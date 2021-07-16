@@ -14,7 +14,7 @@ class CommunityCard extends StatelessWidget {
       width: size.width,
       height: size.height * 0.56,
       decoration: BoxDecoration(
-          color: Colors.pink.shade50,
+          color: Theme.of(context).secondaryHeaderColor.withOpacity(0.05),
           borderRadius: BorderRadius.circular(12.0)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -42,15 +42,23 @@ class CommunityCard extends StatelessWidget {
                   ),
                   Text(
                     "Join the GoFundMe Community",
-                    style:
-                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                        color: Theme.of(context)
+                            .secondaryHeaderColor
+                            .withOpacity(0.9),
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold),
                   ),
                   SizedBox(
                     height: 10.0,
                   ),
                   Text(
                     "Connect with other organizers and learn about fundraising strategies in the GoFundMe Community",
-                    style: TextStyle(fontSize: 16.0),
+                    style: TextStyle(
+                        fontSize: 16.0,
+                        color: Theme.of(context)
+                            .secondaryHeaderColor
+                            .withOpacity(0.6)),
                   ),
                   SizedBox(
                     height: 10.0,

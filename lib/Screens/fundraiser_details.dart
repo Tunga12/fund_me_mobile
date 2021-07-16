@@ -189,7 +189,7 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                       ),
                     ),
                     SizedBox(
-                      height: 20.0,
+                      height: 10.0,
                     ),
                     Row(
                       children: [
@@ -241,7 +241,7 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                         ),
                         CustomRaisedButton(
                           title: "Ney York, NY",
-                          iconData: Icons.wallet_travel,
+                          iconData: Icons.location_on_outlined,
                           onPressed: () {},
                         ),
                       ],
@@ -366,9 +366,11 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
         currentIndex: index,
         onTap: bottomNavBarItemTap,
         elevation: 5.0,
-        selectedItemColor: Theme.of(context).secondaryHeaderColor,
+        selectedItemColor:
+            Theme.of(context).secondaryHeaderColor.withOpacity(0.5),
         showUnselectedLabels: true,
-        unselectedItemColor: Theme.of(context).secondaryHeaderColor,
+        unselectedItemColor:
+            Theme.of(context).secondaryHeaderColor.withOpacity(0.5),
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.money),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class AccountSettings extends StatefulWidget {
   const AccountSettings({Key? key}) : super(key: key);
@@ -146,8 +147,8 @@ class _AccountSettingsState extends State<AccountSettings> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Icon(
-                      Icons.facebook,
-                      color: Colors.blue,
+                      FontAwesomeIcons.facebookSquare,
+                      color: Colors.blue[900],
                       size: 35.0,
                     ),
                     Text(

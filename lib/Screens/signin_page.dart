@@ -1,3 +1,4 @@
+import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:crowd_funding_app/Screens/signup_page.dart';
 import 'package:flutter/material.dart';
 
@@ -72,6 +73,8 @@ class _SigninPageState extends State<SigninPage> {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           print("Logging...");
+                          Navigator.of(context)
+                              .pushReplacementNamed('/homepage');
                         }
                       },
                       child: Text(

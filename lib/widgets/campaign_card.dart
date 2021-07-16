@@ -1,3 +1,4 @@
+import 'package:crowd_funding_app/Screens/share_page.dart';
 import 'package:flutter/material.dart';
 
 class CampaignCard extends StatelessWidget {
@@ -33,8 +34,17 @@ class CampaignCard extends StatelessWidget {
                   child: CircleAvatar(
                     backgroundColor: Colors.white,
                     child: IconButton(
-                      icon: Icon(Icons.ios_share),
-                      onPressed: () {},
+                      icon: Icon(
+                        Icons.ios_share,
+                        size: 20.0,
+                        color: Theme.of(context)
+                            .secondaryHeaderColor
+                            .withOpacity(0.6),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => SharePage()));
+                      },
                     ),
                   ),
                 ),
@@ -48,21 +58,28 @@ class CampaignCard extends StatelessWidget {
               child: Text(
                 "Wichita, KS",
                 style: TextStyle(
-                  fontSize: 16.0,
-                  color: Theme.of(context).secondaryHeaderColor,
+                  color:
+                      Theme.of(context).secondaryHeaderColor.withOpacity(0.4),
                 ),
               )),
           Container(
               margin: EdgeInsets.only(top: 10.0),
               child: Text(
                 "Support For The Russel Family",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+                style: TextStyle(
+                    color:
+                        Theme.of(context).secondaryHeaderColor.withOpacity(0.8),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20.0),
               )),
           Container(
               margin: EdgeInsets.only(top: 10.0),
               child: Text(
                 "\$93,811 raised of \$75,000",
-                style: TextStyle(fontSize: 16.0),
+                style: TextStyle(
+                    color:
+                        Theme.of(context).secondaryHeaderColor.withOpacity(0.6),
+                    fontSize: 16.0),
               )),
           Container(
               margin: EdgeInsets.only(top: 10.0),
@@ -70,11 +87,14 @@ class CampaignCard extends StatelessWidget {
                 "Last donation JUST NOW ago",
                 style: TextStyle(
                     fontSize: 16.0,
-                    color: Theme.of(context).secondaryHeaderColor),
+                    color: Theme.of(context)
+                        .secondaryHeaderColor
+                        .withOpacity(0.4)),
               )),
           Container(
             margin: EdgeInsets.only(top: 10.0),
             child: LinearProgressIndicator(
+              backgroundColor: Theme.of(context).accentColor.withOpacity(0.3),
               value: 0.9,
             ),
           ),

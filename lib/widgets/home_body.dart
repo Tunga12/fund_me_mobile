@@ -80,9 +80,9 @@ class _HomeBodyState extends State<HomeBody> {
               children: [
                 Text("Fundraise for the people and causes you care about.",
                     style: TextStyle(
-                      fontSize: 25.0,
-                      fontWeight: FontWeight.bold,
-                    )),
+                        fontSize: 25.0,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).secondaryHeaderColor)),
                 SizedBox(
                   height: 15.0,
                 ),
@@ -95,7 +95,9 @@ class _HomeBodyState extends State<HomeBody> {
                     onPressed: () {},
                     child: Text(
                       "Start a GoFundMe",
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).backgroundColor),
                     )),
                 SizedBox(
                   height: 50.0,
@@ -106,7 +108,10 @@ class _HomeBodyState extends State<HomeBody> {
                 ),
                 Text(
                   "Nearby Fundraisers",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
+                  style: TextStyle(
+                      color: Theme.of(context).secondaryHeaderColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25.0),
                 ),
                 SizedBox(
                   height: 20.0,
@@ -117,7 +122,10 @@ class _HomeBodyState extends State<HomeBody> {
                 ),
                 Text(
                   'Popular now',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25.0),
+                  style: TextStyle(
+                      color: Theme.of(context).secondaryHeaderColor,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25.0),
                 )
               ],
             ),

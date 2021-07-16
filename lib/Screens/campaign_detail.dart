@@ -1,3 +1,4 @@
+import 'package:crowd_funding_app/Screens/donation_page.dart';
 import 'package:crowd_funding_app/Screens/edit_page.dart';
 import 'package:crowd_funding_app/Screens/share_page.dart';
 import 'package:crowd_funding_app/Screens/team.dart';
@@ -401,7 +402,13 @@ class _CampaignDetailState extends State<CampaignDetail> {
                 style: TextButton.styleFrom(
                     padding: EdgeInsets.symmetric(horizontal: 15.0),
                     backgroundColor: Theme.of(context).accentColor),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => DonationPage(),
+                    ),
+                  );
+                },
                 child: Text(
                   "Donate now",
                   style: TextStyle(color: Theme.of(context).backgroundColor),

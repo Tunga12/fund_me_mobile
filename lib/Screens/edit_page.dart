@@ -113,7 +113,7 @@ class _EditPageState extends State<EditPage> {
                                   }
                                 },
                                 decoration: InputDecoration(
-                                  labelText: "Story Ammount",
+                                  labelText: "Story ",
                                 ),
                               ),
                             ],

@@ -1,4 +1,5 @@
 import 'package:crowd_funding_app/Screens/fundraiser_details.dart';
+import 'package:crowd_funding_app/Screens/share_page.dart';
 import 'package:flutter/material.dart';
 
 class ManageCard extends StatelessWidget {
@@ -21,14 +22,14 @@ class ManageCard extends StatelessWidget {
       },
       child: Container(
         color: Theme.of(context).backgroundColor,
-        height: size.height * 0.55,
+        height: size.height * 0.53,
         padding: EdgeInsets.all(20.0),
         margin: EdgeInsets.only(bottom: 0.5),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
-              height: size.height * 0.35,
+              height: size.height * 0.33,
               child: Stack(
                 children: [
                   Container(
@@ -38,7 +39,7 @@ class ManageCard extends StatelessWidget {
                         image: AssetImage(
                           'assets/images/$image',
                         ),
-                        fit: BoxFit.cover,
+                        fit: BoxFit.fill,
                       ),
                     ),
                   ),
@@ -48,8 +49,20 @@ class ManageCard extends StatelessWidget {
                     child: CircleAvatar(
                       backgroundColor: Colors.white,
                       child: IconButton(
-                        icon: Icon(Icons.ios_share),
-                        onPressed: () {},
+                        icon: Icon(
+                          Icons.ios_share,
+                          size: 20.0,
+                          color: Theme.of(context)
+                              .secondaryHeaderColor
+                              .withOpacity(0.6),
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => SharePage(),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -76,13 +89,22 @@ class ManageCard extends StatelessWidget {
                 margin: EdgeInsets.only(top: 10.0),
                 child: Text(
                   "Support For The Russel Family",
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+                  style: TextStyle(
+                      color: Theme.of(context)
+                          .secondaryHeaderColor
+                          .withOpacity(0.8),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20.0),
                 )),
             Container(
                 margin: EdgeInsets.only(top: 10.0),
                 child: Text(
                   "\$93,811 raised of \$75,000",
-                  style: TextStyle(fontSize: 16.0),
+                  style: TextStyle(
+                      color: Theme.of(context)
+                          .secondaryHeaderColor
+                          .withOpacity(0.6),
+                      fontSize: 16.0),
                 )),
             Container(
               margin: EdgeInsets.only(top: 10.0),

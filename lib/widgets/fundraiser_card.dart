@@ -34,6 +34,10 @@ class FundraiserCard extends StatelessWidget {
                 Text(
                   "Help your local community. Explore the fundraisers around you.",
                   textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Theme.of(context)
+                          .secondaryHeaderColor
+                          .withOpacity(0.6)),
                 ),
                 SizedBox(
                   height: 20.0,
@@ -42,7 +46,7 @@ class FundraiserCard extends StatelessWidget {
                   style: TextButton.styleFrom(
                       shape: RoundedRectangleBorder(
                           side:
-                              BorderSide(color: Theme.of(context).accentColor),
+                              BorderSide(color: Theme.of(context).primaryColor),
                           borderRadius: BorderRadius.circular(20.0))),
                   onPressed: () {},
                   child: Row(
@@ -50,14 +54,14 @@ class FundraiserCard extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.my_location,
-                        color: Theme.of(context).accentColor,
+                        color: Theme.of(context).primaryColor,
                       ),
                       SizedBox(
                         width: 10.0,
                       ),
                       Text(
                         "Use current location",
-                        style: TextStyle(color: Theme.of(context).accentColor),
+                        style: TextStyle(color: Theme.of(context).primaryColor),
                       )
                     ],
                   ),
@@ -70,7 +74,7 @@ class FundraiserCard extends StatelessWidget {
                   child: Center(
                     child: Text("or enter a location",
                         style: TextStyle(
-                            color: Theme.of(context).accentColor,
+                            color: Theme.of(context).primaryColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 16.0)),
                   ),
@@ -81,12 +85,12 @@ class FundraiserCard extends StatelessWidget {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(12.0),
-                      bottomRight: Radius.circular(12.0)),
-                  image: DecorationImage(
-                      image: AssetImage('assets/images/car.jpg'),
-                      fit: BoxFit.cover)),
+                borderRadius: BorderRadius.circular(12.0),
+                image: DecorationImage(
+                  image: AssetImage('assets/images/car.jpg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
           )
         ],
