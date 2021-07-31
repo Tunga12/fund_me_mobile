@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 
 class FundraiserCard extends StatelessWidget {
-  const FundraiserCard({
-    Key? key,
-    required this.size,
-  }) : super(key: key);
-
-  final Size size;
-
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Container(
       height: size.height * 0.6,
       width: size.width,

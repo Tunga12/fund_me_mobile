@@ -5,10 +5,11 @@ class Campaign {
   String editStatus;
   int progress;
 
-  Campaign(
-      {required this.image,
-      required this.title,
-      required this.raisedMoney,
-      required this.editStatus,
-      required this.progress});
+  Campaign({
+    required this.image,
+    required this.title,
+    required this.raisedMoney,
+    required this.editStatus,
+    required this.progress,
+  });
 }

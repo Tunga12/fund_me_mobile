@@ -1,86 +1,79 @@
+import 'package:crowd_funding_app/Models/status.dart';
+import 'package:crowd_funding_app/Screens/home_page.dart';
+import 'package:crowd_funding_app/Screens/loading_screen.dart';
+import 'package:crowd_funding_app/config/utils/user_preference.dart';
+import 'package:crowd_funding_app/services/provider/notification.dart';
 import 'package:crowd_funding_app/widgets/empty_body.dart';
+import 'package:crowd_funding_app/widgets/empty_payment.dart';
+import 'package:crowd_funding_app/widgets/notification_item.dart';
+import 'package:crowd_funding_app/widgets/response_alert.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class Notifications extends StatelessWidget {
+class Notifications extends StatefulWidget {
   const Notifications({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    return ListView.builder(
-      itemCount: 2,
-      itemBuilder: (context, index) {
-        return NotficationItem(size: size);
-      },
-    );
-  }
+  _NotificationsState createState() => _NotificationsState();
 }
 
-class NotficationItem extends StatelessWidget {
-  const NotficationItem({
-    Key? key,
-    required this.size,
-  }) : super(key: key);
+class _NotificationsState extends State<Notifications> {
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
+  @override
+  void initState() {
+    getNotificaions();
+    super.initState();
+  }
 
-  final Size size;
+  getNotificaions() async {
+    UserPreference userPreference = UserPreference();
+    PreferenceData token = await userPreference.getUserToken();
+    await context
+        .read<UserNotificationModel>()
+        .getAllUserNotifications(token.data);
+  }
+
+  Future _refresh() async {
+    getNotificaions();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-      decoration:
-          BoxDecoration(color: Colors.cyan.withOpacity(0.15), boxShadow: [
-        BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 1,
-            offset: Offset(0, 3))
-      ]),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Image.asset(
-            'assets/images/favicon.png',
-            height: size.height * 0.05,
-          ),
-          SizedBox(
-            width: 10.0,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Fasikaw, your GoFundMe is ready! sharing with friends and family is the most important step to get your first donations.",
-                  style: TextStyle(
-                      color: Colors.grey[600],
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.w400),
-                ),
-                GestureDetector(
-                  onTap: () {},
-                  child: Text(
-                    "Share now",
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-          SizedBox(
-            width: 20.0,
-          ),
-          Text(
-            "JUST NOW",
-            style: TextStyle(
-                color: Colors.grey[600],
-                fontSize: 18.0,
-                fontWeight: FontWeight.w400),
-          ),
-        ],
-      ),
-    );
+    // getNotificaions();
+    Response value = context.watch<UserNotificationModel>().response;
+    print("screen data ${value.status}");
+
+    if (value.status == ResponseStatus.LOADING) {
+      return LoadingScreen();
+    } else if (value.status == ResponseStatus.CONNECTIONERROR) {
+      return ResponseAlert(value.message);
+    } else if (value.status == ResponseStatus.FORMATERROR) {
+      return ResponseAlert(value.message);
+    } else {
+      print("Notificationv ${value.data}");
+      if (value.data.length == 0) {
+        return EmptyBody(
+          onPressed: () {
+            Navigator.of(context).pushReplacementNamed(HomePage.routeName);
+          },
+          btnText1: 'Explore home feed',
+          isFilled: false,
+          text1: 'Nothing to see here yet',
+          text2:
+              'find stories and cases you care about on your home feed to get relevant updates here.',
+        );
+      }
+      return RefreshIndicator(
+        key: _refreshIndicatorKey,
+        onRefresh: _refresh,
+        child: ListView.builder(
+          itemCount: value.data.length,
+          itemBuilder: (context, index) {
+            return NotficationItem(content: value.data[index].content);
+          },
+        ),
+      );
+    }
   }
 }

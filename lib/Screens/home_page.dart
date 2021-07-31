@@ -1,13 +1,13 @@
-import 'package:crowd_funding_app/Models/campaign.dart';
+import 'package:crowd_funding_app/Screens/create_fundraiser_home.dart';
 import 'package:crowd_funding_app/Screens/manage.dart';
 import 'package:crowd_funding_app/Screens/notification.dart';
 import 'package:crowd_funding_app/Screens/search.dart';
 import 'package:crowd_funding_app/Screens/settings.dart';
 import 'package:crowd_funding_app/widgets/home_body.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomePage extends StatefulWidget {
+  static const routeName = "/homePage";
   const HomePage({Key? key}) : super(key: key);
 
   @override
@@ -15,7 +15,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Campaign> campaines = [];
   List<Widget> _bodyChild = [];
   List<Widget> _appBarChild = [];
 
@@ -42,10 +41,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void initState() {
+    // getData();
+    super.initState();
+  }
+
+  // getData() async {
+  //   await context.read<FundraiseModel>().getPopularFundraises();
+  // }
+
+  @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     _bodyChild = [
-      HomeBody(size: size),
+      HomeBody(),
       Notifications(),
       Manage(),
       Container(),
@@ -80,9 +88,11 @@ class _HomePageState extends State<HomePage> {
         style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
       ),
     ];
+
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
+          automaticallyImplyLeading: false,
           elevation: _selectedIndex > 0 ? 4.0 : 0.0,
           centerTitle: true,
           actions: _selectedIndex == 1
@@ -115,7 +125,14 @@ class _HomePageState extends State<HomePage> {
                 Icons.add,
                 color: Theme.of(context).backgroundColor,
               ),
-              onPressed: () {})
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CreateFundraiserHome(),
+                  ),
+                );
+              })
           : null,
       bottomNavigationBar: BottomNavigationBar(
         enableFeedback: false,
@@ -129,11 +146,19 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: Theme.of(context).accentColor,
         items: [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined), label: "Discover"),
+              icon: Icon(
+                Icons.home_outlined,
+              ),
+              label: "Discover"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.notifications_outlined), label: "Notifications"),
+              icon: Icon(
+                Icons.notifications_outlined,
+              ),
+              label: "Notifications"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.description), label: "Manage"),
+            icon: Icon(Icons.description),
+            label: "Manage",
+          ),
           BottomNavigationBarItem(
               icon: Icon(
                 Icons.account_circle_outlined,

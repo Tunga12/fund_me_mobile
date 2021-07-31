@@ -1,8 +1,10 @@
+import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 
 class UnorderedList extends StatelessWidget {
   UnorderedList({required this.text});
   String text;
+  Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +23,11 @@ class UnorderedList extends StatelessWidget {
                       color: Colors.black)),
               TextSpan(
                   text: "$text",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1!
-                      .copyWith(color: Theme.of(context).accentColor)),
+                  style: bodyTextStyle2.copyWith(
+                      fontSize: 16.0,
+                      color: Theme.of(context)
+                          .secondaryHeaderColor
+                          .withOpacity(0.6))),
             ],
           ),
         ),

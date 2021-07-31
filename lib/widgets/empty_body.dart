@@ -1,3 +1,4 @@
+import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:flutter/material.dart';
 
 class EmptyBody extends StatelessWidget {
@@ -5,12 +6,15 @@ class EmptyBody extends StatelessWidget {
   final String text2;
   final String btnText1;
   final bool isFilled;
+  final Function onPressed;
 
-  EmptyBody(
-      {required this.text1,
-      required this.text2,
-      required this.btnText1,
-      required this.isFilled});
+  EmptyBody({
+    required this.text1,
+    required this.text2,
+    required this.btnText1,
+    required this.isFilled,
+    required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +44,10 @@ class EmptyBody extends StatelessWidget {
             ),
             Text(
               "$text1",
-              style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                  color: Theme.of(context).secondaryHeaderColor,
+                  fontSize: 25.0,
+                  fontWeight: FontWeight.bold),
             ),
             SizedBox(
               height: 20.0,
@@ -48,6 +55,9 @@ class EmptyBody extends StatelessWidget {
             Text(
               "$text2",
               textAlign: TextAlign.center,
+              style: TextStyle(
+                  color:
+                      Theme.of(context).secondaryHeaderColor.withOpacity(0.5)),
             ),
             SizedBox(
               height: 20.0,
@@ -62,7 +72,9 @@ class EmptyBody extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20.0),
                         side: BorderSide(
                             width: 2.0, color: Theme.of(context).accentColor))),
-                onPressed: () {},
+                onPressed: () {
+                  onPressed();
+                },
                 child: Text(
                   "$btnText1",
                   style: TextStyle(

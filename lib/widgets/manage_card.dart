@@ -1,11 +1,21 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:crowd_funding_app/Screens/fundraiser_details.dart';
 import 'package:crowd_funding_app/Screens/share_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ManageCard extends StatelessWidget {
   String image;
-
-  ManageCard({required this.image});
+  String title;
+  int goalAmount;
+  int raisedAmount;
+  String fundraiseId;
+  ManageCard(
+      {required this.fundraiseId,
+      required this.image,
+      required this.title,
+      required this.goalAmount,
+      required this.raisedAmount});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +26,7 @@ class ManageCard extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => FundraiserDetail(),
+            builder: (context) => FundraiserDetail(fundraiseId),
           ),
         );
       },
@@ -33,14 +43,25 @@ class ManageCard extends StatelessWidget {
               child: Stack(
                 children: [
                   Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.0),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          'assets/images/$image',
+                    child: CachedNetworkImage(
+                      imageUrl: image,
+                      progressIndicatorBuilder:
+                          (context, url, downloadProgress) => Center(
+                        child: SpinKitCircle(
+                          color: Theme.of(context).accentColor,
+                          duration: Duration(seconds: 2),
                         ),
-                        fit: BoxFit.fill,
                       ),
+                      imageBuilder: (context, imageProvider) => Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          image: DecorationImage(
+                            image: imageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Icon(Icons.image),
                     ),
                   ),
                   Positioned(
@@ -88,7 +109,7 @@ class ManageCard extends StatelessWidget {
             Container(
                 margin: EdgeInsets.only(top: 10.0),
                 child: Text(
-                  "Support For The Russel Family",
+                  "$title",
                   style: TextStyle(
                       color: Theme.of(context)
                           .secondaryHeaderColor
@@ -99,7 +120,7 @@ class ManageCard extends StatelessWidget {
             Container(
                 margin: EdgeInsets.only(top: 10.0),
                 child: Text(
-                  "\$93,811 raised of \$75,000",
+                  "\$$raisedAmount raised of \$$goalAmount",
                   style: TextStyle(
                       color: Theme.of(context)
                           .secondaryHeaderColor
@@ -109,7 +130,10 @@ class ManageCard extends StatelessWidget {
             Container(
               margin: EdgeInsets.only(top: 10.0),
               child: LinearProgressIndicator(
-                value: 0.9,
+                value: goalAmount == 0
+                    ? 0.0
+                    : double.parse(
+                        (raisedAmount / goalAmount).toStringAsFixed(2)),
                 backgroundColor: Theme.of(context).accentColor.withOpacity(0.2),
               ),
             ),

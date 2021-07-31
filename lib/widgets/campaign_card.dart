@@ -1,13 +1,40 @@
+import 'package:crowd_funding_app/Models/donation.dart';
 import 'package:crowd_funding_app/Screens/share_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:jiffy/jiffy.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class CampaignCard extends StatelessWidget {
   String image;
+  String locaion;
+  String title;
+  int totalRaised;
+  int goalAmount;
+  Donation donation;
 
-  CampaignCard({required this.image});
+  CampaignCard({
+    required this.image,
+    required this.locaion,
+    required this.title,
+    required this.totalRaised,
+    required this.goalAmount,
+    required this.donation,
+  });
+
+  double progress = 0.0;
+  var date = "";
+
+  getData() {
+    progress = totalRaised / goalAmount;
+    date = Jiffy(donation.date).fromNow();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    print('image is $image');
+    getData();
     return Container(
       color: Theme.of(context).backgroundColor,
       height: MediaQuery.of(context).size.height * 0.6,
@@ -20,11 +47,30 @@ class CampaignCard extends StatelessWidget {
             child: Stack(
               children: [
                 Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12.0),
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/$image'),
-                      fit: BoxFit.cover,
+                  width: size.width,
+                  child: CachedNetworkImage(
+                    imageUrl: image,
+                    errorWidget: (context, url, error) => Icon(Icons.image),
+                    progressIndicatorBuilder:
+                        (context, url, downloadProgress) => Center(
+                      child: SpinKitCircle(
+                        color: Theme.of(context).accentColor,
+                        duration: Duration(
+                            seconds: downloadProgress.progress == null
+                                ? 2
+                                : downloadProgress.progress!.toInt()),
+                      ),
+                    ),
+                    // CircularProgressIndicator(
+                    //     value: downloadProgress.progress),
+                    imageBuilder: (context, imageProvider) => Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -56,7 +102,7 @@ class CampaignCard extends StatelessWidget {
                 top: 10.0,
               ),
               child: Text(
-                "Wichita, KS",
+                "$locaion",
                 style: TextStyle(
                   color:
                       Theme.of(context).secondaryHeaderColor.withOpacity(0.4),
@@ -65,7 +111,7 @@ class CampaignCard extends StatelessWidget {
           Container(
               margin: EdgeInsets.only(top: 10.0),
               child: Text(
-                "Support For The Russel Family",
+                "$title",
                 style: TextStyle(
                     color:
                         Theme.of(context).secondaryHeaderColor.withOpacity(0.8),
@@ -75,7 +121,7 @@ class CampaignCard extends StatelessWidget {
           Container(
               margin: EdgeInsets.only(top: 10.0),
               child: Text(
-                "\$93,811 raised of \$75,000",
+                "$totalRaised raised of $goalAmount",
                 style: TextStyle(
                     color:
                         Theme.of(context).secondaryHeaderColor.withOpacity(0.6),
@@ -84,7 +130,7 @@ class CampaignCard extends StatelessWidget {
           Container(
               margin: EdgeInsets.only(top: 10.0),
               child: Text(
-                "Last donation JUST NOW ago",
+                "Last donation $date",
                 style: TextStyle(
                     fontSize: 16.0,
                     color: Theme.of(context)
@@ -95,7 +141,7 @@ class CampaignCard extends StatelessWidget {
             margin: EdgeInsets.only(top: 10.0),
             child: LinearProgressIndicator(
               backgroundColor: Theme.of(context).accentColor.withOpacity(0.3),
-              value: 0.9,
+              value: progress,
             ),
           ),
           SizedBox(

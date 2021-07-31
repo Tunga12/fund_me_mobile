@@ -1,8 +1,27 @@
+import 'package:crowd_funding_app/Models/category.dart';
+import 'package:crowd_funding_app/Models/fundraise.dart';
+import 'package:crowd_funding_app/Models/status.dart';
+import 'package:crowd_funding_app/Screens/home_page.dart';
+import 'package:crowd_funding_app/Screens/loading_screen.dart';
+import 'package:crowd_funding_app/config/utils/user_preference.dart';
+import 'package:crowd_funding_app/constants/text_styles.dart';
+import 'package:crowd_funding_app/services/provider/category.dart';
+import 'package:crowd_funding_app/services/provider/fundraise.dart';
+import 'package:crowd_funding_app/widgets/authdialog.dart';
+import 'package:crowd_funding_app/widgets/cached_network_image.dart';
+import 'package:crowd_funding_app/widgets/custom_card.dart';
+import 'package:crowd_funding_app/widgets/loading_progress.dart';
+import 'package:crowd_funding_app/widgets/response_alert.dart';
+import 'package:crowd_funding_app/widgets/settings_item.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 
 class EditPage extends StatefulWidget {
-  const EditPage({Key? key}) : super(key: key);
+  final Fundraise fundraise;
+  EditPage(this.fundraise);
 
   @override
   _EditPageState createState() => _EditPageState();
@@ -11,14 +30,81 @@ class EditPage extends StatefulWidget {
 class _EditPageState extends State<EditPage> {
   final _formKey = GlobalKey<FormState>();
   @override
+  void initState() {
+    super.initState();
+    getCategories();
+  }
+
+  String? _category;
+  String locationValue = "";
+
+  getCategories() async {
+    // await context.read<CategoryModel>().getAllCategories();
+    setState(() {
+      _category = widget.fundraise.category!.categoryID;
+      locationValue = widget.fundraise.location!.latitude +
+          " " +
+          widget.fundraise.location!.latitude;
+    });
+  }
+
+  Map<String, dynamic> _fundraiseDetail = {};
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    Response response = context.watch<CategoryModel>().response;
+    if (response.status == ResponseStatus.LOADING) {
+      return LoadingScreen();
+    } else if (response.status == ResponseStatus.CONNECTIONERROR) {
+      return ResponseAlert(response.message);
+    } else if (response.status == ResponseStatus.FORMATERROR) {
+      return ResponseAlert(response.message);
+    }
+    List<Category> categories = response.data;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
           "Edit",
         ),
-        actions: [TextButton(onPressed: () {}, child: Text('SAVE'))],
+        actions: [
+          TextButton(
+              onPressed: () async {
+                if (_formKey.currentState!.validate() &&
+                    locationValue != 'choose location') {
+                  _formKey.currentState!.save();
+
+                  UserPreference userPreference = UserPreference();
+                  PreferenceData preferenceData =
+                      await userPreference.getUserToken();
+
+                  Fundraise fundraise = widget.fundraise.copyWith(
+                    title: _fundraiseDetail['title'],
+                    goalAmount: int.parse(_fundraiseDetail['goalAmount']),
+                    story: _fundraiseDetail['story'],
+                    category: _fundraiseDetail['category'],
+                    location: _fundraiseDetail['location'],
+                  );
+                  loadingProgress(context);
+                  await context
+                      .read<FundraiseModel>()
+                      .updateFundraise(fundraise, preferenceData.data);
+                  Response response = context.read<FundraiseModel>().response;
+                  if (response.status == ResponseStatus.SUCCESS) {
+                    Fluttertoast.showToast(
+                        msg: "Successfully Updated!",
+                        toastLength: Toast.LENGTH_LONG);
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        HomePage.routeName, (route) => false);
+                  } else {
+                    Navigator.pop(context);
+                    authShowDialog(context, Text(response.message),
+                        close: true, error: true);
+                  }
+                }
+              },
+              child: Text('SAVE'))
+        ],
       ),
       body: Container(
         child: SingleChildScrollView(
@@ -27,11 +113,11 @@ class _EditPageState extends State<EditPage> {
               Stack(
                 children: [
                   Container(
-                    child: Image.asset(
-                      "assets/images/image1.png",
-                      height: size.height * 0.35,
-                      width: size.width,
-                      fit: BoxFit.cover,
+                    width: size.width,
+                    height: size.height * 0.35,
+                    child: CachedImage(
+                      image:
+                          'https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg',
                     ),
                   ),
                   Positioned(
@@ -76,7 +162,12 @@ class _EditPageState extends State<EditPage> {
                                 style: Theme.of(context).textTheme.bodyText1,
                               ),
                               TextFormField(
-                                onChanged: (value) {},
+                                initialValue: widget.fundraise.title,
+                                onSaved: (value) {
+                                  setState(() {
+                                    _fundraiseDetail['title'] = value;
+                                  });
+                                },
                                 validator: (value) {
                                   if (value!.isEmpty) {
                                     return "Title required!";
@@ -90,8 +181,14 @@ class _EditPageState extends State<EditPage> {
                                 height: 18.0,
                               ),
                               TextFormField(
+                                initialValue:
+                                    widget.fundraise.goalAmount.toString(),
                                 keyboardType: TextInputType.number,
-                                onChanged: (value) {},
+                                onSaved: (value) {
+                                  setState(() {
+                                    _fundraiseDetail['goalAmount'] = value;
+                                  });
+                                },
                                 validator: (value) {
                                   if (value!.isEmpty) {
                                     return "Goal Amount required!";
@@ -105,8 +202,13 @@ class _EditPageState extends State<EditPage> {
                                 height: 18.0,
                               ),
                               TextFormField(
-                                maxLines: 3,
-                                onChanged: (value) {},
+                                initialValue: widget.fundraise.story,
+                                maxLines: 5,
+                                onSaved: (value) {
+                                  setState(() {
+                                    _fundraiseDetail['story'] = value;
+                                  });
+                                },
                                 validator: (value) {
                                   if (value!.isEmpty) {
                                     return "Story required!";
@@ -145,6 +247,7 @@ class _EditPageState extends State<EditPage> {
                                 style: Theme.of(context).textTheme.bodyText1,
                               ),
                               TextFormField(
+                                initialValue: "https://go.fundme.com/sample",
                                 maxLines: 2,
                                 onChanged: (value) {},
                                 validator: (value) {
@@ -160,22 +263,31 @@ class _EditPageState extends State<EditPage> {
                                 height: 18.0,
                               ),
                               DropdownButtonFormField<String>(
-                                items: [
-                                  DropdownMenuItem<String>(
-                                    value: "1",
-                                    child: Text(
-                                      "Creative arts",
-                                    ),
-                                  ),
-                                  DropdownMenuItem<String>(
-                                    value: "2",
-                                    child: Text(
-                                      "Travel and Adventure",
-                                    ),
-                                  )
-                                ],
-                                onChanged: (value) {},
-                                validator: (value) {},
+                                value: _category,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _category = value;
+                                  });
+                                },
+                                items: categories
+                                    .map(
+                                      (category) => DropdownMenuItem<String>(
+                                        child: Text("${category.categoryName}"),
+                                        value: category.categoryID,
+                                      ),
+                                    )
+                                    .toList(),
+                                onSaved: (value) {
+                                  setState(() {
+                                    _fundraiseDetail['category'] =
+                                        Category(categoryID: value);
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value == "0") {
+                                    return 'select category';
+                                  }
+                                },
                                 decoration: InputDecoration(
                                   labelText: "Category",
                                 ),
@@ -183,21 +295,58 @@ class _EditPageState extends State<EditPage> {
                               SizedBox(
                                 height: 18.0,
                               ),
-                              TextFormField(
-                                onChanged: (value) {},
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "Story required!";
-                                  }
-                                },
-                                decoration: InputDecoration(
-                                  prefix: Icon(Icons.search),
-                                  suffix: Icon(
-                                    Icons.location_on,
-                                    color: Colors.black,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  IconButton(
+                                    onPressed: () async {
+                                      // LatLng location = LatLng(
+                                      //     position.latitude, position.longitude);
+                                      // final LocationArgument valueLocation =
+                                      //     await Navigator.of(context).push(
+                                      //   MaterialPageRoute(
+                                      //     builder: (context) => MapScreen(
+                                      //       args: MapArgument(
+                                      //           location: location, isUser: true),
+                                      //     ),
+                                      //   ),
+                                      // );
+
+                                      Position position =
+                                          await Geolocator.getCurrentPosition(
+                                              desiredAccuracy:
+                                                  LocationAccuracy.high);
+                                      Location locationObject = Location(
+                                        latitude: position.latitude.toString(),
+                                        longitude:
+                                            position.longitude.toString(),
+                                      );
+                                      setState(() {
+                                        locationValue =
+                                            locationObject.latitude +
+                                                " " +
+                                                locationObject.longitude;
+
+                                        _fundraiseDetail['location'] =
+                                            locationObject;
+                                      });
+                                    },
+                                    icon: Icon(
+                                      Icons.place,
+                                      color: Theme.of(context).accentColor,
+                                    ),
                                   ),
-                                  labelText: "Location",
-                                ),
+                                  SizedBox(
+                                    width: 10.0,
+                                  ),
+                                  Text(
+                                    "$locationValue",
+                                    style: labelTextStyle.copyWith(
+                                        color: Theme.of(context)
+                                            .secondaryHeaderColor
+                                            .withOpacity(0.6)),
+                                  )
+                                ],
                               ),
                               SizedBox(
                                 height: 20.0,
@@ -339,7 +488,27 @@ class _EditPageState extends State<EditPage> {
                                 width: 1.5, color: Colors.red.shade900),
                           ),
                         ),
-                        onPressed: () {},
+                        onPressed: () async {
+                          UserPreference userPreference = UserPreference();
+                          PreferenceData preferenceData =
+                              await userPreference.getUserToken();
+                          loadingProgress(context);
+                          await context.read<FundraiseModel>().deleteFundraise(
+                              widget.fundraise.id!, preferenceData.data);
+                          Response response =
+                              context.read<FundraiseModel>().response;
+                          if (response.status == ResponseStatus.SUCCESS) {
+                            Fluttertoast.showToast(
+                                msg: "Successfully Deleted!",
+                                toastLength: Toast.LENGTH_LONG);
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                HomePage.routeName, (route) => false);
+                          } else {
+                            Navigator.pop(context);
+                            authShowDialog(context, Text(response.message),
+                                close: true, error: true);
+                          }
+                        },
                         child: Text(
                           "Delete fundraiser",
                           style: TextStyle(
@@ -355,59 +524,6 @@ class _EditPageState extends State<EditPage> {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class CustomCard extends StatelessWidget {
-  Widget child;
-  CustomCard({required this.child});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-              color: Colors.grey.withOpacity(0.4),
-              spreadRadius: 1.0,
-              blurRadius: 1.0,
-              offset: Offset(0, 3))
-        ],
-      ),
-      padding: EdgeInsets.all(20.0),
-      child: child,
-    );
-  }
-}
-
-class FundraiseSettingItem extends StatelessWidget {
-  String title;
-
-  FundraiseSettingItem({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(
-        vertical: 20.0,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              '$title',
-              style: TextStyle(
-                color: Colors.black.withOpacity(0.7),
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          Switch.adaptive(value: true, onChanged: (value) {}),
-        ],
       ),
     );
   }

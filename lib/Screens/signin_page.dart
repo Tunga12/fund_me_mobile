@@ -1,8 +1,17 @@
+import 'package:crowd_funding_app/Models/status.dart';
+import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:crowd_funding_app/Screens/signup_page.dart';
+import 'package:crowd_funding_app/services/data_provider/api_response.dart';
+import 'package:crowd_funding_app/services/provider/auth.dart';
+import 'package:crowd_funding_app/services/provider/user.dart';
+import 'package:crowd_funding_app/widgets/authdialog.dart';
+import 'package:crowd_funding_app/widgets/loading_progress.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class SigninPage extends StatefulWidget {
+  static const routeName = '/signinPage';
   const SigninPage({Key? key}) : super(key: key);
 
   @override
@@ -11,158 +20,243 @@ class SigninPage extends StatefulWidget {
 
 class _SigninPageState extends State<SigninPage> {
   final _formKey = GlobalKey<FormState>();
+  final Map<String, dynamic> _userInfo = {};
+  bool isValidated = false;
+  bool _isObscured = true;
+  IconData iconData = Icons.visibility;
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Sign in"),
-      ),
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.0),
-        child: ListView(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 40.0),
-              child: Image.asset(
-                "assets/images/gofundme.png",
-                height: size.height * 0.07,
-                width: size.width * 0.01,
-              ),
-            ),
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  TextFormField(
-                    onChanged: (value) {},
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Incorect email or password!";
-                      }
-                    },
-                    decoration: InputDecoration(
-                      labelText: "Email",
+    // AuthModel userModel = Provider.of<AuthModel>(context);
+    return Consumer<AuthModel>(
+      builder: (_, model, child) {
+        print(model.signinStatus);
+        // print(model.status);
+        return Scaffold(
+          appBar: AppBar(
+            title: Text("Sign in"),
+          ),
+          body: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
+            child: ListView(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 40.0),
+                  child: Image.asset(
+                    "assets/images/gofundme.png",
+                    height: size.height * 0.07,
+                    width: size.width * 0.01,
+                  ),
+                ),
+                Form(
+                  key: _formKey,
+                  onChanged: () {
+                    setState(() {
+                      isValidated = _formKey.currentState!.validate();
+                    });
+                  },
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        keyboardType: TextInputType.emailAddress,
+                        onSaved: (value) {
+                          this._userInfo['email'] = value;
+                        },
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Incorect email or password!";
+                          }
+                        },
+                        decoration: InputDecoration(
+                          labelText: "Email",
+                        ),
+                      ),
+                      SizedBox(
+                        height: 18.0,
+                      ),
+                      TextFormField(
+                        obscureText: _isObscured,
+                        onSaved: (value) {
+                          this._userInfo['password'] = value;
+                        },
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Incorect Email or Password!";
+                          }
+                        },
+                        decoration: InputDecoration(
+                          suffixIcon: IconButton(
+                            icon: Icon(iconData),
+                            onPressed: () {
+                              setState(() {
+                                _isObscured = !_isObscured;
+                                iconData = _isObscured
+                                    ? Icons.visibility
+                                    : Icons.visibility_off;
+                              });
+                            },
+                          ),
+                          labelText: "Password",
+                        ),
+                      ),
+                      SizedBox(
+                        height: 18.0,
+                      ),
+                      SizedBox(
+                        width: size.width,
+                        height: size.height * 0.08,
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            backgroundColor: isValidated
+                                ? Theme.of(context).accentColor
+                                : Theme.of(context)
+                                    .secondaryHeaderColor
+                                    .withAlpha(180),
+                          ),
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              _formKey.currentState!.save();
+                              User user = User(
+                                email: _userInfo['email'],
+                                password: _userInfo['password'],
+                              );
+                              loadingProgress(context);
+                              await context.read<AuthModel>().signinUser(user);
+
+                              if (model.signinStatus == AuthStatus.LOGGEDIN) {
+                                print("login user $user");
+                                await context.read<UserModel>().getUser(
+                                    model.response.data, user.password!);
+                                Response response =
+                                    context.read<UserModel>().response;
+                                print("sigin reponse ${response.data}");
+                                if (response.data != null) {
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                      HomePage.routeName,
+                                      (Route<dynamic> route) => false);
+                                } else {
+                                  Navigator.of(context).pop();
+                                  authShowDialog(
+                                      context, Text(response.message),
+                                      error: true, close: true);
+                                }
+                              } else {
+                                if (model.response.status ==
+                                    ResponseStatus.CONNECTIONERROR) {
+                                  Navigator.of(context).pop();
+                                  authShowDialog(
+                                      context, Text(model.response.message),
+                                      error: true, close: true);
+                                } else if (model.response.status ==
+                                    ResponseStatus.MISMATCHERROR) {
+                                  Navigator.of(context).pop();
+                                  authShowDialog(
+                                      context, Text(model.response.message),
+                                      error: true, close: true);
+                                } else if (model.response.status ==
+                                    ResponseStatus.FORMATERROR) {
+                                  Navigator.of(context).pop();
+                                  authShowDialog(
+                                      context, Text(model.response.message),
+                                      error: true, close: true);
+                                } else {
+                                  Navigator.of(context).pop();
+                                  authShowDialog(
+                                      context, Text(model.response.message),
+                                      error: true, close: true);
+                                }
+                              }
+                            }
+                          },
+                          child: Text(
+                            "SIGN IN",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1!
+                                .copyWith(
+                                    color: Theme.of(context).backgroundColor),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    'Forgot your password?',
+                    style: TextStyle(fontSize: 18.0),
+                  ),
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Divider(
+                        thickness: 1.5,
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 18.0,
-                  ),
-                  TextFormField(
-                    onChanged: (value) {},
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Incorect Email or Password!";
-                      }
-                    },
-                    decoration: InputDecoration(
-                      labelText: "Password",
-                    ),
-                  ),
-                  SizedBox(
-                    height: 18.0,
-                  ),
-                  SizedBox(
-                    width: size.width,
-                    height: size.height * 0.08,
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                          backgroundColor: Theme.of(context)
-                              .secondaryHeaderColor
-                              .withAlpha(180)),
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          print("Logging...");
-                          Navigator.of(context)
-                              .pushReplacementNamed('/homepage');
-                        }
-                      },
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        "SIGN IN",
+                        'or',
                         style: Theme.of(context)
                             .textTheme
                             .bodyText1!
-                            .copyWith(color: Theme.of(context).backgroundColor),
+                            .copyWith(fontSize: 20.0),
                       ),
                     ),
-                  )
-                ],
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                'Forgot your password?',
-                style: TextStyle(fontSize: 18.0),
-              ),
-            ),
-            Row(
-              children: [
-                Expanded(
-                  child: Divider(
-                    thickness: 1.5,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    'or',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1!
-                        .copyWith(fontSize: 20.0),
-                  ),
-                ),
-                Expanded(
-                  child: Divider(
-                    thickness: 1.5,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              width: size.width * 0.7,
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  backgroundColor: Colors.blue[800],
-                ),
-                onPressed: () {},
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.facebook,
-                      color: Colors.white,
+                    Expanded(
+                      child: Divider(
+                        thickness: 1.5,
+                      ),
                     ),
-                    SizedBox(
-                      width: 20.0,
-                    ),
-                    Text(
-                      "Continue with Facebook",
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText2!
-                          .copyWith(fontSize: 17.0, color: Colors.white),
-                    )
                   ],
                 ),
-              ),
+                SizedBox(
+                  width: size.width * 0.7,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.blue[800],
+                    ),
+                    onPressed: () {},
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.facebook,
+                          color: Colors.white,
+                        ),
+                        SizedBox(
+                          width: 20.0,
+                        ),
+                        Text(
+                          "Continue with Facebook",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText2!
+                              .copyWith(fontSize: 17.0, color: Colors.white),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20.0,
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.of(context)
+                          .pushReplacementNamed(SignupPage.routeName);
+                    },
+                    child: Text(
+                      "Don't have an account? Sign up.",
+                      style: TextStyle(fontSize: 18.0),
+                    ))
+              ],
             ),
-            SizedBox(
-              height: 20.0,
-            ),
-            TextButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => SignupPage()),
-                  );
-                },
-                child: Text(
-                  "Don't have an account? Sign up.",
-                  style: TextStyle(fontSize: 18.0),
-                ))
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

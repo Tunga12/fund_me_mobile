@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
 
 class CommunityCard extends StatelessWidget {
-  const CommunityCard({
-    Key? key,
-    required this.size,
-  }) : super(key: key);
-
-  final Size size;
-
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Container(
       width: size.width,
       height: size.height * 0.56,

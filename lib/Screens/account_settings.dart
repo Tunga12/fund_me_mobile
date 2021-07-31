@@ -1,5 +1,13 @@
+import 'package:crowd_funding_app/Models/user.dart';
+import 'package:crowd_funding_app/Screens/signin_page.dart';
+import 'package:crowd_funding_app/config/utils/user_preference.dart';
+import 'package:crowd_funding_app/services/provider/user.dart';
+import 'package:crowd_funding_app/widgets/authdialog.dart';
+import 'package:crowd_funding_app/widgets/loading_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:progress_hud/progress_hud.dart';
+import 'package:provider/provider.dart';
 
 class AccountSettings extends StatefulWidget {
   const AccountSettings({Key? key}) : super(key: key);
@@ -10,9 +18,37 @@ class AccountSettings extends StatefulWidget {
 
 class _AccountSettingsState extends State<AccountSettings> {
   final _formKey = GlobalKey<FormState>();
+  User? user;
+  String? token;
+
+  getUser() async {
+    UserPreference userPreference = UserPreference();
+    PreferenceData data = await userPreference.getUserInfromation();
+    PreferenceData tokenData = await userPreference.getUserToken();
+    setState(() {
+      user = data.data;
+      token = tokenData.data;
+    });
+  }
+
+  bool _loading = true;
+  @override
+  void initState() {
+    getUser();
+    super.initState();
+  }
+
+  IconData _iconData = Icons.visibility;
+  bool _isObscured = true;
+
+  Map<String, dynamic> _userInfo = {};
 
   @override
   Widget build(BuildContext context) {
+    if (user == null) {
+      return Container();
+    }
+    print("account user $user");
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
@@ -22,20 +58,44 @@ class _AccountSettingsState extends State<AccountSettings> {
         ),
         actions: [
           TextButton(
-              onPressed: () {
-                final form = _formKey.currentState;
+            onPressed: () async {
+              final form = _formKey.currentState;
 
-                if (form!.validate()) {
-                  print("Saved!");
-                }
-              },
-              child: Text(
-                "SAVE",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18.0,
-                    color: Theme.of(context).secondaryHeaderColor),
-              )),
+              if (form!.validate()) {
+                print("Saved!");
+                form.save();
+                User formUser = User(
+                  firstName: _userInfo['firstName'],
+                  lastName: _userInfo['lastName'],
+                  email: _userInfo['email'],
+                  password: _userInfo['password'],
+                );
+                loadingProgress(context);
+                print("update user $user");
+                print("token $token");
+                await context.read<UserModel>().updateUser(formUser, token!);
+
+                User newUser = user!.copyWith(
+                  firstName: _userInfo['firstName'],
+                  lastName: _userInfo['lastName'],
+                  email: _userInfo['email'],
+                  password: _userInfo['password'],
+                );
+
+                await UserPreference().storeUserInformation(newUser);
+
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              }
+            },
+            child: Text(
+              "SAVE",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18.0,
+                  color: Theme.of(context).secondaryHeaderColor),
+            ),
+          ),
         ],
       ),
       body: ListView(
@@ -46,7 +106,6 @@ class _AccountSettingsState extends State<AccountSettings> {
               boxShadow: [
                 BoxShadow(
                     color: Colors.grey.withOpacity(0.5),
-                    // spreadRadius: 5,
                     blurRadius: 7,
                     offset: Offset(0, 3))
               ],
@@ -71,42 +130,80 @@ class _AccountSettingsState extends State<AccountSettings> {
                     child: Column(
                       children: [
                         TextFormField(
+                          initialValue: user!.firstName,
                           decoration: InputDecoration(
                             labelText: "First name",
                           ),
                           validator: (value) {
                             if (value!.isEmpty) {
                               return "First name must not empty";
+                            } else if (value.length < 3) {
+                              return "field must be atleast 3 chars";
                             }
                           },
-                          onSaved: (value) {},
+                          onSaved: (value) {
+                            setState(() {
+                              _userInfo['firstName'] = value;
+                            });
+                          },
                         ),
                         TextFormField(
+                          initialValue: user!.lastName,
                           decoration: InputDecoration(labelText: "Last name"),
                           validator: (value) {
                             if (value!.isEmpty) {
                               return "Last name must not empty";
+                            } else if (value.length < 3) {
+                              return "field must be atleast 3 chars";
                             }
                           },
-                          onSaved: (value) {},
+                          onSaved: (value) {
+                            _userInfo['lastName'] = value;
+                          },
                         ),
                         TextFormField(
+                          initialValue: user!.email,
                           decoration: InputDecoration(labelText: "Email"),
                           validator: (value) {
                             if (value!.isEmpty) {
                               return "Email must not empty";
                             }
                           },
-                          onSaved: (value) {},
+                          onSaved: (value) {
+                            setState(() {
+                              _userInfo['email'] = value;
+                            });
+                          },
                         ),
                         TextFormField(
-                          decoration: InputDecoration(labelText: "Password"),
+                          obscureText: _isObscured,
+                          initialValue: user!.password,
+                          decoration: InputDecoration(
+                            labelText: "Password",
+                            suffixIcon: IconButton(
+                              icon: Icon(_iconData),
+                              onPressed: () {
+                                setState(() {
+                                  _isObscured = !_isObscured;
+                                  _iconData = _isObscured
+                                      ? Icons.visibility
+                                      : Icons.visibility_off;
+                                });
+                              },
+                            ),
+                          ),
                           validator: (value) {
                             if (value!.isEmpty) {
                               return "Password must not empty";
+                            } else if (value.length < 8) {
+                              return 'password too shart';
                             }
                           },
-                          onSaved: (value) {},
+                          onSaved: (value) {
+                            setState(() {
+                              _userInfo['password'] = value;
+                            });
+                          },
                         ),
                       ],
                     ))
@@ -194,7 +291,15 @@ class _AccountSettingsState extends State<AccountSettings> {
                         fontSize: 20.0,
                         color: Colors.deepOrangeAccent.shade200),
                   ),
-                  onPressed: () {},
+                  onPressed: () async {
+                    loadingProgress(context);
+                    await context.read<UserModel>().deleteUser(token!);
+                    UserPreference userPreference = UserPreference();
+                    await userPreference.removeToken();
+                    await userPreference.getUserInfromation();
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        SigninPage.routeName, (Route<dynamic> route) => false);
+                  },
                   style: TextButton.styleFrom(
                       padding: EdgeInsets.symmetric(horizontal: 0.0)),
                 )

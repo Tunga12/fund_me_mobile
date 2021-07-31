@@ -1,4 +1,4 @@
-import 'package:crowd_funding_app/Screens/edit_page.dart';
+import 'package:crowd_funding_app/widgets/custom_card.dart';
 import 'package:flutter/material.dart';
 
 class Team extends StatelessWidget {
