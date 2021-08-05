@@ -300,16 +300,6 @@ class _EditPageState extends State<EditPage> {
                                 children: [
                                   IconButton(
                                     onPressed: () async {
-                                      // LatLng location = LatLng(
-                                      //     position.latitude, position.longitude);
-                                      // final LocationArgument valueLocation =
-                                      //     await Navigator.of(context).push(
-                                      //   MaterialPageRoute(
-                                      //     builder: (context) => MapScreen(
-                                      //       args: MapArgument(
-                                      //           location: location, isUser: true),
-                                      //     ),
-                                      //   ),
                                       // );
 
                                       Position position =

@@ -1,9 +1,22 @@
+import 'package:crowd_funding_app/Models/team_member.dart';
+import 'package:crowd_funding_app/Models/user.dart';
+import 'package:crowd_funding_app/Screens/fundraiser_teammember_page.dart';
 import 'package:crowd_funding_app/widgets/custom_card.dart';
+import 'package:crowd_funding_app/widgets/team_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:share/share.dart';
 
 class Team extends StatelessWidget {
-  const Team({Key? key}) : super(key: key);
-
+  Team(
+      {Key? key,
+      required this.fundraiseId,
+      required this.teams,
+      required this.user})
+      : super(key: key);
+  final String _teamLink = 'http://gofundme.team.add/';
+  final String fundraiseId;
+  final List<TeamMember> teams;
+  final User user;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -71,7 +84,9 @@ class Team extends StatelessWidget {
                           style: TextStyle(
                               fontSize: 20.0, fontWeight: FontWeight.bold),
                         ),
-                        onPressed: () {},
+                        onPressed: () {
+                          Share.share(_teamLink + "$fundraiseId");
+                        },
                       ),
                     ),
                     SizedBox(
@@ -96,68 +111,36 @@ class Team extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Team member (1)",
+                        "Team member (${teams.length + 1})",
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
                       SizedBox(
                         height: 20.0,
                       ),
-                      TeamTile(),
-                      SizedBox(
-                        height: 30.0,
-                      ),
-                      Text(
-                        "Team members you invite will show up here once they they accept your invite",
-                        style: Theme.of(context).textTheme.bodyText1,
-                      )
+                      TeamTile(
+                          firstName: user.firstName ?? "",
+                          lastName: user.lastName ?? "",
+                          subTitle: "Organizer"),
+                      teams.isEmpty
+                          ? Text(
+                              "Team members you invite will show up here once they they accept your invite",
+                              style: Theme.of(context).textTheme.bodyText1,
+                            )
+                          : Column(
+                              children: teams
+                                  .map((team) => TeamTile(
+                                      firstName:
+                                          team.member!.userID!.firstName!,
+                                      lastName: team.member!.userID!.lastName!,
+                                      subTitle: "Team member"))
+                                  .toList(),
+                            )
                     ],
                   ))
             ],
           ),
         ),
       ),
-    );
-  }
-}
-
-class TeamTile extends StatelessWidget {
-  const TeamTile({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        CircleAvatar(
-          child: Text(
-            'FK',
-            style: Theme.of(context).textTheme.bodyText1,
-          ),
-        ),
-        SizedBox(
-          width: 20.0,
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Fasikaw Kindye",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16.0),
-            ),
-            SizedBox(
-              height: 5.0,
-            ),
-            Text(
-              'Organizer ',
-              style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
-            ),
-          ],
-        )
-      ],
     );
   }
 }

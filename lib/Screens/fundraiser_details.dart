@@ -21,6 +21,7 @@ import 'package:crowd_funding_app/services/provider/fundraise.dart';
 import 'package:crowd_funding_app/widgets/cached_network_image.dart';
 import 'package:crowd_funding_app/widgets/custom_raised_button.dart';
 import 'package:crowd_funding_app/widgets/fundraiser_detail_element.dart';
+import 'package:crowd_funding_app/widgets/manage_bottom_bar.dart';
 import 'package:crowd_funding_app/widgets/response_alert.dart';
 import 'package:crowd_funding_app/widgets/update_body.dart';
 import 'package:flutter/material.dart';
@@ -55,51 +56,6 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
       () =>
           context.read<FundraiseModel>().getSingleFundraise(widget.fundraiseId),
     );
-  }
-
-  bottomNavBarItemTap(int index, Fundraise fundraise) {
-    switch (index) {
-      case 0:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => WithdrawPage(),
-          ),
-        );
-        return;
-      case 1:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => EditPage(fundraise),
-          ),
-        );
-        return;
-      case 2:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SharePage(),
-          ),
-        );
-        return;
-      case 3:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => UpdatePage(fundraise.id!),
-          ),
-        );
-        return;
-      case 4:
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Team(),
-          ),
-        );
-        return;
-    }
   }
 
   ScrollController _scrollController = ScrollController();
@@ -173,344 +129,342 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
         ? Jiffy(_fundraise.donations![0].date, "yyyy-MM-dd").fromNow()
         : "Just Now";
     return Scaffold(
-      body: CustomScrollView(
-        controller: _scrollController,
-        slivers: [
-          SliverAppBar(
-            leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-                color: _theme,
+        body: CustomScrollView(
+          controller: _scrollController,
+          slivers: [
+            SliverAppBar(
+              leading: IconButton(
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: _theme,
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
               ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            pinned: true,
-            floating: true,
-            expandedHeight: size.height * 0.35,
-            flexibleSpace: FlexibleSpaceBar(
-              title: _visible
-                  ? Text(
-                      '$title',
-                      style: TextStyle(color: Colors.black),
-                    )
-                  : Container(),
-              centerTitle: true,
-              background: Stack(
-                children: [
-                  Container(
-                    child: Container(
-                      width: size.width,
-                      child: CachedImage(
-                        image:
-                            'https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg',
+              pinned: true,
+              floating: true,
+              expandedHeight: size.height * 0.35,
+              flexibleSpace: FlexibleSpaceBar(
+                title: _visible
+                    ? Text(
+                        '$title',
+                        style: TextStyle(color: Colors.black),
+                      )
+                    : Container(),
+                centerTitle: true,
+                background: Stack(
+                  children: [
+                    Container(
+                      child: Container(
+                        width: size.width,
+                        child: CachedImage(
+                          image:
+                              'https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg',
+                        ),
                       ),
                     ),
+                    Positioned(
+                      bottom: 30.0,
+                      right: 10.0,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 5.0, horizontal: 7.0),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5.0),
+                            color: Colors.black.withOpacity(0.5)),
+                        child: Row(
+                          children: [
+                            Icon(Icons.image, color: Colors.white),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            Text(
+                              '1',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            SliverList(
+              delegate: SliverChildListDelegate([
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.grey.withOpacity(0.4),
+                          spreadRadius: 1.0,
+                          blurRadius: 1.0,
+                          offset: Offset(0, 3))
+                    ],
                   ),
-                  Positioned(
-                    bottom: 30.0,
-                    right: 10.0,
-                    child: Container(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 5.0, horizontal: 7.0),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.0),
-                          color: Colors.black.withOpacity(0.5)),
-                      child: Row(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        '$title',
+                        style: TextStyle(
+                          color: Colors.black.withOpacity(0.7),
+                          fontSize: 25.0,
+                        ),
+                      ),
+                      SizedBox(
+                        height: 10.0,
+                      ),
+                      Row(
                         children: [
-                          Icon(Icons.image, color: Colors.white),
-                          SizedBox(
-                            width: 10.0,
+                          Text(
+                            "$totalRaised\$ raised",
+                            style:
+                                Theme.of(context).textTheme.bodyText1!.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
                           ),
                           Text(
-                            '1',
-                            style: TextStyle(color: Colors.white),
+                            " of \$$goalAmount",
+                            style: Theme.of(context).textTheme.bodyText1,
                           ),
                         ],
                       ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-          SliverList(
-            delegate: SliverChildListDelegate([
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.grey.withOpacity(0.4),
-                        spreadRadius: 1.0,
-                        blurRadius: 1.0,
-                        offset: Offset(0, 3))
-                  ],
-                ),
-                padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '$title',
-                      style: TextStyle(
-                        color: Colors.black.withOpacity(0.7),
-                        fontSize: 25.0,
+                      SizedBox(
+                        height: 20.0,
                       ),
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Row(
-                      children: [
-                        Text(
-                          "$totalRaised\$ raised",
-                          style:
-                              Theme.of(context).textTheme.bodyText1!.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                      LinearProgressIndicator(
+                        value: 0.1,
+                        backgroundColor: Colors.green[100],
+                      ),
+                      SizedBox(
+                        height: 20.0,
+                      ),
+                      SizedBox(
+                        width: size.width,
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              side: BorderSide(
+                                  width: 1.5,
+                                  color: Theme.of(context).accentColor),
+                            ),
+                          ),
+                          onPressed: () {},
+                          child: Text("Donate now"),
                         ),
-                        Text(
-                          " of \$$goalAmount",
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          CustomRaisedButton(
+                            title: "${category.categoryName}",
+                            iconData: Icons.wallet_travel,
+                            onPressed: () {},
+                          ),
+                          CustomRaisedButton(
+                            title: "${location!.latitude}",
+                            iconData: Icons.location_on_outlined,
+                            onPressed: () {},
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10.0,
+                      ),
+                      Container(
+                        child: Text(
+                          "$story",
                           style: Theme.of(context).textTheme.bodyText1,
                         ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    LinearProgressIndicator(
-                      value: 0.1,
-                      backgroundColor: Colors.green[100],
-                    ),
-                    SizedBox(
-                      height: 20.0,
-                    ),
-                    SizedBox(
-                      width: size.width,
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            side: BorderSide(
-                                width: 1.5,
-                                color: Theme.of(context).accentColor),
-                          ),
-                        ),
-                        onPressed: () {},
-                        child: Text("Donate now"),
-                      ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        CustomRaisedButton(
-                          title: "${category.categoryName}",
-                          iconData: Icons.wallet_travel,
-                          onPressed: () {},
-                        ),
-                        CustomRaisedButton(
-                          title: "${location!.latitude}",
-                          iconData: Icons.location_on_outlined,
-                          onPressed: () {},
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Container(
-                      child: Text(
-                        "$story",
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              FundraiserDetailElements(
-                  title: "Update (${updates.length})",
-                  body: updates.isEmpty
+                SizedBox(
+                  height: 10.0,
+                ),
+                FundraiserDetailElements(
+                    title: "Update (${updates.length})",
+                    body: updates.isEmpty
+                        ? Text(
+                            "Keep your donor's up-to-date with what's going on with your fundraiser.",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1!
+                                .copyWith(height: 1.8),
+                          )
+                        : Container(
+                            child: Column(
+                              children: updates
+                                  .map((update) => UpdateBody(
+                                        update: update,
+                                      ))
+                                  .toList(),
+                            ),
+                          )),
+                SizedBox(
+                  height: 10.0,
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                          color: Colors.grey.withOpacity(0.4),
+                          spreadRadius: 1.0,
+                          blurRadius: 1.0,
+                          offset: Offset(0, 3))
+                    ],
+                  ),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => Team(
+                          teams: _fundraise.teams!,
+                          fundraiseId: _fundraise.id!,
+                          user: _fundraise.organizer!,
+                        ),
+                      ));
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Team (${user!.id != organizer!.id ? teams.length + 2 : teams.length + 1})",
+                          style: titleTextStyle,
+                        ),
+                        SizedBox(
+                          height: 10.0,
+                        ),
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              child: Icon(
+                                Icons.group_outlined,
+                                color: Colors.grey,
+                              ),
+                              radius: 40.0,
+                              backgroundColor: Colors.grey[300],
+                            ),
+                            SizedBox(
+                              width: 20.0,
+                            ),
+                            Text(
+                              "Fundraising Team",
+                              style: titleTextStyle.copyWith(fontSize: 25.0),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: 10.0,
+                        ),
+                        Row(
+                          children: [
+                            TeamIcons(
+                              user: user,
+                              margin: 0.0,
+                            ),
+                            if (user!.id != organizer.id)
+                              TeamIcons(
+                                user: organizer,
+                                margin: 0.0,
+                              ),
+                            if (teams.isNotEmpty)
+                              TeamIcons(
+                                  margin: 0.0, user: teams[0].member!.userID),
+                            SizedBox(
+                              width: 10.0,
+                            ),
+                            Text(
+                              'You are fundraising as  a team',
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.bodyText1,
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10.0,
+                ),
+                FundraiserDetailElements(
+                  onPressed: () {
+                    print('I am tapped');
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => FundraiseDonationPage(
+                        donations: donations,
+                      ),
+                    ));
+                  },
+                  title: "Donation (${donations.length})",
+                  body: donations.isEmpty
                       ? Text(
-                          "Keep your donor's up-to-date with what's going on with your fundraiser.",
+                          "Share your compaign with your friends and family to start getting activity.",
                           style: Theme.of(context)
                               .textTheme
                               .bodyText1!
                               .copyWith(height: 1.8),
                         )
-                      : Container(
-                          child: Column(
-                            children: updates
-                                .map((update) => UpdateBody(
-                                      update: update,
-                                    ))
-                                .toList(),
-                          ),
-                        )),
-              SizedBox(
-                height: 10.0,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.grey.withOpacity(0.4),
-                        spreadRadius: 1.0,
-                        blurRadius: 1.0,
-                        offset: Offset(0, 3))
-                  ],
+                      : Container(),
                 ),
-                padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => Team(),
-                    ));
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Team (${teams.length})",
-                        style: titleTextStyle,
-                      ),
-                      SizedBox(
-                        height: 10.0,
-                      ),
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            child: Icon(
-                              Icons.group_outlined,
-                              color: Colors.grey,
-                            ),
-                            radius: 40.0,
-                            backgroundColor: Colors.grey[300],
-                          ),
-                          SizedBox(
-                            width: 20.0,
-                          ),
-                          Text(
-                            "Fundraising Team",
-                            style: titleTextStyle.copyWith(fontSize: 25.0),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10.0,
-                      ),
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            child: Text(
-                              "${user!.firstName![0].toUpperCase()} ${user!.lastName![0].toUpperCase()}",
-                              style: Theme.of(context).textTheme.bodyText1,
-                            ),
-                            radius: 20.0,
-                            backgroundColor: Colors.grey[300],
-                          ),
-                          SizedBox(
-                            width: 20.0,
-                          ),
-                          Row(
-                            children: [
-                              Text(
-                                "You",
-                                style: titleTextStyle.copyWith(fontSize: 20.0),
-                              ),
-                              Text(
-                                ' are fundraising as  a team',
-                                style: Theme.of(context).textTheme.bodyText1,
-                              )
-                            ],
-                          )
-                        ],
-                      )
-                    ],
-                  ),
+                SizedBox(
+                  height: 10.0,
                 ),
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              FundraiserDetailElements(
-                onPressed: () {
-                  print('I am tapped');
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => FundraiseDonationPage(
-                      donations: donations,
-                    ),
-                  ));
-                },
-                title: "Donation (${donations.length})",
-                body: donations.isEmpty
-                    ? Text(
-                        "Share your compaign with your friends and family to start getting activity.",
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1!
-                            .copyWith(height: 1.8),
-                      )
-                    : Container(),
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              FundraiserDetailElements(
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => CommentsPage()));
-                  },
-                  title: "Comments",
-                  body: Text(
-                    "Share your compaigns with those closest to you to get more comments.",
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1!
-                        .copyWith(height: 1.8),
-                  ))
-            ]),
-          )
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: index,
-        onTap: (value) {
-          bottomNavBarItemTap(value, _fundraise);
-        },
-        elevation: 5.0,
-        selectedItemColor:
-            Theme.of(context).secondaryHeaderColor.withOpacity(0.5),
-        showUnselectedLabels: true,
-        unselectedItemColor:
-            Theme.of(context).secondaryHeaderColor.withOpacity(0.5),
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.money),
-            label: "withdraw",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.edit),
-            label: "Edit",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.ios_share),
-            label: "Share",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add_box_outlined),
-            label: "Update",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.group_outlined),
-            label: "Team",
-          ),
-        ],
+                FundraiserDetailElements(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => CommentsPage()));
+                    },
+                    title: "Comments",
+                    body: Text(
+                      "Share your compaigns with those closest to you to get more comments.",
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1!
+                          .copyWith(height: 1.8),
+                    ))
+              ]),
+            )
+          ],
+        ),
+        bottomNavigationBar: ManageBottomNavBar(
+          fundraise: _fundraise,
+          isOrganizer: user!.id == _fundraise.organizer!.id,
+        ));
+  }
+}
+
+class TeamIcons extends StatelessWidget {
+  const TeamIcons({
+    Key? key,
+    required this.user,
+    required this.margin,
+  }) : super(key: key);
+
+  final User? user;
+  final double? margin;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.only(left: margin ?? 0.0),
+      child: CircleAvatar(
+        child: Text(
+          "${user!.firstName![0].toUpperCase()}${user!.lastName![0].toUpperCase()}",
+          style: Theme.of(context).textTheme.bodyText1,
+        ),
+        radius: 20.0,
+        backgroundColor: Colors.grey[300],
       ),
     );
   }

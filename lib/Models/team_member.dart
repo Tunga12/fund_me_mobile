@@ -1,32 +1,28 @@
 import 'package:crowd_funding_app/Models/user.dart';
 
-class TeamMember {
+class Member {
   String? id;
   User? userID;
   int? hasRaised;
   int? shareCount;
-  bool? isDeleted;
 
-  TeamMember({
+  Member({
     this.id,
     this.userID,
     this.hasRaised,
     this.shareCount,
-    this.isDeleted,
   });
   // parsing the json object ot TeamMember object
-  factory TeamMember.fromJson(Map<String, dynamic> data) {
+  factory Member.fromJson(Map<String, dynamic> data) {
     String id = data['_id'];
     int hasRaised = data['hasRaised'];
     int shareCount = data['shareCount'];
-    bool isDeleted = data['isDeleted'];
     User userId = User.fromJson(data['userId']);
 
-    return TeamMember(
+    return Member(
       id: id,
       hasRaised: hasRaised,
       shareCount: shareCount,
-      isDeleted: isDeleted,
       userID: userId,
     );
   }
@@ -36,7 +32,6 @@ class TeamMember {
       'userId': userID,
       'hasRaised': hasRaised ?? 0,
       'shareCount': shareCount ?? 0,
-      'isDeleted': isDeleted ?? false,
     };
   }
 
@@ -44,5 +39,30 @@ class TeamMember {
   @override
   String toString() {
     return ' TeamMember(userID: $userID,hasRaised: $hasRaised, shareCount: $shareCount,)';
+  }
+}
+
+class TeamMember {
+  String? status;
+  Member? member;
+
+  TeamMember({
+    this.member,
+    this.status,
+  });
+
+  factory TeamMember.fromJson(Map<String, dynamic> data) {
+    String status = data['status'];
+    Map<String, dynamic> id = data['id'];
+
+    return TeamMember(
+      status: status,
+      member: Member.fromJson(id),
+    );
+  }
+
+  @override
+  String toString() {
+    return "TeamMember{status: $status, memeber: $member}";
   }
 }

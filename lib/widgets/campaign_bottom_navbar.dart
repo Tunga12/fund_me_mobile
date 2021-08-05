@@ -7,6 +7,7 @@ class CampainBottomNavBar extends StatelessWidget {
   final Function donateAction;
   String likeText;
   String shareCount;
+  bool isLiked;
 
   CampainBottomNavBar({
     required this.likeAction,
@@ -14,6 +15,7 @@ class CampainBottomNavBar extends StatelessWidget {
     required this.donateAction,
     required this.likeText,
     required this.shareCount,
+    required this.isLiked,
   });
 
   @override
@@ -31,9 +33,9 @@ class CampainBottomNavBar extends StatelessWidget {
                   likeAction();
                 },
                 icon: Icon(
-                  FontAwesomeIcons.thumbsUp,
+                  Icons.thumb_up_sharp,
                   size: 20.0,
-                  color: Colors.grey,
+                  color: isLiked ? Colors.blue : Colors.grey,
                 ),
                 label: Text(
                   "$likeText",

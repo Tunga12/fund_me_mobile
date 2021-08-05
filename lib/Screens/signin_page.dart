@@ -2,6 +2,7 @@ import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:crowd_funding_app/Screens/signup_page.dart';
+import 'package:crowd_funding_app/constants/actions.dart';
 import 'package:crowd_funding_app/services/data_provider/api_response.dart';
 import 'package:crowd_funding_app/services/provider/auth.dart';
 import 'package:crowd_funding_app/services/provider/user.dart';
@@ -12,7 +13,8 @@ import 'package:provider/provider.dart';
 
 class SigninPage extends StatefulWidget {
   static const routeName = '/signinPage';
-  const SigninPage({Key? key}) : super(key: key);
+  SigninPage({Key? key, this.url}) : super(key: key);
+  String? url;
 
   @override
   _SigninPageState createState() => _SigninPageState();
@@ -126,6 +128,9 @@ class _SigninPageState extends State<SigninPage> {
 
                               if (model.signinStatus == AuthStatus.LOGGEDIN) {
                                 print("login user $user");
+                                if (widget.url != null)
+                                  acceptInvitation(context, user.email!,
+                                      model.response.data, widget.url!);
                                 await context.read<UserModel>().getUser(
                                     model.response.data, user.password!);
                                 Response response =
@@ -245,8 +250,16 @@ class _SigninPageState extends State<SigninPage> {
                 ),
                 TextButton(
                     onPressed: () {
-                      Navigator.of(context)
-                          .pushReplacementNamed(SignupPage.routeName);
+                      widget.url != null
+                          ? Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (context) => SignupPage(
+                                  url: widget.url,
+                                ),
+                              ),
+                            )
+                          : Navigator.of(context)
+                              .pushReplacementNamed(SignupPage.routeName);
                     },
                     child: Text(
                       "Don't have an account? Sign up.",

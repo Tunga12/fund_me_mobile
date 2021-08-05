@@ -1,3 +1,4 @@
+import 'package:crowd_funding_app/Models/notification.dart';
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:crowd_funding_app/Screens/loading_screen.dart';
@@ -52,7 +53,8 @@ class _NotificationsState extends State<Notifications> {
       return ResponseAlert(value.message);
     } else {
       print("Notificationv ${value.data}");
-      if (value.data.length == 0) {
+      List<UserNotification> userNotificatons = value.data ?? [];
+      if (userNotificatons.isEmpty) {
         return EmptyBody(
           onPressed: () {
             Navigator.of(context).pushReplacementNamed(HomePage.routeName);
@@ -68,9 +70,9 @@ class _NotificationsState extends State<Notifications> {
         key: _refreshIndicatorKey,
         onRefresh: _refresh,
         child: ListView.builder(
-          itemCount: value.data.length,
+          itemCount: userNotificatons.length,
           itemBuilder: (context, index) {
-            return NotficationItem(content: value.data[index].content);
+            return NotficationItem(content: userNotificatons[index].content);
           },
         ),
       );

@@ -1,3 +1,4 @@
+import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Screens/create_fundraiser_home.dart';
 import 'package:crowd_funding_app/Screens/loading_screen.dart';
@@ -18,6 +19,7 @@ class Manage extends StatefulWidget {
 }
 
 class _ManageState extends State<Manage> {
+  List<Fundraise>? userFundraises;
   @override
   void initState() {
     super.initState();
@@ -27,14 +29,27 @@ class _ManageState extends State<Manage> {
   getUserFundraises() async {
     UserPreference userPreference = UserPreference();
     PreferenceData token = await userPreference.getUserToken();
-    PreferenceData user = await userPreference.getUserInfromation();
-
     await Provider.of<FundraiseModel>(context, listen: false)
-        .getUserFundaisers(token.data, user.data.id);
+        .getUserFundaisers(token.data);
+    List<Fundraise> userFundraisesResponse =
+        Provider.of<FundraiseModel>(context, listen: false)
+            .homeFundraise
+            .fundraises!;
+    await Provider.of<FundraiseModel>(context, listen: false)
+        .getMemberFundrases(token.data);
+    List<Fundraise> memberFundraisesResponse =
+        Provider.of<FundraiseModel>(context, listen: false)
+            .homeFundraise
+            .fundraises!;
+    setState(() {
+      userFundraisesResponse.addAll(memberFundraisesResponse);
+      userFundraises = userFundraisesResponse;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    print("user response fundraises $userFundraises");
     final value = Provider.of<FundraiseModel>(context);
     if (value.response.status == ResponseStatus.LOADING) {
       return LoadingScreen();
@@ -43,7 +58,8 @@ class _ManageState extends State<Manage> {
     } else if (value.response.status == ResponseStatus.FORMATERROR) {
       return ResponseAlert(value.response.message);
     } else {
-      return value.homeFundraise.fundraises!.isEmpty
+      List<Fundraise> fundraises = userFundraises ?? [];
+      return fundraises.isEmpty
           ? EmptyBody(
               text1: "Ready to fundraise?",
               text2:
@@ -62,17 +78,15 @@ class _ManageState extends State<Manage> {
               color: Colors.grey,
               child: Scrollbar(
                 child: ListView.builder(
-                    itemCount: value.homeFundraise.fundraises!.length,
+                    itemCount: fundraises.length,
                     itemBuilder: (context, index) {
                       return ManageCard(
-                        fundraiseId: value.homeFundraise.fundraises![index].id!,
+                        fundraiseId: fundraises[index].id!,
                         image:
                             "https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg",
-                        raisedAmount:
-                            value.homeFundraise.fundraises![index].totalRaised!,
-                        goalAmount:
-                            value.homeFundraise.fundraises![index].goalAmount!,
-                        title: value.homeFundraise.fundraises![index].title!,
+                        raisedAmount: fundraises[index].totalRaised!,
+                        goalAmount: fundraises[index].goalAmount!,
+                        title: fundraises[index].title!,
                       );
                     }),
               ),

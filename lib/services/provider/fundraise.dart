@@ -131,12 +131,12 @@ class FundraiseModel extends ChangeNotifier {
     }
   }
 
-  Future getUserFundaisers(String token, String userId) async {
+  Future getUserFundaisers(String token) async {
     response =
         Response(status: ResponseStatus.LOADING, data: null, message: '');
     try {
       HomeFundraise _homeFundraise =
-          await fundraiseRepository.getUserFundaisers(token, userId);
+          await fundraiseRepository.getUserFundaisers(token);
 
       response = Response(
           status: ResponseStatus.SUCCESS,
@@ -239,6 +239,40 @@ class FundraiseModel extends ChangeNotifier {
     }
   }
 
+  // get all fundraises for a member
+  Future getMemberFundrases(String token) async {
+    response =
+        Response(status: ResponseStatus.LOADING, data: null, message: '');
+    try {
+      HomeFundraise _homeFundraise =
+          await fundraiseRepository.getMemberFundrases(token);
+
+      response = Response(
+          status: ResponseStatus.SUCCESS,
+          data: _homeFundraise.fundraises,
+          message: "success");
+      homeFundraise = _homeFundraise;
+      print("In popular fundraise model");
+      print(response.status);
+      notifyListeners();
+    } on SocketException catch (e) {
+      print("Fundraise Error ${e.message}");
+      response = Response(
+          status: ResponseStatus.CONNECTIONERROR,
+          data: null,
+          message: "No internet connection");
+    } on FormatException catch (e) {
+      print('Fundraise Error ${e.message}');
+      response = Response(
+          status: ResponseStatus.FORMATERROR,
+          data: null,
+          message: "Invalid response from the server");
+    } catch (e) {
+      print("fundraise error ${e.toString()}");
+    }
+  }
+
+  // Signingout
   Future signOut() async {
     response =
         Response(data: null, status: ResponseStatus.LOADING, message: "");

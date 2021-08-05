@@ -1,16 +1,41 @@
-import 'package:crowd_funding_app/Screens/payment_button.dart';
+import 'package:crowd_funding_app/Models/donation.dart';
+import 'package:crowd_funding_app/Models/fundraise.dart';
+import 'package:crowd_funding_app/Models/status.dart';
+import 'package:crowd_funding_app/config/utils/user_preference.dart';
+import 'package:crowd_funding_app/constants/text_styles.dart';
+import 'package:crowd_funding_app/services/provider/donation.dart';
+import 'package:crowd_funding_app/widgets/continue_button.dart';
+import 'package:crowd_funding_app/widgets/loading_progress.dart';
+import 'package:crowd_funding_app/widgets/response_alert.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
 class DonationPage extends StatefulWidget {
-  const DonationPage({Key? key}) : super(key: key);
+  DonationPage({Key? key, required this.fundraise}) : super(key: key);
+  final Fundraise fundraise;
 
   @override
   DonationPageState createState() => DonationPageState();
 }
 
 class DonationPageState extends State<DonationPage> {
+  final _formKey = GlobalKey<FormState>();
+  double _sliderValue = 5.0;
+  Map<String, dynamic> _donation = {};
+
+  double _tip = 0.0;
   @override
   Widget build(BuildContext context) {
+    print(_donation['amount']);
+    _tip = _donation.isNotEmpty
+        ? _sliderValue *
+            0.01 *
+            int.parse(_donation['amount'].toString() != ""
+                ? _donation['amount'].toString()
+                : "0")
+        : 0.0;
+
     final size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
@@ -46,7 +71,7 @@ class DonationPageState extends State<DonationPage> {
                               ),
                             ),
                             TextSpan(
-                              text: " Help Dave Fund",
+                              text: " ${widget.fundraise.title}",
                               style: TextStyle(
                                   color: Colors.grey[600],
                                   fontWeight: FontWeight.bold),
@@ -59,13 +84,14 @@ class DonationPageState extends State<DonationPage> {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: "You're supporiting",
+                              text: "Your donation will benefit",
                               style: TextStyle(
                                 color: Colors.grey[600],
                               ),
                             ),
                             TextSpan(
-                              text: " Help Dave Fund",
+                              text:
+                                  " ${widget.fundraise.beneficiary!.firstName} ${widget.fundraise.beneficiary!.lastName} ",
                               style: TextStyle(
                                   color: Colors.grey[600],
                                   fontWeight: FontWeight.bold),
@@ -92,40 +118,54 @@ class DonationPageState extends State<DonationPage> {
                       SizedBox(
                         height: 5.0,
                       ),
-                      TextField(
-                        textAlign: TextAlign.end,
-                        keyboardType: TextInputType.number,
-                        // cursorHeight: 40.0,
-                        style: TextStyle(
-                            color: Colors.black.withOpacity(0.6),
-                            fontSize: 40.0,
-                            fontWeight: FontWeight.bold),
-                        decoration: InputDecoration(
-                          suffixText: ".00",
-                          contentPadding: EdgeInsets.only(
-                            top: 10.0,
-                            bottom: 10.0,
-                            right: 20.0,
-                          ),
-                          prefixIcon: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "\$",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 30.0,
-                                    fontWeight: FontWeight.bold),
+                      Form(
+                        key: _formKey,
+                        child: TextFormField(
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'the minimum amount is \$5';
+                            } else if (int.parse(value) < 5) {
+                              return "the minimum amount is \$5";
+                            }
+                          },
+                          onChanged: (value) {
+                            setState(() {
+                              _donation['amount'] = value;
+                            });
+                          },
+                          textAlign: TextAlign.end,
+                          keyboardType: TextInputType.number,
+                          style: TextStyle(
+                              color: Colors.black.withOpacity(0.6),
+                              fontSize: 40.0,
+                              fontWeight: FontWeight.bold),
+                          decoration: InputDecoration(
+                            suffixText: ".00",
+                            contentPadding: EdgeInsets.only(
+                              top: 10.0,
+                              bottom: 10.0,
+                              right: 20.0,
+                            ),
+                            prefixIcon: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "\$",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 30.0,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  "USD",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ],
+                            ),
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                width: 1.5,
                               ),
-                              Text(
-                                "USD",
-                                style: TextStyle(color: Colors.black),
-                              ),
-                            ],
-                          ),
-                          border: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 1.5,
                             ),
                           ),
                         ),
@@ -161,7 +201,12 @@ class DonationPageState extends State<DonationPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(flex: 1, child: Text("0%")),
+                          Expanded(
+                              flex: 1,
+                              child: Text("5%",
+                                  style: labelTextStyle.copyWith(
+                                      color: Theme.of(context)
+                                          .secondaryHeaderColor))),
                           Expanded(
                             flex: 10,
                             child: SliderTheme(
@@ -177,20 +222,27 @@ class DonationPageState extends State<DonationPage> {
                                   valueIndicatorColor:
                                       Theme.of(context).backgroundColor),
                               child: Slider.adaptive(
-                                label: "12%",
+                                label:
+                                    "${_tip == 0.0 ? "" : _tip.toStringAsFixed(1)}  $_sliderValue%",
                                 divisions: 10,
-                                min: 0.0,
+                                min: 5.0,
                                 max: 25.0,
-                                value: 12.5,
-                                onChanged: (value) {},
+                                value: _sliderValue,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _sliderValue = value;
+                                  });
+                                },
                               ),
                             ),
                           ),
                           Expanded(
-                              flex: 1,
-                              child: Text(
-                                "25%",
-                              ))
+                            flex: 1,
+                            child: Text("25%",
+                                style: labelTextStyle.copyWith(
+                                    color: Theme.of(context)
+                                        .secondaryHeaderColor)),
+                          )
                         ],
                       ),
                       SizedBox(
@@ -203,38 +255,47 @@ class DonationPageState extends State<DonationPage> {
                             color: Colors.grey[600],
                             fontWeight: FontWeight.w500),
                       ),
-                      PaymentButton(
-                        size: size,
-                        onPressed: () {},
-                      ),
                       SizedBox(
-                        height: 10.0,
+                        height: 20.0,
                       ),
-                      Center(
-                        child: Text(
-                          "or",
-                          style: TextStyle(
-                              color: Theme.of(context).secondaryHeaderColor),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 10.0,
-                      ),
-                      Card(
-                        elevation: 4.0,
-                        color: Colors.white60,
-                        child: SizedBox(
-                          width: size.width,
-                          child: TextButton(
-                            style: TextButton.styleFrom(),
-                            child: Image.asset(
-                              'assets/images/telebirr.png',
-                              height: 40.0,
-                            ),
-                            onPressed: () {},
-                          ),
-                        ),
-                      )
+                      ContinueButton(
+                          isValidate: true,
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              loadingProgress(context);
+                              UserPreference userPreference = UserPreference();
+                              PreferenceData tokenData =
+                                  await userPreference.getUserToken();
+                              PreferenceData userData =
+                                  await userPreference.getUserInfromation();
+                              Donation donation = Donation(
+                                amount: int.parse(_donation['amount']),
+                                userID: userData.data,
+                                memberID: userData.data.id,
+                                tip: _tip == 0.0
+                                    ? 0.05 * int.parse(_donation['amount'])
+                                    : _tip,
+                                comment:
+                                    'donated \$${_donation['amount']} amount of money',
+                              );
+
+                              print(donation);
+
+                              await context
+                                  .read<DonationModel>()
+                                  .createDonation(donation, tokenData.data,
+                                      widget.fundraise.id!);
+                              Response response =
+                                  context.read<DonationModel>().response;
+                              if (response.status == ResponseStatus.SUCCESS) {
+                                Navigator.of(context).pop();
+                                Fluttertoast.showToast(msg: response.message);
+                              } else {
+                                ResponseAlert(response.message);
+                              }
+                            }
+                          },
+                          title: "Donate now")
                     ],
                   ),
                 )

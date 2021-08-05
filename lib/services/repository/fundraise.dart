@@ -34,7 +34,12 @@ class FundraiseRepository {
   }
 
   // get all fundraises created by user
-  Future<HomeFundraise> getUserFundaisers(String token, String userId) async {
-    return await dataProvider.getUserFundaisers(token, userId);
+  Future<HomeFundraise> getUserFundaisers(String token) async {
+    return await dataProvider.getUserFundaisers(token);
+  }
+
+  // get all fundraises created by user
+  Future<HomeFundraise> getMemberFundrases(String token) async {
+    return await dataProvider.getMemberFundrases(token);
   }
 }

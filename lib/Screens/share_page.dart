@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:share/share.dart';
 
 class SharePage extends StatelessWidget {
-  const SharePage({Key? key}) : super(key: key);
+  SharePage({Key? key}) : super(key: key);
+
+  final String _link = "https/go.fundme.com/sample";
 
   @override
   Widget build(BuildContext context) {
@@ -63,8 +66,11 @@ class SharePage extends StatelessWidget {
                   margin: EdgeInsets.only(top: 10.0),
                   child: SizedBox(
                     height: 50.0,
-                    child: TextField(
+                    child: TextFormField(
+                      initialValue: _link,
                       decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 5.0),
                           border: OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: Colors.grey, width: 1.5),
@@ -78,6 +84,13 @@ class SharePage extends StatelessWidget {
                 ),
               ),
               ListTile(
+                onTap: () {
+                  // FlutterSocialContentShare.share(
+                  //   type: ShareType.facebookWithoutImage,
+                  //   url: _link,
+                  //   quote: "captions",
+                  // );
+                },
                 leading: Icon(
                   FontAwesomeIcons.facebookSquare,
                   color: Colors.blue,
@@ -85,6 +98,7 @@ class SharePage extends StatelessWidget {
                 title: Text("Facebook"),
               ),
               ListTile(
+                onTap: () async {},
                 leading: Icon(
                   FontAwesomeIcons.instagramSquare,
                   color: Colors.pink.shade500,
@@ -92,6 +106,9 @@ class SharePage extends StatelessWidget {
                 title: Text("Instagram"),
               ),
               ListTile(
+                onTap: () {
+                  Share.share(_link);
+                },
                 leading: Icon(
                   Icons.chat_outlined,
                   // color: Colors.blue,
@@ -99,6 +116,9 @@ class SharePage extends StatelessWidget {
                 title: Text("Text"),
               ),
               ListTile(
+                onTap: () {
+                  Share.share(_link);
+                },
                 leading: Icon(
                   FontAwesomeIcons.envelope,
                   // color: Colors.blue,
@@ -106,6 +126,9 @@ class SharePage extends StatelessWidget {
                 title: Text("Email"),
               ),
               ListTile(
+                onTap: () {
+                  Share.share(_link);
+                },
                 leading: Icon(
                   FontAwesomeIcons.whatsappSquare,
                   color: Colors.green,
@@ -113,6 +136,9 @@ class SharePage extends StatelessWidget {
                 title: Text("Facebook"),
               ),
               ListTile(
+                onTap: () {
+                  Share.share(_link);
+                },
                 leading: Icon(
                   FontAwesomeIcons.twitterSquare,
                   color: Colors.blue,
@@ -120,6 +146,9 @@ class SharePage extends StatelessWidget {
                 title: Text("Twitter"),
               ),
               ListTile(
+                onTap: () {
+                  Share.share(_link);
+                },
                 leading: Icon(
                   Icons.person_add_alt,
                   // color: Colors.blue,
@@ -127,6 +156,9 @@ class SharePage extends StatelessWidget {
                 title: Text("Invite Contacts"),
               ),
               ListTile(
+                onTap: () {
+                  Share.share(_link);
+                },
                 leading: Icon(
                   Icons.more_horiz_outlined,
                   // color: Colors.blue,

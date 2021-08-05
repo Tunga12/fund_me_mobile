@@ -8,6 +8,7 @@ class Donation {
   String? comment;
   DateTime? date;
   bool? isDeleted;
+  double? tip;
 
   Donation(
       {this.id,
@@ -15,10 +16,12 @@ class Donation {
       this.memberID,
       this.amount,
       this.comment,
+      this.tip,
       this.date,
       this.isDeleted});
 
   factory Donation.fromJson(Map<String, dynamic> data) {
+    print("donation data");
     String id = data['_id'] ?? "";
     User userID =
         data['userId'] == null ? User() : User.fromJson(data['userId']);
@@ -39,38 +42,29 @@ class Donation {
         date: date,
         isDeleted: isDeleted);
   }
-  // factory Donation.fromJson2(Map<String, dynamic> data) {
-  //   print("donationsData $data");
-  //   String id = data['_id'];
-  //   String dateString = data['date'];
-  //   DateTime date = DateTime.parse(dateString);
-
-  //   return Donation(
-  //     id: id,
-  //     date: date,
-  //   );
-  // }
 
   // To convert Donation object to map
   Map<String, dynamic> toJson() {
     return {
-      'userId': userID,
-      'memberId': memberID,
-      'amount': amount,
-      'comment': comment,
-      'date': date,
-      'isDeleted': isDeleted,
+      'userId': userID!.id ?? "",
+      'memberId': memberID ?? "",
+      'amount': amount ?? 0,
+      'comment': comment ?? "",
+      'tip': tip ?? 0.0,
     };
   }
 
   @override
   String toString() {
     return '''
-            userID: $amount,
-            memberID: $memberID,
+           Donation{
+              userId: ${userID!.id},
+            memberId: $memberID,
             amount: $amount,
             comment: $comment,
             date: $date,
+            'tip': $tip,
+           }
         ''';
   }
 }

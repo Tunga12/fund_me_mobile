@@ -46,4 +46,18 @@ class EndPoints {
 
   // create update
   static const String createUpdate = baseURL + "/api/updates/";
+
+  // create donation
+  static const String createDonation = baseURL + "/api/donations/";
+
+  // create team member
+  static const String createTeamMember = baseURL + "/api/members/";
+
+  // vrifye team member invitation
+  static const String verifyInvitaion =
+      baseURL + "/api/fundraisers/invitation/";
+
+  // create team member
+  static const String teamMemberFundraises =
+      baseURL + "/api/fundraisers/member/";
 }

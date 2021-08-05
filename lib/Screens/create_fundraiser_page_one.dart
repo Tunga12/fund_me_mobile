@@ -3,9 +3,7 @@ import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Screens/create_fundraiser_page_two.dart';
 import 'package:crowd_funding_app/Screens/loading_screen.dart';
-import 'package:crowd_funding_app/Screens/map_screen.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
-import 'package:crowd_funding_app/services/data_provider/category.dart';
 import 'package:crowd_funding_app/services/provider/category.dart';
 import 'package:crowd_funding_app/widgets/continue_button.dart';
 import 'package:crowd_funding_app/widgets/form_label_text.dart';
@@ -13,7 +11,6 @@ import 'package:crowd_funding_app/widgets/form_progress.dart';
 import 'package:crowd_funding_app/widgets/response_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
 class CreateFundraiserPageOne extends StatefulWidget {
@@ -26,11 +23,9 @@ class CreateFundraiserPageOne extends StatefulWidget {
 
 class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
   final _formKey = GlobalKey<FormState>();
-
   String _category = '0';
   bool btnEnabled = false;
   String locationValue = 'choose your location';
-
   Map<String, dynamic> _fundraiseInfo = {};
   @override
   void initState() {
@@ -165,18 +160,6 @@ class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
                           children: [
                             IconButton(
                               onPressed: () async {
-                                // LatLng location = LatLng(
-                                //     position.latitude, position.longitude);
-                                // final LocationArgument valueLocation =
-                                //     await Navigator.of(context).push(
-                                //   MaterialPageRoute(
-                                //     builder: (context) => MapScreen(
-                                //       args: MapArgument(
-                                //           location: location, isUser: true),
-                                //     ),
-                                //   ),
-                                // );
-
                                 Position position =
                                     await Geolocator.getCurrentPosition(
                                         desiredAccuracy: LocationAccuracy.high);
@@ -263,26 +246,3 @@ class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
     return Container(width: 0, alignment: Alignment(-0.99, 0.0), child: child);
   }
 }
-
-// Row(
-//                           children: [
-
-//                             TextFormField(
-//                               autofocus: false,
-//                               enabled: false,
-//                               initialValue: locationValue,
-//                               textAlignVertical: TextAlignVertical.center,
-//                               validator: (value) {
-//                                 if (value == '') {
-//                                   return "location required";
-//                                 }
-//                               },
-//                               decoration: InputDecoration(
-//                                   contentPadding: EdgeInsets.only(bottom: 0.0),
-//                                   hintText: "select location",
-//                                   prefixIcon: buildCustomPrifixIcon(
-//                                     Icon(Icons.place),
-//                                   )),
-//                             ),
-//                           ],
-//                         ),

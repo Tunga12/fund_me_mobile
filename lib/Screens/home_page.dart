@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
 
   getCampaign() {}
 
-  int _selectedIndex = 0;
+  int _selectedIndex = 2;
 
   void _onTappedTapped(int index) {
     if (index == 3) {

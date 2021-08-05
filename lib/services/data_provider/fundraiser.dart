@@ -12,6 +12,7 @@ class FundraiseDataProvider {
 
   // creating a fundraise
   Future<void> createFundraise(Fundraise fundraise, String token) async {
+    print("create token $token");
     http.Response response;
     response = await httpClient.post(
       Uri.parse(EndPoints.baseURL + '/api/fundraisers'),
@@ -30,7 +31,6 @@ class FundraiseDataProvider {
           'latitude': fundraise.location!.latitude,
           'longitude': fundraise.location!.longitude
         },
-        'beneficiary': fundraise.beneficiary!.id,
         'isPublished': true,
       }),
     );
@@ -74,11 +74,8 @@ class FundraiseDataProvider {
 
   // Update fundraise
   Future<Fundraise> updateFundraise(Fundraise fundraise, String token) async {
-    print("fundraise title ${fundraise.title}");
-    print("fundraise title ${jsonEncode(fundraise.id)}");
-    print("token $token");
-    final update = fundraise.updates!.map((update) => update.id).toList();
-    print("update is $update");
+    print("fundraise title $fundraise");
+
     final response = await httpClient.put(
       Uri.parse(
         EndPoints.fundraises + fundraise.id.toString(),
@@ -100,9 +97,9 @@ class FundraiseDataProvider {
         "image": fundraise.image,
         "goalAmount": fundraise.goalAmount,
         "story": fundraise.story,
-        "category": fundraise.category!.categoryID,
-        "beneficiary": fundraise.beneficiary!.id,
         "organizer": fundraise.organizer!.id,
+        "likedBy": fundraise.likedBy,
+        "category": fundraise.category!.categoryID,
       }),
     );
     print("update status code ${response.statusCode}");
@@ -160,9 +157,8 @@ class FundraiseDataProvider {
   }
 
   // get fundraisers created by a user
-  Future<HomeFundraise> getUserFundaisers(String token, String userId) async {
-    print(userId);
-    var url = Uri.parse(EndPoints.baseURL + "/api/fundraisers/user/$userId");
+  Future<HomeFundraise> getUserFundaisers(String token) async {
+    var url = Uri.parse(EndPoints.baseURL + "/api/fundraisers/user");
     print(url);
     final response = await httpClient.get(url, headers: <String, String>{
       'x-auth-token': token,
@@ -173,6 +169,22 @@ class FundraiseDataProvider {
       return HomeFundraise.fromJson(popularFundraises);
     } else {
       throw Exception("Faild to get popular fundraises");
+    }
+  }
+
+  // get fundraisers created by a member
+  Future<HomeFundraise> getMemberFundrases(String token) async {
+    var url = Uri.parse(EndPoints.teamMemberFundraises);
+    print(url);
+    final response = await httpClient.get(url, headers: <String, String>{
+      'x-auth-token': token,
+    });
+    if (response.statusCode == 200) {
+      final popularFundraises =
+          jsonDecode(response.body) as Map<String, dynamic>;
+      return HomeFundraise.fromJson(popularFundraises);
+    } else {
+      throw Exception(response.body);
     }
   }
 }

@@ -47,10 +47,11 @@ class Teams extends StatelessWidget {
   String fullName = "";
   String avatarChild = "";
   getData() {
-    fullName =
-        teamMember.userID!.firstName! + " " + teamMember.userID!.lastName!;
-    avatarChild = teamMember.userID!.firstName![0].toUpperCase() +
-        teamMember.userID!.lastName![0].toUpperCase();
+    fullName = teamMember.member!.userID!.firstName! +
+        " " +
+        teamMember.member!.userID!.lastName!;
+    avatarChild = teamMember.member!.userID!.firstName![0].toUpperCase() +
+        teamMember.member!.userID!.lastName![0].toUpperCase();
   }
 
   @override

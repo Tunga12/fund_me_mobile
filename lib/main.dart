@@ -3,21 +3,28 @@ import 'dart:io';
 import 'package:crowd_funding_app/config/utils/routes.dart';
 import 'package:crowd_funding_app/constants/colors.dart';
 import 'package:crowd_funding_app/services/data_provider/category.dart';
+import 'package:crowd_funding_app/services/data_provider/donation.dart';
 import 'package:crowd_funding_app/services/data_provider/fundraiser.dart';
 import 'package:crowd_funding_app/services/data_provider/auth.dart';
 import 'package:crowd_funding_app/services/data_provider/notification.dart';
+import 'package:crowd_funding_app/services/data_provider/team_member.dart';
 import 'package:crowd_funding_app/services/data_provider/update.dart';
 import 'package:crowd_funding_app/services/data_provider/user.dart';
 import 'package:crowd_funding_app/services/provider/auth.dart';
 import 'package:crowd_funding_app/services/provider/category.dart';
+import 'package:crowd_funding_app/services/provider/donation.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
 import 'package:crowd_funding_app/services/provider/notification.dart';
+import 'package:crowd_funding_app/services/provider/team_add_deep_link.dart';
+import 'package:crowd_funding_app/services/provider/team_member.dart';
 import 'package:crowd_funding_app/services/provider/update.dart';
 import 'package:crowd_funding_app/services/provider/user.dart';
 import 'package:crowd_funding_app/services/repository/category.dart';
+import 'package:crowd_funding_app/services/repository/donation.dart';
 import 'package:crowd_funding_app/services/repository/fundraise.dart';
 import 'package:crowd_funding_app/services/repository/auth.dart';
 import 'package:crowd_funding_app/services/repository/notification.dart';
+import 'package:crowd_funding_app/services/repository/tean_member.dart';
 import 'package:crowd_funding_app/services/repository/update.dart';
 import 'package:crowd_funding_app/services/repository/user.dart';
 import 'package:flutter/material.dart';
@@ -25,18 +32,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 
-// class MyHttpOverrides extends HttpOverrides{
-//   @override
-//   HttpClient createHttpClient(SecurityContext context){
-//     return super.createHttpClient(context)
-//       ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
-//   }
-// }
-
 Future<void> main() async {
-  // HttpOverrides.global = new MyHttpOverrides();
-  // WidgetsFlutterBinding.ensureInitialized();
-  // UserPreference preference = await UserPreference.init();
   final FundraiseRepository fundraiseRepository = FundraiseRepository(
     dataProvider: FundraiseDataProvider(
       httpClient: http.Client(),
@@ -69,6 +65,16 @@ Future<void> main() async {
       httpClient: http.Client(),
     ),
   );
+  final DonationRepository donationReponsitory = DonationRepository(
+    dataProvider: DonationDataProvider(
+      httpClient: http.Client(),
+    ),
+  );
+  final TeamMemberRepository teamMemberRepository = TeamMemberRepository(
+    teamMemberDataProvider: TeamMemberDataProvider(
+      httpClient: http.Client(),
+    ),
+  );
   runApp(
     CrowdFundingApp(
       fundraiseRepository: fundraiseRepository,
@@ -77,6 +83,8 @@ Future<void> main() async {
       categoryRepository: categoryRepository,
       notificationRepository: userNotificationRepository,
       updateRepository: updateRepository,
+      donationRepository: donationReponsitory,
+      teamMemberRepository: teamMemberRepository,
     ),
   );
 }
@@ -90,20 +98,25 @@ class CrowdFundingApp extends StatelessWidget {
     required this.categoryRepository,
     required this.notificationRepository,
     required this.updateRepository,
+    required this.donationRepository,
+    required this.teamMemberRepository,
   }) : super(key: key);
 
-  FundraiseRepository fundraiseRepository;
-  AuthRepository authRepository;
-  UserRepository userRepository;
-  CategoryRepository categoryRepository;
-  UserNotificationRepository notificationRepository;
-  UpdateRepository updateRepository;
+  final FundraiseRepository fundraiseRepository;
+  final AuthRepository authRepository;
+  final UserRepository userRepository;
+  final CategoryRepository categoryRepository;
+  final UserNotificationRepository notificationRepository;
+  final UpdateRepository updateRepository;
+  final DonationRepository donationRepository;
+  final TeamMemberRepository teamMemberRepository;
 
   @override
   Widget build(BuildContext context) {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(statusBarColor: Colors.white));
+    final _teamAddModel = TeamAddModel();
     return MultiProvider(
       providers: [
         ChangeNotifierProvider<FundraiseModel>(
@@ -127,6 +140,17 @@ class CrowdFundingApp extends StatelessWidget {
         ChangeNotifierProvider<UpdateModel>(
             create: (context) =>
                 UpdateModel(updateRepository: updateRepository)),
+        ChangeNotifierProvider<DonationModel>(
+            create: (context) =>
+                DonationModel(donationRepository: donationRepository)),
+        Provider<TeamAddModel>(
+          create: (context) => _teamAddModel,
+          dispose: (context, data) => data.dispose(),
+        ),
+        ChangeNotifierProvider<TeamMemberModel>(
+          create: (context) =>
+              TeamMemberModel(teamMemberRepository: teamMemberRepository),
+        ),
       ],
       child: MaterialApp(
         onGenerateRoute: AppRoute.generateRoute,

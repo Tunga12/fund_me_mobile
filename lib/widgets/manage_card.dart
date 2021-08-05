@@ -32,7 +32,7 @@ class ManageCard extends StatelessWidget {
       },
       child: Container(
         color: Theme.of(context).backgroundColor,
-        height: size.height * 0.53,
+        height: size.height * 0.55,
         padding: EdgeInsets.all(20.0),
         margin: EdgeInsets.only(bottom: 0.5),
         child: Column(

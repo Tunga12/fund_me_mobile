@@ -20,6 +20,7 @@ class Update {
   // parsing json object to update object
 
   factory Update.fromJson(Map<String, dynamic> data) {
+    print("update $data");
     String id = data['_id'];
     User userID = User.fromJson(data['userId']);
     String image = data['image'];

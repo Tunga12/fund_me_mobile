@@ -2,6 +2,7 @@ import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:crowd_funding_app/Screens/signin_page.dart';
+import 'package:crowd_funding_app/constants/actions.dart';
 import 'package:crowd_funding_app/services/provider/auth.dart';
 import 'package:crowd_funding_app/services/provider/user.dart';
 import 'package:crowd_funding_app/widgets/authdialog.dart';
@@ -12,7 +13,9 @@ import 'package:provider/provider.dart';
 
 class SignupPage extends StatefulWidget {
   static String routeName = "/signupPage";
-  const SignupPage({Key? key}) : super(key: key);
+  SignupPage({Key? key, this.url}) : super(key: key);
+
+  String? url;
 
   @override
   _SignupPageState createState() => _SignupPageState();
@@ -22,6 +25,7 @@ class _SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormState>();
   bool isValidated = false;
   bool _isObscured = true;
+  String _password = '';
   IconData iconData = Icons.visibility;
   Map<String, dynamic> _userInfo = {};
   @override
@@ -150,6 +154,11 @@ class _SignupPageState extends State<SignupPage> {
                             _userInfo['password'] = value;
                           });
                         },
+                        onChanged: (value) {
+                          setState(() {
+                            _userInfo['password'] = value;
+                          });
+                        },
                         validator: (value) {
                           if (value!.isEmpty) {
                             return "Password is required!";
@@ -170,6 +179,35 @@ class _SignupPageState extends State<SignupPage> {
                             },
                           ),
                           labelText: "Password",
+                        ),
+                      ),
+                      TextFormField(
+                        obscureText: _isObscured,
+                        onSaved: (value) {
+                          setState(() {
+                            _userInfo['password'] = value;
+                          });
+                        },
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "password don't match";
+                          } else if (value != _userInfo['password']) {
+                            return "password don't match!";
+                          }
+                        },
+                        decoration: InputDecoration(
+                          suffixIcon: IconButton(
+                            icon: Icon(iconData),
+                            onPressed: () {
+                              setState(() {
+                                _isObscured = !_isObscured;
+                                iconData = _isObscured
+                                    ? Icons.visibility
+                                    : Icons.visibility_off;
+                              });
+                            },
+                          ),
+                          labelText: "confirm password",
                         ),
                       ),
                       SizedBox(
@@ -203,7 +241,9 @@ class _SignupPageState extends State<SignupPage> {
                               await context.read<AuthModel>().signupUser(user);
                               if (model.signupStatus == AuthStatus.REGISTERED) {
                                 print('signup user $user');
-
+                                if (widget.url != null)
+                                  acceptInvitation(context, user.email!,
+                                      model.response.data, widget.url!);
                                 await context.read<UserModel>().getUser(
                                     model.response.data, user.password!);
                                 Response response =
@@ -277,8 +317,16 @@ class _SignupPageState extends State<SignupPage> {
                               TextStyle(color: Theme.of(context).accentColor),
                           recognizer: TapGestureRecognizer()
                             ..onTap = () {
-                              Navigator.of(context)
-                                  .pushReplacementNamed(SigninPage.routeName);
+                              widget.url != null
+                                  ? Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                        builder: (context) => SignupPage(
+                                          url: widget.url,
+                                        ),
+                                      ),
+                                    )
+                                  : Navigator.of(context).pushReplacementNamed(
+                                      SigninPage.routeName);
                             })
                     ])),
                   ),

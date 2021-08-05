@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class PaymentButton extends StatelessWidget {
-  const PaymentButton({Key? key, required this.size, required this.onPressed})
-      : super(key: key);
+  PaymentButton({Key? key, required this.onPressed, required this.title});
 
-  final Size size;
   final Function onPressed;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Card(
       elevation: 4.0,
       color: Colors.amber,

@@ -6,17 +6,17 @@ import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreen extends StatefulWidget {
-  static String routeName = "/";
   const SplashScreen({Key? key}) : super(key: key);
-
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
   PreferenceData? user;
+
   @override
   void initState() {
+    super.initState();
     getUser().whenComplete(() async {
       Timer(
           Duration(seconds: 2),
@@ -30,6 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Future getUser() async {
     UserPreference userPreference = UserPreference();
     final loggedUser = await userPreference.getUserInfromation();
+
     setState(() {
       user = loggedUser;
     });
@@ -37,15 +38,14 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    print("start Page");
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
         child: Center(
-          child: Image.asset(
-            'assets/images/gofundme.png',
-            height: 50.0,
-          ),
-        ),
+            child: Image.asset('assets/images/gofundme.png',
+                width: size.width * 0.6)),
       ),
     );
   }
