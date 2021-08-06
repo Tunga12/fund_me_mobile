@@ -10,9 +10,11 @@ import 'package:crowd_funding_app/Screens/donation_page.dart';
 import 'package:crowd_funding_app/Screens/fundraise_donation_page.dart';
 import 'package:crowd_funding_app/Screens/fundraiser_teammember_page.dart';
 import 'package:crowd_funding_app/Screens/loading_screen.dart';
+import 'package:crowd_funding_app/Screens/share_page.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
 import 'package:crowd_funding_app/widgets/campaign_bottom_navbar.dart';
+import 'package:crowd_funding_app/widgets/custom_cached_network_image.dart';
 import 'package:crowd_funding_app/widgets/custom_card.dart';
 import 'package:crowd_funding_app/widgets/custom_circle_avatar.dart';
 import 'package:crowd_funding_app/widgets/response_alert.dart';
@@ -20,6 +22,7 @@ import 'package:crowd_funding_app/widgets/title_row.dart';
 import 'package:crowd_funding_app/widgets/update_body.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 
@@ -45,8 +48,8 @@ class _CampaignDetailState extends State<CampaignDetail> {
 
   @override
   void initState() {
-    getSingleFundraise();
-    getUserInformaion();
+    getSingleFundraise().whenComplete(() => getUserInformaion());
+    
     _scrollController.addListener(
       () => _getIsAppbarCollapsed
           ? {
@@ -55,7 +58,6 @@ class _CampaignDetailState extends State<CampaignDetail> {
                       () {
                         _visible = false;
                         _theme = Colors.white;
-                        // print('setState is called');
                       },
                     )
                   : {},
@@ -76,6 +78,8 @@ class _CampaignDetailState extends State<CampaignDetail> {
         _scrollController.offset < (200 - kToolbarHeight);
   }
 
+  Fundraise? _fundraise;
+
   getUserInformaion() async {
     UserPreference userPreference = UserPreference();
     PreferenceData userData = await userPreference.getUserInfromation();
@@ -93,11 +97,17 @@ class _CampaignDetailState extends State<CampaignDetail> {
     });
   }
 
-  getSingleFundraise() async {
+ Future getSingleFundraise() async {
     await Future.delayed(
       Duration(milliseconds: 1),
       () => context.read<FundraiseModel>().getSingleFundraise(widget.id),
     );
+
+    final model = context.read<FundraiseModel>();
+
+    setState(() {
+      _fundraise = model.fundraise;
+    });
   }
 
   _likeAction(Fundraise _fundraise) async {
@@ -138,32 +148,37 @@ class _CampaignDetailState extends State<CampaignDetail> {
     if (model.response.status == ResponseStatus.LOADING) {
       return LoadingScreen();
     } else if (model.response.status == ResponseStatus.CONNECTIONERROR) {
-      return ResponseAlert(model.response.message);
+      return ResponseAlert(
+        model.response.message,
+        retry: () {
+          getSingleFundraise();
+        },
+        status: ResponseStatus.CONNECTIONERROR,
+      );
     } else if (model.response.status == ResponseStatus.FORMATERROR) {
       return ResponseAlert(model.response.message);
     }
-    Fundraise _fundraise = model.fundraise;
-
-    var days = Jiffy(_fundraise.dateCreated, "yyyy-MM-dd").fromNow();
-    String totalShareCount = Counter.getCounter(_fundraise.totalSharedCount!);
-    Location? location = _fundraise.location;
-    List<Update> updates = _fundraise.updates!;
-    List<TeamMember> teams = _fundraise.teams!;
-    List<Donation> donations = _fundraise.donations!;
+    if (_fundraise == null) return Container();
+    var days = Jiffy(_fundraise!.dateCreated, "yyyy-MM-dd").fromNow();
+    String totalShareCount = Counter.getCounter(_fundraise!.totalSharedCount!);
+    Location? location = _fundraise!.location;
+    List<Update> updates = _fundraise!.updates!;
+    List<TeamMember> teams = _fundraise!.teams!;
+    List<Donation> donations = _fundraise!.donations!;
     double process = 0.0;
-    String title = _fundraise.title!;
-    String image = _fundraise.image!;
-    User? organizer = _fundraise.organizer;
-    User? beneficiary = _fundraise.beneficiary;
-    int totalRaised = _fundraise.goalAmount!;
-    int goalAmount = _fundraise.goalAmount!;
-    String story = _fundraise.story!;
+    String title = _fundraise!.title!;
+    String image = _fundraise!.image!;
+    User? organizer = _fundraise!.organizer;
+    User? beneficiary = _fundraise!.beneficiary;
+    int totalRaised = _fundraise!.goalAmount!;
+    int goalAmount = _fundraise!.goalAmount!;
+    String story = _fundraise!.story!;
 
     String lastUpdate = updates.isNotEmpty
-        ? Jiffy(_fundraise.updates![0].dateCreated, "yyyy-MM-dd").fromNow()
+        ? Jiffy(_fundraise!.updates![0].dateCreated, "yyyy-MM-dd").fromNow()
         : "Just Now";
     String lastDonation = donations.isNotEmpty
-        ? Jiffy(_fundraise.donations![0].date, "yyyy-MM-dd").fromNow()
+        ? Jiffy(_fundraise!.donations![0].date, "yyyy-MM-dd").fromNow()
         : "Just Now";
     List<Donation> avatarDonations =
         donations.length >= 3 ? donations.sublist(0, 3) : donations;
@@ -196,24 +211,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
                   children: [
                     Container(
                       width: size.width,
-                      child: CachedNetworkImage(
-                        imageUrl:
-                            'https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg',
-                        errorWidget: (context, url, error) => Icon(Icons.image),
-                        progressIndicatorBuilder:
-                            (context, url, downloadProgress) =>
-                                CircularProgressIndicator(
-                                    value: downloadProgress.progress),
-                        imageBuilder: (context, imageProvider) => Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            image: DecorationImage(
-                              image: imageProvider,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
+                      child: CustomCachedNetworkImage(image: image),
                     ),
                     Positioned(
                       bottom: 30.0,
@@ -289,8 +287,8 @@ class _CampaignDetailState extends State<CampaignDetail> {
                       height: 5.0,
                     ),
                     LinearProgressIndicator(
-                      value: ((_fundraise.totalRaised as int) /
-                          (_fundraise.goalAmount as int)),
+                      value: _fundraise!.totalRaised!.toInt() /
+                          _fundraise!.goalAmount!.toInt(),
                       backgroundColor: Colors.green[100],
                     ),
                     SizedBox(
@@ -441,6 +439,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
                     MaterialPageRoute(
                       builder: (context) => FundraiserTeamMemberPage(
                         teamMembers: teams,
+                        organizer: organizer,
                       ),
                     ),
                   );
@@ -503,14 +502,20 @@ class _CampaignDetailState extends State<CampaignDetail> {
         likeText: Counter.getCounter(_likeCount),
         shareCount: totalShareCount,
         likeAction: () {
-          _likeAction(_fundraise);
+          _likeAction(_fundraise!);
         },
-        shareAction: () {},
+        shareAction: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => SharePage(),
+            ),
+          );
+        },
         donateAction: () {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => DonationPage(
-                fundraise: _fundraise,
+                fundraise: _fundraise!,
               ),
             ),
           );

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Screens/home_page.dart';
+import 'package:crowd_funding_app/config/utils/endpoints.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
 import 'package:crowd_funding_app/services/provider/team_member.dart';
@@ -12,62 +13,9 @@ import 'package:crowd_funding_app/widgets/loading_progress.dart';
 import 'package:crowd_funding_app/widgets/response_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-
-void createFundraiser(BuildContext context, Map<String, dynamic> fundraiseInfo,
-    File image, Response response) async {
-  loadingProgress(context);
-  PreferenceData userInfo = await UserPreference().getUserInfromation();
-
-  String byte64Image = base64Encode(image.readAsBytesSync());
-  String fileImage = image.path.split('/').last;
-
-  Fundraise fundraise = Fundraise(
-    title: fundraiseInfo['title'],
-    story: fundraiseInfo['story'],
-    location: fundraiseInfo['location'],
-    category: fundraiseInfo['category'],
-    image: byte64Image + ":" + fileImage,
-    goalAmount: int.parse(fundraiseInfo['goalAmount']),
-    beneficiary: userInfo.data,
-  );
-  PreferenceData tokenInfo = await UserPreference().getUserToken();
-  String token = tokenInfo.data;
-
-  await context.read<FundraiseModel>().createFundraise(fundraise, token);
-  if (response.status == ResponseStatus.CONNECTIONERROR) {
-    authShowDialog(context, Text(response.message), error: true, close: true);
-    return;
-  } else if (response.status == ResponseStatus.FORMATERROR) {
-    authShowDialog(context, Text(response.message), error: true, close: true);
-    return;
-  } else if (response.status == ResponseStatus.MISMATCHERROR) {
-    authShowDialog(
-        context,
-        Text(
-          response.message,
-        ),
-        error: true,
-        close: true);
-    return;
-  } else if (response.status == ResponseStatus.SUCCESS) {
-    Navigator.pop(context);
-    Fluttertoast.showToast(
-        msg: "Successfully created!", toastLength: Toast.LENGTH_LONG);
-    Navigator.of(context).pushNamedAndRemoveUntil(
-      HomePage.routeName,
-      (Route<dynamic> route) => false,
-    );
-    return;
-  } else {}
-  authShowDialog(
-      context,
-      Text(
-        response.message,
-      ),
-      error: true,
-      close: true);
-}
+import 'package:http/http.dart' as http;
 
 void acceptInvitation(BuildContext context, String email, String token,
     String fundraiseId) async {
@@ -103,3 +51,97 @@ void declineInvitaion(BuildContext context, String email, String token,
     ResponseAlert(response.message);
   }
 }
+
+Future<String> getImage(String token, File image) async {
+  // print("image ${image.path}");
+
+  // String base64Image = base64Encode(image.readAsBytesSync());
+  // String fileName = image.path.split("/").last;
+  // var res = await httpClient.post(
+  //     Uri.parse(
+  //       EndPoints.imageURL,
+  //     ),
+  //     headers: <String, String>{
+  //       'x-auth-token': token,
+  //     },
+  //     body: {
+  //       "image": base64Image,
+  //       "name": fileName,
+  //     });
+  // if (res.statusCode == 201) {
+  //   return jsonDecode(res.body);
+  // } else {
+  //      print("image upload exception ${res.reasonPhrase}");
+  //   print("image upload exception ${res.headers}");
+  //   print("image upload exception ${res.statusCode}");
+  //   print("image upload exception $res");
+  //   throw Exception(res.body);
+  // }
+  print("image path is ${image.path}");
+
+  var headers = {
+    'x-auth-token': token,
+  };
+  var request = http.MultipartRequest('POST', Uri.parse(EndPoints.imageURL));
+  request.files.add(await http.MultipartFile.fromPath('image', image.path));
+  request.headers.addAll(headers);
+  var res = await request.send();
+
+  if (res.statusCode == 201) {
+    return await res.stream.bytesToString();
+  } else {
+    print("image upload exception ${res.reasonPhrase}");
+    print("image upload exception ${res.headers}");
+    print("image upload exception ${res.statusCode}");
+    print("image upload exception $res");
+
+    throw Exception(res.reasonPhrase);
+  }
+}
+
+Future<File?> pickImageFormFile(
+    ImageSource imageSource, ImagePicker imagePicker) async {
+  XFile? imageFile = await imagePicker.pickImage(source: imageSource);
+
+  if (imageFile == null) return null;
+  return File(imageFile.path);
+}
+
+ 
+// Future<File?> chooseSource() asy {
+//     return AlertDialog(
+//       title: Text("choose method"),
+//       content: SingleChildScrollView(
+//         child: Column(
+//           children: [
+//             ListTile(
+//               onTap: () async {
+//                 // _getImage(ImageSource.camera);
+//                 File? file =
+//                     await pickImageFormFile(ImageSource.camera, _imagePicker);
+//                     setState(() {
+//                   _image = file!;
+//                 });
+
+//                 Navigator.of(context).pop();
+//               },
+//               leading: Icon(Icons.add_a_photo),
+//               title: Text("take a photo"),
+//             ),
+//             ListTile(
+//               onTap: () async {
+//                 File? file =
+//                     await pickImageFormFile(ImageSource.gallery, _imagePicker);
+//                 setState(() {
+//                   _image = file!;
+//                 });
+//                 Navigator.of(context).pop();
+//               },
+//               leading: Icon(Icons.collections),
+//               title: Text("choose from gallery"),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }

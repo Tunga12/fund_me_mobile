@@ -47,7 +47,9 @@ class _ManageBottomNavBarState extends State<ManageBottomNavBar> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => WithdrawPage(),
+              builder: (context) => WithdrawPage(
+                fundraise: widget.fundraise,
+              ),
             ),
           );
           return;
@@ -80,7 +82,7 @@ class _ManageBottomNavBarState extends State<ManageBottomNavBar> {
             context,
             MaterialPageRoute(
               builder: (context) => Team(
-                fundraiseId: widget.fundraise.id ?? "",
+                fundraise: widget.fundraise,
                 teams: widget.fundraise.teams ?? [],
                 user: _user ?? User(),
               ),

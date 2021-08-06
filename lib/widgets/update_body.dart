@@ -22,13 +22,12 @@ class UpdateBody extends StatelessWidget {
                       Theme.of(context).secondaryHeaderColor.withOpacity(0.6))
             },
           ),
-          Container(
-            width: size.width,
-            height: size.height * 0.35,
-            child: CachedImage(
-                image:
-                    'https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg'),
-          )
+          if (update.image != null)
+            Container(
+              width: size.width,
+              height: size.height * 0.35,
+              child: CachedImage(image: update.image!),
+            )
         ],
       ),
     );

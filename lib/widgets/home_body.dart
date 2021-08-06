@@ -49,7 +49,11 @@ class _HomeBodyState extends State<HomeBody> {
     if (value.response.status == ResponseStatus.LOADING) {
       return LoadingScreen();
     } else if (value.response.status == ResponseStatus.CONNECTIONERROR) {
-      return ResponseAlert(value.response.message);
+      return ResponseAlert(
+        value.response.message,
+        status: ResponseStatus.CONNECTIONERROR,
+        retry: () => getPopularFundraises(),
+      );
     } else if (value.response.status == ResponseStatus.FORMATERROR) {
       return ResponseAlert(value.response.message);
     } else {
@@ -144,8 +148,7 @@ class _HomeBodyState extends State<HomeBody> {
                         );
                       },
                       child: CampaignCard(
-                        image:
-                            'https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg',
+                        image: _fundraises[index].image!,
                         donation: _fundraises[index].donations!.length > 0
                             ? _fundraises[index].donations![0]
                             : Donation(),

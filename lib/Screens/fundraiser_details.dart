@@ -15,10 +15,12 @@ import 'package:crowd_funding_app/Screens/loading_screen.dart';
 import 'package:crowd_funding_app/Screens/share_page.dart';
 import 'package:crowd_funding_app/Screens/team.dart';
 import 'package:crowd_funding_app/Screens/update_page.dart';
+import 'package:crowd_funding_app/Screens/update_view.dart';
 import 'package:crowd_funding_app/Screens/withdraw_page.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
 import 'package:crowd_funding_app/widgets/cached_network_image.dart';
+import 'package:crowd_funding_app/widgets/custom_cached_network_image.dart';
 import 'package:crowd_funding_app/widgets/custom_raised_button.dart';
 import 'package:crowd_funding_app/widgets/fundraiser_detail_element.dart';
 import 'package:crowd_funding_app/widgets/manage_bottom_bar.dart';
@@ -46,11 +48,16 @@ class FundraiserDetail extends StatefulWidget {
 class _FundraiserDetailState extends State<FundraiserDetail> {
   int index = 0;
   User? user;
+  String? token;
 
   getSingleFundraise() async {
     UserPreference userPreference = UserPreference();
     PreferenceData data = await userPreference.getUserInfromation();
-    user = data.data;
+    PreferenceData tokenData = await userPreference.getUserToken();
+    setState(() {
+      user = data.data;
+      token = tokenData.data;
+    });
     await Future.delayed(
       Duration(milliseconds: 1),
       () =>
@@ -98,6 +105,8 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final model = context.watch<FundraiseModel>();
+    print("fundraisers id ");
+    print(model.fundraise.id);
     if (model.response.status == ResponseStatus.LOADING) {
       return LoadingScreen();
     } else if (model.response.status == ResponseStatus.CONNECTIONERROR) {
@@ -157,12 +166,10 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                   children: [
                     Container(
                       child: Container(
-                        width: size.width,
-                        child: CachedImage(
-                          image:
-                              'https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg',
-                        ),
-                      ),
+                          width: size.width,
+                          child: CustomCachedNetworkImage(
+                            image: image,
+                          )),
                     ),
                     Positioned(
                       bottom: 30.0,
@@ -238,7 +245,7 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                         height: 20.0,
                       ),
                       LinearProgressIndicator(
-                        value: 0.1,
+                        value: totalRaised / goalAmount,
                         backgroundColor: Colors.green[100],
                       ),
                       SizedBox(
@@ -278,9 +285,16 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                         height: 10.0,
                       ),
                       Container(
-                        child: Text(
-                          "$story",
-                          style: Theme.of(context).textTheme.bodyText1,
+                        child: Html(
+                          data: story,
+                          style: {
+                            "body": Style(
+                                fontSize: FontSize.larger,
+                                fontWeight: FontWeight.w400,
+                                color: Theme.of(context)
+                                    .secondaryHeaderColor
+                                    .withOpacity(0.6))
+                          },
                         ),
                       )
                     ],
@@ -290,6 +304,14 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                   height: 10.0,
                 ),
                 FundraiserDetailElements(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => UpdatesView(
+                                loggedInUser: user!,
+                                updates: updates,
+                                token: token!,
+                              )));
+                    },
                     title: "Update (${updates.length})",
                     body: updates.isEmpty
                         ? Text(
@@ -329,8 +351,8 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => Team(
                           teams: _fundraise.teams!,
-                          fundraiseId: _fundraise.id!,
-                          user: _fundraise.organizer!,
+                          fundraise: _fundraise,
+                          user: user!,
                         ),
                       ));
                     },

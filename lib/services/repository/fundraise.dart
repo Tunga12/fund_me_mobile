@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/services/data_provider/fundraiser.dart';
 
@@ -9,8 +11,9 @@ class FundraiseRepository {
   });
 
   // creating a fundraise
-  Future<void> createFundraise(Fundraise fundraise, String token) async {
-    return await dataProvider.createFundraise(fundraise, token);
+  Future<bool> createFundraise(
+      Fundraise fundraise, String token, File image) async {
+    return await dataProvider.createFundraise(fundraise, token, image);
   }
 
   // Get popular fundraisers
@@ -24,8 +27,9 @@ class FundraiseRepository {
   }
 
   // Update fundraise
-  Future<Fundraise> updateFundraise(Fundraise fundraise, String token) async {
-    return await dataProvider.updateFundraise(fundraise, token);
+  Future<bool> updateFundraise(Fundraise fundraise, String token,
+      {File? image}) async {
+    return await dataProvider.updateFundraise(fundraise, token, image: image);
   }
 
   // delete fundraise

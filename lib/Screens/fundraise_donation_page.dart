@@ -64,6 +64,7 @@ class FundraiseDonation extends StatelessWidget {
     getData();
     print("Donatins ${donation.userID}");
     return Container(
+      padding: EdgeInsets.symmetric(vertical: 10.0),
       child: Column(
         children: [
           Row(
@@ -106,19 +107,6 @@ class FundraiseDonation extends StatelessWidget {
                         fontWeight: FontWeight.w300,
                         color: Theme.of(context).secondaryHeaderColor),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.thumb_up_off_alt),
-                      ),
-                      SizedBox(
-                        width: 40.0,
-                      ),
-                      IconButton(onPressed: () {}, icon: Icon(Icons.ios_share))
-                    ],
-                  )
                 ],
               ),
             ],

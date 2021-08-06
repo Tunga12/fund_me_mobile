@@ -21,6 +21,7 @@ class UserModel extends ChangeNotifier {
 
   set response(Response response) {
     _response = response;
+    notifyListeners();
   }
 
   // get single user user informations

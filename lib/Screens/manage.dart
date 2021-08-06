@@ -54,7 +54,11 @@ class _ManageState extends State<Manage> {
     if (value.response.status == ResponseStatus.LOADING) {
       return LoadingScreen();
     } else if (value.response.status == ResponseStatus.CONNECTIONERROR) {
-      return ResponseAlert(value.response.message);
+      return ResponseAlert(
+        value.response.message,
+        status: ResponseStatus.CONNECTIONERROR,
+        retry: () => getUserFundraises(),
+      );
     } else if (value.response.status == ResponseStatus.FORMATERROR) {
       return ResponseAlert(value.response.message);
     } else {
@@ -82,8 +86,7 @@ class _ManageState extends State<Manage> {
                     itemBuilder: (context, index) {
                       return ManageCard(
                         fundraiseId: fundraises[index].id!,
-                        image:
-                            "https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg",
+                        image: fundraises[index].image!,
                         raisedAmount: fundraises[index].totalRaised!,
                         goalAmount: fundraises[index].goalAmount!,
                         title: fundraises[index].title!,

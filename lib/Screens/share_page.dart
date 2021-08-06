@@ -90,6 +90,7 @@ class SharePage extends StatelessWidget {
                   //   url: _link,
                   //   quote: "captions",
                   // );
+                  Share.share(_link);
                 },
                 leading: Icon(
                   FontAwesomeIcons.facebookSquare,
@@ -98,7 +99,9 @@ class SharePage extends StatelessWidget {
                 title: Text("Facebook"),
               ),
               ListTile(
-                onTap: () async {},
+                onTap: () async {
+                  Share.share(_link);
+                },
                 leading: Icon(
                   FontAwesomeIcons.instagramSquare,
                   color: Colors.pink.shade500,

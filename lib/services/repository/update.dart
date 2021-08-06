@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:crowd_funding_app/Models/update.dart';
 import 'package:crowd_funding_app/services/data_provider/update.dart';
 
@@ -7,12 +9,17 @@ class UpdateRepository {
     required this.updateDataProvider,
   });
 
-  Future<Update> createUpdate(
-      Update update, String token, String fundraiseId) async {
+  Future<bool> createUpdate(
+      Update update, String token, String fundraiseId, {File? image}) async {
     return await updateDataProvider.createUpdate(
       update,
       token,
       fundraiseId,
+      image: image
     );
+  }
+
+  Future<bool> deleteUpdate(String updateId, String token) async {
+    return await updateDataProvider.deleteUpdate(updateId, token);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:crowd_funding_app/Models/donation.dart';
 import 'package:crowd_funding_app/Screens/share_page.dart';
+import 'package:crowd_funding_app/widgets/custom_cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:jiffy/jiffy.dart';
@@ -48,30 +49,8 @@ class CampaignCard extends StatelessWidget {
               children: [
                 Container(
                   width: size.width,
-                  child: CachedNetworkImage(
-                    imageUrl: image,
-                    errorWidget: (context, url, error) => Icon(Icons.image),
-                    progressIndicatorBuilder:
-                        (context, url, downloadProgress) => Center(
-                      child: SpinKitCircle(
-                        color: Theme.of(context).accentColor,
-                        duration: Duration(
-                            seconds: downloadProgress.progress == null
-                                ? 2
-                                : downloadProgress.progress!.toInt()),
-                      ),
-                    ),
-                    // CircularProgressIndicator(
-                    //     value: downloadProgress.progress),
-                    imageBuilder: (context, imageProvider) => Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        image: DecorationImage(
-                          image: imageProvider,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
+                  child: CustomCachedNetworkImage(
+                    image: image,
                   ),
                 ),
                 Positioned(

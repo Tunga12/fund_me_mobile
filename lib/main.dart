@@ -10,6 +10,7 @@ import 'package:crowd_funding_app/services/data_provider/notification.dart';
 import 'package:crowd_funding_app/services/data_provider/team_member.dart';
 import 'package:crowd_funding_app/services/data_provider/update.dart';
 import 'package:crowd_funding_app/services/data_provider/user.dart';
+import 'package:crowd_funding_app/services/data_provider/withdraw.dart';
 import 'package:crowd_funding_app/services/provider/auth.dart';
 import 'package:crowd_funding_app/services/provider/category.dart';
 import 'package:crowd_funding_app/services/provider/donation.dart';
@@ -19,6 +20,7 @@ import 'package:crowd_funding_app/services/provider/team_add_deep_link.dart';
 import 'package:crowd_funding_app/services/provider/team_member.dart';
 import 'package:crowd_funding_app/services/provider/update.dart';
 import 'package:crowd_funding_app/services/provider/user.dart';
+import 'package:crowd_funding_app/services/provider/withdrawal.dart';
 import 'package:crowd_funding_app/services/repository/category.dart';
 import 'package:crowd_funding_app/services/repository/donation.dart';
 import 'package:crowd_funding_app/services/repository/fundraise.dart';
@@ -27,6 +29,7 @@ import 'package:crowd_funding_app/services/repository/notification.dart';
 import 'package:crowd_funding_app/services/repository/tean_member.dart';
 import 'package:crowd_funding_app/services/repository/update.dart';
 import 'package:crowd_funding_app/services/repository/user.dart';
+import 'package:crowd_funding_app/services/repository/withdrawal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -75,6 +78,11 @@ Future<void> main() async {
       httpClient: http.Client(),
     ),
   );
+  final WithdrawalRepository withdrawalRepository = WithdrawalRepository(
+    withdrawDataProvider: WithdrawDataProvider(
+      httpClient: http.Client(),
+    ),
+  );
   runApp(
     CrowdFundingApp(
       fundraiseRepository: fundraiseRepository,
@@ -85,6 +93,7 @@ Future<void> main() async {
       updateRepository: updateRepository,
       donationRepository: donationReponsitory,
       teamMemberRepository: teamMemberRepository,
+      withdrawalRepository: withdrawalRepository,
     ),
   );
 }
@@ -100,6 +109,7 @@ class CrowdFundingApp extends StatelessWidget {
     required this.updateRepository,
     required this.donationRepository,
     required this.teamMemberRepository,
+    required this.withdrawalRepository,
   }) : super(key: key);
 
   final FundraiseRepository fundraiseRepository;
@@ -110,6 +120,7 @@ class CrowdFundingApp extends StatelessWidget {
   final UpdateRepository updateRepository;
   final DonationRepository donationRepository;
   final TeamMemberRepository teamMemberRepository;
+  final WithdrawalRepository withdrawalRepository;
 
   @override
   Widget build(BuildContext context) {
@@ -151,6 +162,10 @@ class CrowdFundingApp extends StatelessWidget {
           create: (context) =>
               TeamMemberModel(teamMemberRepository: teamMemberRepository),
         ),
+        ChangeNotifierProvider<WithdrawalModel>(
+            create: (context) => WithdrawalModel(
+                  withdrawalRepository: withdrawalRepository,
+                ))
       ],
       child: MaterialApp(
         onGenerateRoute: AppRoute.generateRoute,

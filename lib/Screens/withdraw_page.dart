@@ -1,9 +1,13 @@
+import 'package:crowd_funding_app/Models/fundraise.dart';
+import 'package:crowd_funding_app/Screens/setup_withdrawal.dart';
 import 'package:crowd_funding_app/widgets/custom_card.dart';
 import 'package:crowd_funding_app/widgets/withdraw_note.dart';
 import 'package:flutter/material.dart';
 
 class WithdrawPage extends StatelessWidget {
-  const WithdrawPage({Key? key}) : super(key: key);
+  const WithdrawPage({Key? key, required this.fundraise}) : super(key: key);
+
+  final Fundraise fundraise;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +47,7 @@ class WithdrawPage extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "\$0.00",
+                    "\$${fundraise.totalRaised}.00",
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -57,7 +61,15 @@ class WithdrawPage extends StatelessWidget {
                     child: TextButton(
                         style: TextButton.styleFrom(
                             backgroundColor: Theme.of(context).accentColor),
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => SetupWithdrawal(
+                                fundraiseId: fundraise.id!,
+                              ),
+                            ),
+                          );
+                        },
                         child: Text(
                           "Set up withdrawals",
                           style: TextStyle(

@@ -1,11 +1,14 @@
 import 'package:crowd_funding_app/Models/team_member.dart';
+import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 
 class FundraiserTeamMemberPage extends StatelessWidget {
-  FundraiserTeamMemberPage({Key? key, required this.teamMembers})
+  FundraiserTeamMemberPage(
+      {Key? key, required this.teamMembers, required this.organizer})
       : super(key: key);
-  List<TeamMember> teamMembers;
+  final List<TeamMember> teamMembers;
+  final User? organizer;
 
   @override
   Widget build(BuildContext context) {
@@ -17,23 +20,26 @@ class FundraiserTeamMemberPage extends StatelessWidget {
         ),
       ),
       body: SingleChildScrollView(
-        child: Container(
-            padding: EdgeInsets.all(20.0),
-            child: teamMembers.length > 0
-                ? Column(
-                    children: teamMembers
-                        .map((team) => Teams(
-                              teamMember: team,
-                            ))
-                        .toList(),
-                  )
-                : Center(
-                    child: Text(
-                      "No Teams yet",
-                      style: labelTextStyle.copyWith(
-                          color: Theme.of(context).secondaryHeaderColor),
-                    ),
-                  )),
+        child: Column(
+          children: [
+            Container(
+                child: organizer != null
+                    ? Teams(
+                        teamMember: organizer!,
+                      )
+                    : Container()),
+            Container(
+              padding: EdgeInsets.all(20.0),
+              child: Column(
+                children: teamMembers
+                    .map((team) => Teams(
+                          teamMember: team.member!.userID!,
+                        ))
+                    .toList(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -42,16 +48,14 @@ class FundraiserTeamMemberPage extends StatelessWidget {
 class Teams extends StatelessWidget {
   Teams({Key? key, required this.teamMember}) : super(key: key);
 
-  TeamMember teamMember;
+  User teamMember;
 
   String fullName = "";
   String avatarChild = "";
   getData() {
-    fullName = teamMember.member!.userID!.firstName! +
-        " " +
-        teamMember.member!.userID!.lastName!;
-    avatarChild = teamMember.member!.userID!.firstName![0].toUpperCase() +
-        teamMember.member!.userID!.lastName![0].toUpperCase();
+    fullName = teamMember.firstName! + " " + teamMember.lastName!;
+    avatarChild = teamMember.firstName![0].toUpperCase() +
+        teamMember.lastName![0].toUpperCase();
   }
 
   @override

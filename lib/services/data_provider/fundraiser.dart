@@ -3,7 +3,11 @@ import 'dart:io';
 
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/config/utils/endpoints.dart';
+import 'package:crowd_funding_app/constants/actions.dart';
 import 'package:http/http.dart' as http;
+import 'package:async/async.dart';
+import 'package:async/async.dart';
+import 'package:path/path.dart';
 
 class FundraiseDataProvider {
   final http.Client httpClient;
@@ -11,36 +15,40 @@ class FundraiseDataProvider {
   FundraiseDataProvider({required this.httpClient});
 
   // creating a fundraise
-  Future<void> createFundraise(Fundraise fundraise, String token) async {
+  Future<bool> createFundraise(
+      Fundraise fundraise, String token, File image) async {
     print("create token $token");
-    http.Response response;
-    response = await httpClient.post(
-      Uri.parse(EndPoints.baseURL + '/api/fundraisers'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'x-auth-token': token,
-      },
-      body: jsonEncode(<String, dynamic>{
-        'title': fundraise.title,
-        'image':
-            'https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg',
-        'goalAmount': fundraise.goalAmount,
-        'story': fundraise.story,
-        'category': fundraise.category!.categoryID,
-        'location': <String, dynamic>{
-          'latitude': fundraise.location!.latitude,
-          'longitude': fundraise.location!.longitude
+    http.Response? response;
+    final imageResponse = await getImage(token, image).then((image) async {
+      response = await httpClient.post(
+        Uri.parse(EndPoints.baseURL + '/api/fundraisers'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': token,
         },
-        'isPublished': true,
-      }),
-    );
-    // await getImage(token, fundraise.image!).then((image) async {});
+        body: jsonEncode(<String, dynamic>{
+          'title': fundraise.title,
+          'image': image,
+          'goalAmount': fundraise.goalAmount,
+          'story': fundraise.story,
+          'category': fundraise.category!.categoryID,
+          'location': <String, dynamic>{
+            'latitude': fundraise.location!.latitude,
+            'longitude': fundraise.location!.longitude
+          },
+          'isPublished': true,
+        }),
+      );
+    });
 
-    if (response.statusCode == 201) {
-      print(response.body);
+    print("create fundraise status ${response!.statusCode}");
+
+    if (response!.statusCode == 201 &&
+        imageResponse.toString().startsWith("http")) {
+      return true;
     } else {
-      print("Error happening at ${response.body}");
-      throw Exception(response.body);
+      print("Error happening at ${response!.body}");
+      throw Exception(response!.body);
     }
   }
 
@@ -73,42 +81,73 @@ class FundraiseDataProvider {
   }
 
   // Update fundraise
-  Future<Fundraise> updateFundraise(Fundraise fundraise, String token) async {
-    print("fundraise title $fundraise");
+  Future<bool> updateFundraise(Fundraise fundraise, String token,
+      {File? image}) async {
+    print(" Update image is  $image");
 
-    final response = await httpClient.put(
-      Uri.parse(
-        EndPoints.fundraises + fundraise.id.toString(),
-      ),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'x-auth-token': token,
-      },
-      body: jsonEncode(<String, dynamic>{
-        "location": <String, dynamic>{
-          "latitude": fundraise.location!.latitude,
-          "longitude": fundraise.location!.longitude,
-        },
-        "totalRaised": fundraise.totalRaised,
-        "isPublished": fundraise.isPublished,
-        "totalShareCount": fundraise.totalSharedCount,
-        "likeCount": fundraise.likeCount,
-        "title": fundraise.title,
-        "image": fundraise.image,
-        "goalAmount": fundraise.goalAmount,
-        "story": fundraise.story,
-        "organizer": fundraise.organizer!.id,
-        "likedBy": fundraise.likedBy,
-        "category": fundraise.category!.categoryID,
-      }),
-    );
-    print("update status code ${response.statusCode}");
-    print("update body  ${response.body}");
-    if (response.statusCode == 200) {
-      return fundraise;
+    http.Response? response;
+    image == null
+        ? response = await httpClient.put(
+            Uri.parse(
+              EndPoints.fundraises + fundraise.id.toString(),
+            ),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+              'x-auth-token': token,
+            },
+            body: jsonEncode(<String, dynamic>{
+              "location": <String, dynamic>{
+                "latitude": fundraise.location!.latitude,
+                "longitude": fundraise.location!.longitude,
+              },
+              "totalRaised": fundraise.totalRaised,
+              "isPublished": fundraise.isPublished,
+              "totalShareCount": fundraise.totalSharedCount,
+              "likeCount": fundraise.likeCount,
+              "title": fundraise.title,
+              "image": fundraise.image,
+              "goalAmount": fundraise.goalAmount,
+              "story": fundraise.story,
+              "organizer": fundraise.organizer!.id,
+              "likedBy": fundraise.likedBy,
+              "category": fundraise.category!.categoryID,
+            }),
+          )
+        : await getImage(token, image).then((imageResponse) async {
+            response = await httpClient.put(
+              Uri.parse(
+                EndPoints.fundraises + fundraise.id.toString(),
+              ),
+              headers: <String, String>{
+                'Content-Type': 'application/json; charset=UTF-8',
+                'x-auth-token': token,
+              },
+              body: jsonEncode(<String, dynamic>{
+                "location": <String, dynamic>{
+                  "latitude": fundraise.location!.latitude,
+                  "longitude": fundraise.location!.longitude,
+                },
+                "totalRaised": fundraise.totalRaised,
+                "isPublished": fundraise.isPublished,
+                "totalShareCount": fundraise.totalSharedCount,
+                "likeCount": fundraise.likeCount,
+                "title": fundraise.title,
+                "image": imageResponse,
+                "goalAmount": fundraise.goalAmount,
+                "story": fundraise.story,
+                "organizer": fundraise.organizer!.id,
+                "likedBy": fundraise.likedBy,
+                "category": fundraise.category!.categoryID,
+              }),
+            );
+          });
+    print("update status code ${response!.statusCode}");
+    print("update body  ${response!.body}");
+    if (response!.statusCode == 200) {
+      return true;
     } else {
-      print("Update exceptin ${response.body}");
-      throw Exception(response.body);
+      print("Update exceptin ${response!.body}");
+      throw Exception(response!.body);
     }
   }
 
@@ -129,32 +168,6 @@ class FundraiseDataProvider {
   // get User fundraisers
 
   // get all user fundraises
-
-  Future<String> getImage(String token, String image) async {
-    print("Uploading image $image");
-    print(token);
-    String image1 = image.split(":").first;
-    String image2 = image.split(":").last;
-    print(image1);
-    print(image2);
-    final response = await httpClient.post(
-      Uri.parse(EndPoints.imageURL),
-      headers: <String, String>{'x-auth-token': token},
-      body: {'image': image1, 'name': image2},
-    );
-    if (response.statusCode == 200) {
-      String image = jsonDecode(response.body);
-      print('response image $image');
-      return image;
-    } else {
-      print("image upload exception ${response.reasonPhrase}");
-      print("image upload exception ${response.headers}");
-      print("image upload exception ${response.statusCode}");
-      print("image upload exception ${response.body}");
-
-      throw Exception(response.reasonPhrase);
-    }
-  }
 
   // get fundraisers created by a user
   Future<HomeFundraise> getUserFundaisers(String token) async {

@@ -3,6 +3,7 @@ import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/widgets/continue_button.dart';
 import 'package:crowd_funding_app/widgets/form_label_text.dart';
 import 'package:crowd_funding_app/widgets/form_progress.dart';
+import 'package:crowd_funding_app/widgets/rich_text_editor.dart';
 import 'package:flutter/material.dart';
 
 class CreateFundraiserPageTwo extends StatefulWidget {
@@ -20,6 +21,7 @@ class _CreateFundraiserPageTwoState extends State<CreateFundraiserPageTwo> {
   bool isEnabled = false;
 
   Map<String, dynamic> _fundraiseInfo = {};
+  String _initialStory = '';
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +105,20 @@ class _CreateFundraiserPageTwoState extends State<CreateFundraiserPageTwo> {
                           FormLabelText(
                               text: 'Describe your need and situation'),
                           TextFormField(
+                            initialValue: _initialStory,
+                            // onTap: () async {
+                            //   final value = await Navigator.of(context).push(
+                            //     MaterialPageRoute(
+                            //       builder: (context) =>
+                            //           RichTextEditor(data: _initialStory),
+                            //     ),
+                            //   );
+
+                            //   print("Story value is $value");
+                            //   setState(() {
+                            //     _initialStory = value;
+                            //   });
+                            // },
                             keyboardType: TextInputType.multiline,
                             maxLines: 6,
                             validator: (value) {

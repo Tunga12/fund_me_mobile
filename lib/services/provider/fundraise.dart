@@ -96,14 +96,18 @@ class FundraiseModel extends ChangeNotifier {
     }
   }
 
-  Future createFundraise(Fundraise fundraise, String token) async {
+  Future createFundraise(Fundraise fundraise, String token, File image) async {
     response =
         Response(status: ResponseStatus.LOADING, data: null, message: '');
     try {
-      await fundraiseRepository.createFundraise(fundraise, token);
-      response = Response(
-          status: ResponseStatus.SUCCESS, data: null, message: "success");
-      notifyListeners();
+      bool createResponse =
+          await fundraiseRepository.createFundraise(fundraise, token, image);
+      print("Create response $createResponse");
+      if (createResponse)
+        response = Response(
+            status: ResponseStatus.SUCCESS,
+            data: createResponse,
+            message: "success");
     } on TimeoutException catch (e) {
       print("time out");
       response = Response(
@@ -163,16 +167,18 @@ class FundraiseModel extends ChangeNotifier {
     }
   }
 
-  Future updateFundraise(Fundraise fundraise, String token) async {
+  Future updateFundraise(Fundraise fundraise, String token,
+      {File? image}) async {
     response =
         Response(status: ResponseStatus.LOADING, data: null, message: '');
     try {
-      Fundraise fundraiseResponse =
-          await fundraiseRepository.updateFundraise(fundraise, token);
-      response = Response(
-          status: ResponseStatus.SUCCESS,
-          data: fundraiseResponse,
-          message: "success");
+      bool fundraiseResponse = await fundraiseRepository
+          .updateFundraise(fundraise, token, image: image);
+      if (fundraiseResponse)
+        response = Response(
+            status: ResponseStatus.SUCCESS,
+            data: fundraiseResponse,
+            message: "success");
       notifyListeners();
     } on TimeoutException catch (e) {
       print("time out");

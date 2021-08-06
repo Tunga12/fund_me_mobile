@@ -1,3 +1,4 @@
+import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/team_member.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/fundraiser_teammember_page.dart';
@@ -9,12 +10,12 @@ import 'package:share/share.dart';
 class Team extends StatelessWidget {
   Team(
       {Key? key,
-      required this.fundraiseId,
+      required this.fundraise,
       required this.teams,
       required this.user})
       : super(key: key);
   final String _teamLink = 'http://gofundme.team.add/';
-  final String fundraiseId;
+  final Fundraise fundraise;
   final List<TeamMember> teams;
   final User user;
   @override
@@ -80,12 +81,16 @@ class Team extends StatelessWidget {
                                   color: Theme.of(context).accentColor),
                             )),
                         child: Text(
-                          "Add member",
+                          fundraise.organizer!.id == user.id
+                              ? 'Add member'
+                              : "Message member",
                           style: TextStyle(
                               fontSize: 20.0, fontWeight: FontWeight.bold),
                         ),
                         onPressed: () {
-                          Share.share(_teamLink + "$fundraiseId");
+                          if (fundraise.organizer!.id == user.id) {
+                            Share.share(_teamLink + "${fundraise.id}");
+                          }
                         },
                       ),
                     ),

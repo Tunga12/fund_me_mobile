@@ -60,4 +60,7 @@ class EndPoints {
   // create team member
   static const String teamMemberFundraises =
       baseURL + "/api/fundraisers/member/";
+
+  // create withdrawal
+  static const String withdrawalUrl = baseURL + "/api/withdrawal/";
 }

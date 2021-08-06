@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ffi';
+import 'dart:async';
 
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
@@ -18,6 +20,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' as http;
+import 'package:async/async.dart';
 
 class CreateFundraiserPageThree extends StatefulWidget {
   final Map<String, dynamic> fundraiseInfo;
@@ -309,17 +313,11 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                               loadingProgress(context);
                               PreferenceData userInfo =
                                   await UserPreference().getUserInfromation();
-
-                              String byte64Image =
-                                  base64Encode(_image!.readAsBytesSync());
-                              String fileImage = _image!.path.split('/').last;
-
                               Fundraise fundraise = Fundraise(
                                 title: widget.fundraiseInfo['title'],
                                 story: widget.fundraiseInfo['story'],
                                 location: widget.fundraiseInfo['location'],
                                 category: widget.fundraiseInfo['category'],
-                                image: byte64Image + ":" + fileImage,
                                 goalAmount: int.parse(
                                     widget.fundraiseInfo['goalAmount']),
                                 beneficiary: userInfo.data,
@@ -330,50 +328,20 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
 
                               await context
                                   .read<FundraiseModel>()
-                                  .createFundraise(fundraise, token);
-                              if (response.status ==
-                                  ResponseStatus.CONNECTIONERROR) {
-                                authShowDialog(context, Text(response.message),
-                                    error: true, close: true);
-                                return;
-                              } else if (response.status ==
-                                  ResponseStatus.FORMATERROR) {
-                                authShowDialog(context, Text(response.message),
-                                    error: true, close: true);
-                                return;
-                              } else if (response.status ==
-                                  ResponseStatus.MISMATCHERROR) {
-                                authShowDialog(
-                                    context,
-                                    Text(
-                                      response.message,
-                                    ),
-                                    error: true,
-                                    close: true);
-                                return;
-                              } else if (response.status ==
-                                  ResponseStatus.SUCCESS) {
-                                Navigator.pop(context);
+                                  .createFundraise(fundraise, token, _image!);
+
+                              if (response.status == ResponseStatus.SUCCESS) {
                                 Fluttertoast.showToast(
                                     msg: "Successfully created!",
                                     toastLength: Toast.LENGTH_LONG);
                                 Navigator.of(context).pushNamedAndRemoveUntil(
-                                  HomePage.routeName,
-                                  (Route<dynamic> route) => false,
-                                );
-                                return;
-                              } else {}
-                              authShowDialog(
-                                  context,
-                                  Text(
-                                    response.message,
-                                  ),
-                                  error: true,
-                                  close: true);
-
-                              return;
-                            },
-                          )
+                                    HomePage.routeName, (route) => false);
+                              } else {
+                                Navigator.pop(context);
+                                authShowDialog(context, Text(response.message),
+                                    close: true, error: true);
+                              }
+                            })
                   ],
                 ),
               )

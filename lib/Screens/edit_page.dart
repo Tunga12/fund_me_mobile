@@ -1,14 +1,18 @@
+import 'dart:io';
+
 import 'package:crowd_funding_app/Models/category.dart';
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:crowd_funding_app/Screens/loading_screen.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
+import 'package:crowd_funding_app/constants/actions.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/services/provider/category.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
 import 'package:crowd_funding_app/widgets/authdialog.dart';
 import 'package:crowd_funding_app/widgets/cached_network_image.dart';
+import 'package:crowd_funding_app/widgets/custom_cached_network_image.dart';
 import 'package:crowd_funding_app/widgets/custom_card.dart';
 import 'package:crowd_funding_app/widgets/loading_progress.dart';
 import 'package:crowd_funding_app/widgets/response_alert.dart';
@@ -17,6 +21,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class EditPage extends StatefulWidget {
@@ -29,6 +34,7 @@ class EditPage extends StatefulWidget {
 
 class _EditPageState extends State<EditPage> {
   final _formKey = GlobalKey<FormState>();
+  final _imagePicker = ImagePicker();
   @override
   void initState() {
     super.initState();
@@ -37,6 +43,7 @@ class _EditPageState extends State<EditPage> {
 
   String? _category;
   String locationValue = "";
+  File? image;
 
   getCategories() async {
     // await context.read<CategoryModel>().getAllCategories();
@@ -46,6 +53,45 @@ class _EditPageState extends State<EditPage> {
           " " +
           widget.fundraise.location!.latitude;
     });
+  }
+
+  File? _image;
+  _chooseSource() {
+    return AlertDialog(
+      title: Text("choose method"),
+      content: SingleChildScrollView(
+        child: Column(
+          children: [
+            ListTile(
+              onTap: () async {
+                // _getImage(ImageSource.camera);
+                var file =
+                    await pickImageFormFile(ImageSource.camera, _imagePicker);
+                setState(() {
+                  _image = file!;
+                });
+
+                Navigator.of(context).pop();
+              },
+              leading: Icon(Icons.add_a_photo),
+              title: Text("take a photo"),
+            ),
+            ListTile(
+              onTap: () async {
+                File? file =
+                    await pickImageFormFile(ImageSource.gallery, _imagePicker);
+                setState(() {
+                  _image = file!;
+                });
+                Navigator.of(context).pop();
+              },
+              leading: Icon(Icons.collections),
+              title: Text("choose from gallery"),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Map<String, dynamic> _fundraiseDetail = {};
@@ -86,9 +132,14 @@ class _EditPageState extends State<EditPage> {
                     location: _fundraiseDetail['location'],
                   );
                   loadingProgress(context);
-                  await context
-                      .read<FundraiseModel>()
-                      .updateFundraise(fundraise, preferenceData.data);
+                  if (_image == null)
+                    await context
+                        .read<FundraiseModel>()
+                        .updateFundraise(fundraise, preferenceData.data);
+                  else
+                    await context.read<FundraiseModel>().updateFundraise(
+                        fundraise, preferenceData.data,
+                        image: _image);
                   Response response = context.read<FundraiseModel>().response;
                   if (response.status == ResponseStatus.SUCCESS) {
                     Fluttertoast.showToast(
@@ -115,10 +166,14 @@ class _EditPageState extends State<EditPage> {
                   Container(
                     width: size.width,
                     height: size.height * 0.35,
-                    child: CachedImage(
-                      image:
-                          'https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg',
-                    ),
+                    child: _image == null
+                        ? CustomCachedNetworkImage(
+                            image: widget.fundraise.image!)
+                        : Image.file(
+                            _image!,
+                            width: size.width,
+                            fit: BoxFit.cover,
+                          ),
                   ),
                   Positioned(
                       bottom: 10.0,
@@ -128,7 +183,11 @@ class _EditPageState extends State<EditPage> {
                             backgroundColor: Colors.black.withOpacity(0.2)),
                         child: Text("Change Cover",
                             style: TextStyle(color: Colors.white)),
-                        onPressed: () {},
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) => _chooseSource());
+                        },
                       ))
                 ],
               ),

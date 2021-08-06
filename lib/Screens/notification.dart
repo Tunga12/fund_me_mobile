@@ -48,11 +48,15 @@ class _NotificationsState extends State<Notifications> {
     if (value.status == ResponseStatus.LOADING) {
       return LoadingScreen();
     } else if (value.status == ResponseStatus.CONNECTIONERROR) {
-      return ResponseAlert(value.message);
+      return ResponseAlert(
+        value.message,
+        status: ResponseStatus.CONNECTIONERROR,
+        retry: () => getNotificaions(),
+      );
     } else if (value.status == ResponseStatus.FORMATERROR) {
       return ResponseAlert(value.message);
     } else {
-      print("Notificationv ${value.data}");
+      print("Notification ${value.data}");
       List<UserNotification> userNotificatons = value.data ?? [];
       if (userNotificatons.isEmpty) {
         return EmptyBody(
@@ -72,7 +76,8 @@ class _NotificationsState extends State<Notifications> {
         child: ListView.builder(
           itemCount: userNotificatons.length,
           itemBuilder: (context, index) {
-            return NotficationItem(content: userNotificatons[index].content);
+            return NotficationItem(
+              content: userNotificatons[index].content);
           },
         ),
       );

@@ -51,11 +51,6 @@ class _SearchPageState extends State<SearchPage> {
         homeResponse.status == ResponseStatus.LOADING) {
       return LoadingScreen();
     } else {
-      List<Category> category =
-          response.data ?? [Category(categoryID: "0", categoryName: "")];
-      if (category[0].categoryID == "0") {
-        category.removeAt(0);
-      }
       return Scaffold(
         appBar: AppBar(
           title: Row(
@@ -147,8 +142,7 @@ class _SearchPageState extends State<SearchPage> {
                               );
                             },
                             child: CampaignCard(
-                              image:
-                                  'https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg',
+                              image: searchFundraises[index].image!,
                               donation:
                                   searchFundraises[index].donations!.length > 0
                                       ? searchFundraises[index].donations![0]
@@ -173,44 +167,6 @@ class _SearchPageState extends State<SearchPage> {
                         "Browse GoFundMe",
                         style: titleTextStyle.copyWith(
                             color: Theme.of(context).secondaryHeaderColor),
-                      ),
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(vertical: 30.0),
-                      height: size.height * 0.8,
-                      child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent: 200,
-                          childAspectRatio: 1.5,
-                          crossAxisSpacing: 20.0,
-                          mainAxisSpacing: 20.0,
-                        ),
-                        itemCount: category.length,
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              print("${category[index].categoryName}");
-                            },
-                            child: Container(
-                              child: Column(
-                                children: [
-                                  CircleAvatar(
-                                    child: Image.asset(
-                                        "assets/images/category.png"),
-                                    radius: 40.0,
-                                  ),
-                                  SizedBox(height: 10.0),
-                                  Text(
-                                    category[index].categoryName!,
-                                    style: labelTextStyle.copyWith(
-                                        color: Theme.of(context)
-                                            .secondaryHeaderColor),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
                       ),
                     ),
                   ],
