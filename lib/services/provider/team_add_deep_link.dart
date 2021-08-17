@@ -8,10 +8,10 @@ abstract class TeamProvider {
 
 class TeamAddModel extends TeamProvider {
   //Event Channel creation
-  static const stream = const EventChannel('http.gofundme.team.add/events');
+  static const stream = const EventChannel('https.shrouded-bastion-52038.herokuapp.com/events');
 
   //Method channel creation
-  static const platform = const MethodChannel('http.gofundme.team.add/channel');
+  static const platform = const MethodChannel('https.shrouded-bastion-52038.herokuapp.com/channel');
 
   StreamController<String> _stateController = StreamController();
 

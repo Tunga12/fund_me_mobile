@@ -18,8 +18,9 @@ class CategoryDataProvider {
 
     if (response.statusCode == 200) {
       // print("response $P");
-      final allCategories = jsonDecode(response.body) as List;
-      print("all categories $allCategories");
+      final _allCategories = jsonDecode(response.body);
+      print("all categories $_allCategories");
+      final allCategories = _allCategories as List;
 
       return allCategories
           .map((category) => Category.fromJson(category))

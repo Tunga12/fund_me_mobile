@@ -1,4 +1,5 @@
-import 'package:crowd_funding_app/Screens/accept_invite_page.dart';
+import 'package:crowd_funding_app/Screens/forgot_password.dart';
+import 'package:crowd_funding_app/Screens/popular_fundraise_detail.dart';
 import 'package:crowd_funding_app/Screens/splash_screen.dart';
 import 'package:crowd_funding_app/services/provider/team_add_deep_link.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,26 @@ class StartPage extends StatelessWidget {
         if (!snapshots.hasData) {
           return SplashScreen();
         } else {
-          return AcceptTeamInvitation(data: snapshots.data!);
+          String data = snapshots.data!;
+
+          if (data.substring(45).startsWith('fundraiser')) {
+            String fundraiserId = data.substring(56);
+            return CampaignDetail(id: fundraiserId);
+          } else if (data.substring(45).startsWith("api/users/verify")) {
+            String userId = data.substring(62);
+            return ForgotPassword(url: userId);
+          } else {
+            return Scaffold(
+              appBar: AppBar(
+                title: Text("Error"),
+              ),
+              body: Container(
+                child: Center(
+                  child: Text("Unknown path"),
+                ),
+              ),
+            );
+          }
         }
       },
     );

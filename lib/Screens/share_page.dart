@@ -1,11 +1,15 @@
+import 'package:crowd_funding_app/Models/fundraise.dart';
+import 'package:crowd_funding_app/widgets/preview_text_button.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:share/share.dart';
 
 class SharePage extends StatelessWidget {
-  SharePage({Key? key}) : super(key: key);
+  SharePage({Key? key, required this.fundraise}) : super(key: key);
+  final String fundraise;
 
-  final String _link = "https/go.fundme.com/sample";
+  final String _link =
+      "https://shrouded-bastion-52038.herokuapp.com/fundraiser/";
 
   @override
   Widget build(BuildContext context) {
@@ -69,104 +73,40 @@ class SharePage extends StatelessWidget {
                     child: TextFormField(
                       initialValue: _link,
                       decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10.0, horizontal: 5.0),
-                          border: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.grey, width: 1.5),
-                          ),
-                          suffix: TextButton(
-                            onPressed: () {},
-                            child: Text("copy Link"),
-                          )),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 10.0, horizontal: 5.0),
+                        border: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.grey, width: 1.5),
+                        ),
+                        suffix: TextButton(
+                          onPressed: () {},
+                          child: Text("copy Link"),
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
-              ListTile(
-                onTap: () {
-                  // FlutterSocialContentShare.share(
-                  //   type: ShareType.facebookWithoutImage,
-                  //   url: _link,
-                  //   quote: "captions",
-                  // );
-                  Share.share(_link);
-                },
-                leading: Icon(
-                  FontAwesomeIcons.facebookSquare,
-                  color: Colors.blue,
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 30.0, horizontal: 20.0),
+                child: PreviewTextButton(
+                  title: "Share",
+                  backgroundColor: Theme.of(context).buttonColor.withAlpha(100),
+                  onPressed: () {
+                    Share.share(_link + fundraise);
+                  },
+                  leadingChild: Container(
+                      padding: EdgeInsets.all(3.0),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(3.0),
+                          color: Theme.of(context).secondaryHeaderColor),
+                      child: Icon(
+                        Icons.ios_share,
+                        color: Theme.of(context).backgroundColor,
+                      )),
                 ),
-                title: Text("Facebook"),
-              ),
-              ListTile(
-                onTap: () async {
-                  Share.share(_link);
-                },
-                leading: Icon(
-                  FontAwesomeIcons.instagramSquare,
-                  color: Colors.pink.shade500,
-                ),
-                title: Text("Instagram"),
-              ),
-              ListTile(
-                onTap: () {
-                  Share.share(_link);
-                },
-                leading: Icon(
-                  Icons.chat_outlined,
-                  // color: Colors.blue,
-                ),
-                title: Text("Text"),
-              ),
-              ListTile(
-                onTap: () {
-                  Share.share(_link);
-                },
-                leading: Icon(
-                  FontAwesomeIcons.envelope,
-                  // color: Colors.blue,
-                ),
-                title: Text("Email"),
-              ),
-              ListTile(
-                onTap: () {
-                  Share.share(_link);
-                },
-                leading: Icon(
-                  FontAwesomeIcons.whatsappSquare,
-                  color: Colors.green,
-                ),
-                title: Text("Facebook"),
-              ),
-              ListTile(
-                onTap: () {
-                  Share.share(_link);
-                },
-                leading: Icon(
-                  FontAwesomeIcons.twitterSquare,
-                  color: Colors.blue,
-                ),
-                title: Text("Twitter"),
-              ),
-              ListTile(
-                onTap: () {
-                  Share.share(_link);
-                },
-                leading: Icon(
-                  Icons.person_add_alt,
-                  // color: Colors.blue,
-                ),
-                title: Text("Invite Contacts"),
-              ),
-              ListTile(
-                onTap: () {
-                  Share.share(_link);
-                },
-                leading: Icon(
-                  Icons.more_horiz_outlined,
-                  // color: Colors.blue,
-                ),
-                title: Text("More"),
               ),
             ],
           ),

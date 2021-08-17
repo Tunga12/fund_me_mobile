@@ -1,20 +1,25 @@
+import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/create_fundraiser_home.dart';
 import 'package:crowd_funding_app/Screens/manage.dart';
 import 'package:crowd_funding_app/Screens/notification.dart';
 import 'package:crowd_funding_app/Screens/search.dart';
 import 'package:crowd_funding_app/Screens/settings.dart';
+import 'package:crowd_funding_app/Screens/signin_page.dart';
+import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/widgets/home_body.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = "/homePage";
-  const HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key, this.index}) : super(key: key);
+  int? index;
 
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  User? _user;
   List<Widget> _bodyChild = [];
   List<Widget> _appBarChild = [];
 
@@ -27,35 +32,60 @@ class _HomePageState extends State<HomePage> {
 
   getCampaign() {}
 
-  int _selectedIndex = 2;
+  int _selectedIndex = 0;
 
   void _onTappedTapped(int index) {
-    if (index == 3) {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => Settings()));
-      return;
+    if (index == 1 || index == 2) {
+      if (_user == null) {
+        Navigator.of(context).pushNamed(SigninPage.routeName);
+        return;
+      }
     }
+    if (index == 3) {
+      if (_user != null) {
+        Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => Settings()));
+        return;
+      } else {
+        Navigator.of(context).pushNamed(SigninPage.routeName);
+        return;
+      }
+    }
+
     setState(() {
       _selectedIndex = index;
     });
   }
 
-  @override
-  void initState() {
-    // getData();
-    super.initState();
+  _setIndex() {
+    if (widget.index != null) {
+      setState(() {
+        _selectedIndex = widget.index!;
+      });
+    }
   }
 
-  // getData() async {
-  //   await context.read<FundraiseModel>().getPopularFundraises();
-  // }
+  getUser() async {
+    UserPreference _userPreference = UserPreference();
+    PreferenceData preferenceData = await _userPreference.getUserInfromation();
+    setState(() {
+      _user = preferenceData.data;
+    });
+  }
+
+  @override
+  void initState() {
+    _setIndex();
+    getUser();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     _bodyChild = [
       HomeBody(),
-      Notifications(),
-      Manage(),
+      _user != null ? Notifications() : SigninPage(),
+      _user != null ? Manage() : SigninPage(),
       Container(),
     ];
     _appBarChild = [
@@ -132,7 +162,8 @@ class _HomePageState extends State<HomePage> {
                     builder: (context) => CreateFundraiserHome(),
                   ),
                 );
-              })
+              },
+            )
           : null,
       bottomNavigationBar: BottomNavigationBar(
         enableFeedback: false,

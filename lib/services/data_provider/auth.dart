@@ -19,17 +19,18 @@ class AuthDataProvider {
       Uri.http('shrouded-bastion-52038.herokuapp.com', '/api/users'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
-      },
+      }, 
       body: jsonEncode(
         <String, dynamic>{
           'firstName': user.firstName,
           'lastName': user.lastName,
           'email': user.email,
-          'password': user.password
+          'password': user.password,
+          'phoneNumber': user.phoneNumber,
         },
       ),
     );
-    print("create status code ${response.body}");
+    // print("create status code ${response.body}");
     if (response.statusCode == 201) {
       String token = response.headers['x-auth-token'].toString();
       return token;

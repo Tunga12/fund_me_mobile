@@ -37,13 +37,12 @@ class FundraiseModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future getPopularFundraises() async {
+  Future getPopularFundraises(int page) async {
     response =
         Response(status: ResponseStatus.LOADING, data: null, message: '');
     try {
       HomeFundraise _homeFundraise =
-          await fundraiseRepository.getPopularFundraises();
-
+          await fundraiseRepository.getPopularFundraises(page);
       response = Response(
           status: ResponseStatus.SUCCESS,
           data: _homeFundraise.fundraises,
@@ -65,7 +64,10 @@ class FundraiseModel extends ChangeNotifier {
           data: null,
           message: "Invalid response from the server");
     } catch (e) {
-      print("fundraise error ${e.toString()}");
+      response = Response(
+          status: ResponseStatus.MISMATCHERROR,
+          data: null,
+          message: "failed to get fundraisers");
     }
   }
 
@@ -74,11 +76,13 @@ class FundraiseModel extends ChangeNotifier {
     response =
         Response(status: ResponseStatus.LOADING, data: null, message: '');
     try {
-      Fundraise _fundraise = await fundraiseRepository.getSingleFundraise(id);
-      response = Response(
-          status: ResponseStatus.SUCCESS, data: _fundraise, message: "success");
+      final _fundraise = await fundraiseRepository.getSingleFundraise(id);
+      if (_fundraise is Fundraise)
+        response = Response(
+            status: ResponseStatus.SUCCESS,
+            data: _fundraise,
+            message: "success");
       fundraise = _fundraise;
-      notifyListeners();
     } on SocketException catch (e) {
       print("Fundraise Error ${e.message}");
       response = Response(
@@ -92,7 +96,10 @@ class FundraiseModel extends ChangeNotifier {
           data: null,
           message: "Invalid response from the server");
     } catch (e) {
-      print("fundraise error ${e.toString()}");
+      response = Response(
+          status: ResponseStatus.MISMATCHERROR,
+          data: null,
+          message: e.toString());
     }
   }
 
@@ -131,17 +138,16 @@ class FundraiseModel extends ChangeNotifier {
       response = Response(
           status: ResponseStatus.MISMATCHERROR,
           data: null,
-          message: "${e.toString()}");
+          message: "failed to create fundraiser");
     }
   }
 
-  Future getUserFundaisers(String token) async {
+  Future getUserFundaisers(String token, int page) async {
     response =
         Response(status: ResponseStatus.LOADING, data: null, message: '');
     try {
       HomeFundraise _homeFundraise =
-          await fundraiseRepository.getUserFundaisers(token);
-
+          await fundraiseRepository.getUserFundaisers(token, page);
       response = Response(
           status: ResponseStatus.SUCCESS,
           data: _homeFundraise.fundraises,
@@ -163,7 +169,10 @@ class FundraiseModel extends ChangeNotifier {
           data: null,
           message: "Invalid response from the server");
     } catch (e) {
-      print("fundraise error ${e.toString()}");
+      response = Response(
+          status: ResponseStatus.MISMATCHERROR,
+          data: null,
+          message: "failed to fetch your fundraisers.");
     }
   }
 
@@ -203,7 +212,7 @@ class FundraiseModel extends ChangeNotifier {
       response = Response(
           status: ResponseStatus.MISMATCHERROR,
           data: null,
-          message: "${e.toString()}");
+          message: "failed to update");
     }
   }
 
@@ -246,12 +255,12 @@ class FundraiseModel extends ChangeNotifier {
   }
 
   // get all fundraises for a member
-  Future getMemberFundrases(String token) async {
+  Future getMemberFundrases(String token, int page) async {
     response =
         Response(status: ResponseStatus.LOADING, data: null, message: '');
     try {
       HomeFundraise _homeFundraise =
-          await fundraiseRepository.getMemberFundrases(token);
+          await fundraiseRepository.getMemberFundrases(token, page);
 
       response = Response(
           status: ResponseStatus.SUCCESS,
@@ -274,7 +283,46 @@ class FundraiseModel extends ChangeNotifier {
           data: null,
           message: "Invalid response from the server");
     } catch (e) {
-      print("fundraise error ${e.toString()}");
+      response = Response(
+          data: null,
+          status: ResponseStatus.MISMATCHERROR,
+          message: 'Unable to load');
+    }
+  }
+
+  // search fundraises
+  Future searchFundraises(String title, int pageNumber) async {
+    print("searched title is $title");
+    try {
+      response =
+          Response(status: ResponseStatus.LOADING, data: '', message: '');
+      final _fundraiseResponse =
+          await fundraiseRepository.searchFundraises(title, pageNumber);
+      print('search data is $_fundraiseResponse');
+      print("${_fundraiseResponse is HomeFundraise}");
+      if (_fundraiseResponse is HomeFundraise)
+        response = Response(
+            status: ResponseStatus.SUCCESS,
+            data: _fundraiseResponse,
+            message: 'successfully searched');
+    } on SocketException catch (e) {
+      print("Socket Exception ${e.message}");
+      response = Response(
+          status: ResponseStatus.CONNECTIONERROR,
+          data: null,
+          message: "No internet connection");
+    } on FormatException catch (e) {
+      print('Format exception ${e.message}');
+      response = Response(
+          status: ResponseStatus.FORMATERROR,
+          data: null,
+          message: "Invalid response from the server");
+    } catch (e) {
+      print("update error ${e.toString()}");
+      response = Response(
+          status: ResponseStatus.MISMATCHERROR,
+          data: null,
+          message: "unable to search data");
     }
   }
 

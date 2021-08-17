@@ -68,7 +68,7 @@ class UpdatesView extends StatelessWidget {
                                 Fluttertoast.showToast(
                                     msg: "Successfully deleted");
                                 Navigator.of(context).pushNamedAndRemoveUntil(
-                                    HomePage.routeName, (route) => false);
+                                    HomePage.routeName, (route) => false, arguments: 2);
                               } else {
                                 Navigator.of(context).pop();
                                 authShowDialog(

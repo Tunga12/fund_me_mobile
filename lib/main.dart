@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:crowd_funding_app/Screens/welcom_page.dart';
 import 'package:crowd_funding_app/config/utils/routes.dart';
 import 'package:crowd_funding_app/constants/colors.dart';
 import 'package:crowd_funding_app/services/data_provider/category.dart';
@@ -171,18 +172,20 @@ class CrowdFundingApp extends StatelessWidget {
         onGenerateRoute: AppRoute.generateRoute,
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-            primarySwatch: MaterialColor(0xFF00B860, color),
-            primaryColor: MaterialColor(0xFF00B860, color),
-            accentColor: MaterialColor(0xFF08B868, color_two),
-            backgroundColor: Colors.white,
-            secondaryHeaderColor: Colors.grey[800],
-            buttonColor: Colors.amber[800],
-            appBarTheme: AppBarTheme(color: Colors.white),
-            textTheme: TextTheme(
-                bodyText1: TextStyle(color: Colors.grey, fontSize: 16.0),
-                bodyText2: TextStyle(
-                    color: MaterialColor(0xFF08B868, color_two),
-                    fontWeight: FontWeight.bold))),
+          primarySwatch: MaterialColor(0xFF00B860, color),
+          primaryColor: MaterialColor(0xFF00B860, color),
+          accentColor: MaterialColor(0xFF08B868, color_two),
+          backgroundColor: Colors.white,
+          secondaryHeaderColor: Colors.grey[800],
+          buttonColor: Colors.amber[800],
+          appBarTheme: AppBarTheme(color: Colors.white),
+          textTheme: TextTheme(
+            bodyText1: TextStyle(color: Colors.grey, fontSize: 16.0),
+            bodyText2: TextStyle(
+                color: MaterialColor(0xFF08B868, color_two),
+                fontWeight: FontWeight.bold),
+          ),
+        ),
       ),
     );
   }

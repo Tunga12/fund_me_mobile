@@ -25,18 +25,17 @@ class FundraiserTeamMemberPage extends StatelessWidget {
             Container(
                 child: organizer != null
                     ? Teams(
+                        isOrganizer: true,
                         teamMember: organizer!,
                       )
                     : Container()),
-            Container(
-              padding: EdgeInsets.all(20.0),
-              child: Column(
-                children: teamMembers
-                    .map((team) => Teams(
-                          teamMember: team.member!.userID!,
-                        ))
-                    .toList(),
-              ),
+            Column(
+              children: teamMembers
+                  .map((team) => Teams(
+                        isOrganizer: false,
+                        teamMember: team.member!.userID!,
+                      ))
+                  .toList(),
             ),
           ],
         ),
@@ -46,9 +45,11 @@ class FundraiserTeamMemberPage extends StatelessWidget {
 }
 
 class Teams extends StatelessWidget {
-  Teams({Key? key, required this.teamMember}) : super(key: key);
+  Teams({Key? key, required this.teamMember, required this.isOrganizer})
+      : super(key: key);
 
   User teamMember;
+  final bool isOrganizer;
 
   String fullName = "";
   String avatarChild = "";
@@ -75,7 +76,7 @@ class Teams extends StatelessWidget {
           ),
           title: Text("$fullName"),
           subtitle: Text(
-            "CampaignOrganizer",
+            isOrganizer ? "Campaign Organizer" : "Team member",
             style: labelTextStyle.copyWith(
                 color: Theme.of(context).secondaryHeaderColor.withOpacity(0.5)),
           ),

@@ -11,7 +11,7 @@ class TeamMemberDataProvider {
     required this.httpClient,
   });
 
-  Future<TeamMember> createTeamMember(
+  Future<bool> createTeamMember(
       String email, String token, String fundraiseId) async {
     final response = await httpClient.post(
       Uri.parse(EndPoints.createTeamMember + fundraiseId),
@@ -26,8 +26,8 @@ class TeamMemberDataProvider {
       ),
     );
 
-    if (response.statusCode == 200) {
-      return TeamMember.fromJson(jsonDecode(response.body));
+    if (response.statusCode == 201) {
+      return true;
     } else {
       throw Exception(response.body);
     }
@@ -50,6 +50,18 @@ class TeamMemberDataProvider {
 
     if (response.statusCode == 200) {
       return response.body;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
+  Future<bool> deleteMember(String token, String memberId) async {
+    final response = await httpClient.delete(
+        Uri.parse(EndPoints.teamMember + memberId),
+        headers: <String, String>{'x-auth-token': token});
+
+    if (response.statusCode == 200) {
+      return true;
     } else {
       throw Exception(response.body);
     }

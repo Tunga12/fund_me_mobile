@@ -1,9 +1,13 @@
 import 'package:crowd_funding_app/Models/campaign.dart';
 import 'package:crowd_funding_app/Models/donation.dart';
+import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
+import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/loading_screen.dart';
 import 'package:crowd_funding_app/Screens/popular_fundraise_detail.dart';
 import 'package:crowd_funding_app/Screens/create_fundraiser_home.dart';
+import 'package:crowd_funding_app/Screens/signin_page.dart';
+import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
 import 'package:crowd_funding_app/widgets/campaign_card.dart';
 import 'package:crowd_funding_app/widgets/community_card.dart';
@@ -19,14 +23,36 @@ class HomeBody extends StatefulWidget {
 
 class _HomeBodyState extends State<HomeBody> {
   int counter = 0;
-  List<Campaign> _campaigns = [];
+  List<Fundraise> _campaigns = [];
+  bool _bottomLoading = true;
   ScrollController _campaignScrollController = ScrollController();
-  ScrollController campaignScrollController = ScrollController();
+  // ScrollController campaignScrollController = ScrollController();
+  int _page = 0;
+  Response response =
+      Response(status: ResponseStatus.LOADING, data: '', message: '');
 
   @override
   void initState() {
-    getPopularFundraises();
+    getPopularFundraises(0);
+    getUser();
+    _campaignScrollController.addListener(() {
+      if (_campaignScrollController.position.pixels ==
+          _campaignScrollController.position.maxScrollExtent) {
+        getPopularFundraises(++_page);
+      }
+    });
+
     super.initState();
+  }
+
+  User? _user;
+
+  getUser() async {
+    UserPreference _userPreference = UserPreference();
+    PreferenceData preferenceData = await _userPreference.getUserInfromation();
+    setState(() {
+      _user = preferenceData.data;
+    });
   }
 
   @override
@@ -34,30 +60,51 @@ class _HomeBodyState extends State<HomeBody> {
     super.dispose();
   }
 
-  getPopularFundraises() async {
+  getPopularFundraises(int page) async {
+    setState(() {
+      _bottomLoading = true;
+    });
     await Future.delayed(
       Duration(milliseconds: 1),
-      () => context.read<FundraiseModel>().getPopularFundraises(),
+      () => Provider.of<FundraiseModel>(context, listen: false)
+          .getPopularFundraises(page),
     );
+
+    setState(() {
+       response = Provider.of<FundraiseModel>(context, listen: false).response;
+      List<Fundraise> _response =
+          Provider.of<FundraiseModel>(context, listen: false)
+              .homeFundraise
+              .fundraises!;
+      _campaigns.addAll(_response);
+      _bottomLoading = false;
+    });
   }
+
+ 
 
   @override
   Widget build(BuildContext context) {
     // fetchFundraise();
-    final value = Provider.of<FundraiseModel>(context);
 
-    if (value.response.status == ResponseStatus.LOADING) {
+    if (response.status == ResponseStatus.LOADING) {
       return LoadingScreen();
-    } else if (value.response.status == ResponseStatus.CONNECTIONERROR) {
+    } else if (response.status == ResponseStatus.CONNECTIONERROR) {
       return ResponseAlert(
-        value.response.message,
+        response.message,
         status: ResponseStatus.CONNECTIONERROR,
-        retry: () => getPopularFundraises(),
+        retry: () => getPopularFundraises(_page),
       );
-    } else if (value.response.status == ResponseStatus.FORMATERROR) {
-      return ResponseAlert(value.response.message);
+    } else if (response.status == ResponseStatus.FORMATERROR) {
+      return ResponseAlert(response.message);
+    } else if (response.status == ResponseStatus.MISMATCHERROR) {
+      return ResponseAlert(
+        response.message,
+        retry: () => getPopularFundraises(_page),
+        status: ResponseStatus.MISMATCHERROR,
+      );
     } else {
-      final _fundraises = value.homeFundraise.fundraises;
+      final _fundraises = _campaigns;
       return Scrollbar(
         controller: _campaignScrollController,
         isAlwaysShown: true,
@@ -85,11 +132,15 @@ class _HomeBodyState extends State<HomeBody> {
                               vertical: 20.0, horizontal: 50.0),
                           backgroundColor: Theme.of(context).indicatorColor),
                       onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => CreateFundraiserHome(),
-                          ),
-                        );
+                        if (_user != null) {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => CreateFundraiserHome(),
+                            ),
+                          );
+                        } else {
+                          Navigator.of(context).pushNamed(SigninPage.routeName);
+                        }
                       },
                       child: Text(
                         "Start a GoFundMe",
@@ -134,7 +185,7 @@ class _HomeBodyState extends State<HomeBody> {
                   primary: true,
                   shrinkWrap: true,
                   physics: ClampingScrollPhysics(),
-                  itemCount: _fundraises!.length,
+                  itemCount: _fundraises.length,
                   itemBuilder: (_, index) {
                     return GestureDetector(
                       onTap: () {
@@ -148,6 +199,7 @@ class _HomeBodyState extends State<HomeBody> {
                         );
                       },
                       child: CampaignCard(
+                        fundraiseId: _fundraises[index].id!,
                         image: _fundraises[index].image!,
                         donation: _fundraises[index].donations!.length > 0
                             ? _fundraises[index].donations![0]
@@ -160,6 +212,13 @@ class _HomeBodyState extends State<HomeBody> {
                     );
                   }),
             ),
+            if (_bottomLoading)
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 10.0),
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              )
           ],
         ),
       );

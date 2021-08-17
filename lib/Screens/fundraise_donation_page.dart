@@ -1,5 +1,6 @@
 import 'package:crowd_funding_app/Models/donation.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
+import 'package:crowd_funding_app/widgets/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:jiffy/jiffy.dart';
 
@@ -74,7 +75,7 @@ class FundraiseDonation extends StatelessWidget {
                 backgroundColor:
                     Theme.of(context).secondaryHeaderColor.withOpacity(0.5),
                 child: Text(
-                  "$avatarText",
+                  donation.isAnonymous! ? "A" : "$avatarText",
                   style: bodyTextStyle.copyWith(
                       color: Theme.of(context).backgroundColor),
                 ),
@@ -88,7 +89,7 @@ class FundraiseDonation extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        "$fullName",
+                        donation.isAnonymous! ? "Anonymous" : "$fullName",
                         style: bodyTextStyle.copyWith(
                             fontSize: 18.0,
                             color: Theme.of(context).secondaryHeaderColor),
@@ -107,6 +108,9 @@ class FundraiseDonation extends StatelessWidget {
                         fontWeight: FontWeight.w300,
                         color: Theme.of(context).secondaryHeaderColor),
                   ),
+                  if (donation.comment != '')
+                    Container(
+                        child: DescriptionTextWidget(text: donation.comment!)),
                 ],
               ),
             ],

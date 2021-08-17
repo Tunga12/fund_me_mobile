@@ -22,6 +22,7 @@ import 'package:crowd_funding_app/services/provider/fundraise.dart';
 import 'package:crowd_funding_app/widgets/cached_network_image.dart';
 import 'package:crowd_funding_app/widgets/custom_cached_network_image.dart';
 import 'package:crowd_funding_app/widgets/custom_raised_button.dart';
+import 'package:crowd_funding_app/widgets/expandable_content.dart';
 import 'package:crowd_funding_app/widgets/fundraiser_detail_element.dart';
 import 'package:crowd_funding_app/widgets/manage_bottom_bar.dart';
 import 'package:crowd_funding_app/widgets/response_alert.dart';
@@ -168,6 +169,7 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                       child: Container(
                           width: size.width,
                           child: CustomCachedNetworkImage(
+                            isTopBorderd: true,
                             image: image,
                           )),
                     ),
@@ -262,7 +264,15 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                                   color: Theme.of(context).accentColor),
                             ),
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => DonationPage(
+                                  fundraise: _fundraise,
+                                ),
+                              ),
+                            );
+                          },
                           child: Text("Donate now"),
                         ),
                       ),
@@ -304,32 +314,25 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                   height: 10.0,
                 ),
                 FundraiserDetailElements(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => UpdatesView(
-                                loggedInUser: user!,
-                                updates: updates,
-                                token: token!,
-                              )));
-                    },
-                    title: "Update (${updates.length})",
-                    body: updates.isEmpty
-                        ? Text(
-                            "Keep your donor's up-to-date with what's going on with your fundraiser.",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1!
-                                .copyWith(height: 1.8),
-                          )
-                        : Container(
-                            child: Column(
-                              children: updates
-                                  .map((update) => UpdateBody(
-                                        update: update,
-                                      ))
-                                  .toList(),
-                            ),
-                          )),
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => UpdatesView(
+                              loggedInUser: user!,
+                              updates: updates,
+                              token: token!,
+                            )));
+                  },
+                  title: "Update (${updates.length})",
+                  body: updates.isEmpty
+                      ? Text(
+                          "Keep your donor's up-to-date with what's going on with your fundraiser.",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(height: 1.8),
+                        )
+                      : ExpandableContent(updates: updates),
+                ),
                 SizedBox(
                   height: 10.0,
                 ),
@@ -390,18 +393,12 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                         ),
                         Row(
                           children: [
-                            TeamIcons(
-                              user: user,
-                              margin: 0.0,
-                            ),
                             if (user!.id != organizer.id)
                               TeamIcons(
                                 user: organizer,
-                                margin: 0.0,
                               ),
                             if (teams.isNotEmpty)
-                              TeamIcons(
-                                  margin: 0.0, user: teams[0].member!.userID),
+                              TeamIcons(user: teams.first.member!.userID),
                             SizedBox(
                               width: 10.0,
                             ),
@@ -437,24 +434,21 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                               .bodyText1!
                               .copyWith(height: 1.8),
                         )
-                      : Container(),
+                      : Container(
+                          child: Row(
+                            children: donations.length <= 3
+                                ? donations
+                                    .map((donation) =>
+                                        TeamIcons(user: donation.userID))
+                                    .toList()
+                                : donations
+                                    .sublist(0, 3)
+                                    .map((donation) =>
+                                        TeamIcons(user: donation.userID))
+                                    .toList(),
+                          ),
+                        ),
                 ),
-                SizedBox(
-                  height: 10.0,
-                ),
-                FundraiserDetailElements(
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => CommentsPage()));
-                    },
-                    title: "Comments",
-                    body: Text(
-                      "Share your compaigns with those closest to you to get more comments.",
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1!
-                          .copyWith(height: 1.8),
-                    ))
               ]),
             )
           ],
@@ -470,16 +464,13 @@ class TeamIcons extends StatelessWidget {
   const TeamIcons({
     Key? key,
     required this.user,
-    required this.margin,
   }) : super(key: key);
 
   final User? user;
-  final double? margin;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: margin ?? 0.0),
       child: CircleAvatar(
         child: Text(
           "${user!.firstName![0].toUpperCase()}${user!.lastName![0].toUpperCase()}",

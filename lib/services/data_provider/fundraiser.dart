@@ -19,7 +19,8 @@ class FundraiseDataProvider {
       Fundraise fundraise, String token, File image) async {
     print("create token $token");
     http.Response? response;
-    final imageResponse = await getImage(token, image).then((image) async {
+    final imageResponse = await getImage(token, image).then((imageResp) async {
+      print("the response image is $imageResp");
       response = await httpClient.post(
         Uri.parse(EndPoints.baseURL + '/api/fundraisers'),
         headers: <String, String>{
@@ -28,7 +29,7 @@ class FundraiseDataProvider {
         },
         body: jsonEncode(<String, dynamic>{
           'title': fundraise.title,
-          'image': image,
+          'image': imageResp,
           'goalAmount': fundraise.goalAmount,
           'story': fundraise.story,
           'category': fundraise.category!.categoryID,
@@ -40,11 +41,8 @@ class FundraiseDataProvider {
         }),
       );
     });
-
-    print("create fundraise status ${response!.statusCode}");
-
-    if (response!.statusCode == 201 &&
-        imageResponse.toString().startsWith("http")) {
+    // print("create fundraise status ${response!.statusCode}");
+    if (response!.statusCode == 201) {
       return true;
     } else {
       print("Error happening at ${response!.body}");
@@ -53,16 +51,16 @@ class FundraiseDataProvider {
   }
 
   // Get popular fundraisers
-  Future<HomeFundraise> getPopularFundraises() async {
-    var url = Uri.https(
-        "shrouded-bastion-52038.herokuapp.com", '/api/fundraisers/popular');
+  Future<HomeFundraise> getPopularFundraises(int page) async {
+    var url =
+        Uri.parse(EndPoints.baseURL + '/api/fundraisers/popular/?page=$page');
     final response = await httpClient.get(url);
     if (response.statusCode == 200) {
       final popularFundraises =
           jsonDecode(response.body) as Map<String, dynamic>;
       return HomeFundraise.fromJson(popularFundraises);
     } else {
-      throw Exception("Faild to get popular fundraises");
+      throw Exception(response.body);
     }
   }
 
@@ -76,7 +74,7 @@ class FundraiseDataProvider {
       final singleFundraise = jsonDecode(response.body);
       return Fundraise.fromJson(singleFundraise);
     } else {
-      throw Exception('Failed to get fundraise');
+      throw Exception(response.body);
     }
   }
 
@@ -170,8 +168,9 @@ class FundraiseDataProvider {
   // get all user fundraises
 
   // get fundraisers created by a user
-  Future<HomeFundraise> getUserFundaisers(String token) async {
-    var url = Uri.parse(EndPoints.baseURL + "/api/fundraisers/user");
+  Future<HomeFundraise> getUserFundaisers(String token, int page) async {
+    var url =
+        Uri.parse(EndPoints.baseURL + "/api/fundraisers/user/?page=$page");
     print(url);
     final response = await httpClient.get(url, headers: <String, String>{
       'x-auth-token': token,
@@ -186,8 +185,8 @@ class FundraiseDataProvider {
   }
 
   // get fundraisers created by a member
-  Future<HomeFundraise> getMemberFundrases(String token) async {
-    var url = Uri.parse(EndPoints.teamMemberFundraises);
+  Future<HomeFundraise> getMemberFundrases(String token, int page) async {
+    var url = Uri.parse(EndPoints.teamMemberFundraises + "?page=$page");
     print(url);
     final response = await httpClient.get(url, headers: <String, String>{
       'x-auth-token': token,
@@ -196,6 +195,19 @@ class FundraiseDataProvider {
       final popularFundraises =
           jsonDecode(response.body) as Map<String, dynamic>;
       return HomeFundraise.fromJson(popularFundraises);
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
+  // search fundraiser
+  Future<HomeFundraise> searchFundraises(String title, int pageNumber) async {
+    final response = await httpClient.get(
+      Uri.parse(EndPoints.searchURL + title + "/?page=$pageNumber"),
+    );
+
+    if (response.statusCode == 200) {
+      return HomeFundraise.fromJson(jsonDecode(response.body));
     } else {
       throw Exception(response.body);
     }

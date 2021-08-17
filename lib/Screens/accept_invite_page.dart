@@ -5,12 +5,12 @@ import 'package:crowd_funding_app/Screens/signin_page.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/constants/actions.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
-import 'package:crowd_funding_app/services/provider/team_add_deep_link.dart';
 import 'package:crowd_funding_app/services/provider/team_member.dart';
-import 'package:crowd_funding_app/widgets/response_alert.dart';
+import 'package:crowd_funding_app/widgets/authdialog.dart';
+import 'package:crowd_funding_app/widgets/loading_progress.dart';
 import 'package:crowd_funding_app/widgets/verify_invitation_button.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class AcceptTeamInvitation extends StatefulWidget {
@@ -43,9 +43,11 @@ class AcceptTeamInvitationState extends State<AcceptTeamInvitation> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.data);
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
+      appBar: AppBar(title: Text("Accept invitaion")),
       body: Container(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -70,18 +72,23 @@ class AcceptTeamInvitationState extends State<AcceptTeamInvitation> {
           Center(
             child: VerifyButton(
               onPressed: () async {
-                if (user != null) {
-                  String fundraiseId = widget.data.substring(25);
-
-                  acceptInvitation(context, user!.email!, token!, fundraiseId);
+                String fundraiseId = widget.data;
+                await context
+                    .read<TeamMemberModel>()
+                    .verifyTeamMember(true, token!, fundraiseId);
+                Response response = context.read<TeamMemberModel>().response;
+                if (response.status == ResponseStatus.SUCCESS) {
+                  Fluttertoast.showToast(
+                      msg: "You accepted your invitation",
+                      toastLength: Toast.LENGTH_LONG);
+                  Navigator.of(context)
+                      .pushReplacementNamed(HomePage.routeName, arguments: 2);
+                } else if (response.status == ResponseStatus.LOADING) {
+                  loadingProgress(context);
                 } else {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                      builder: (context) => SigninPage(
-                        url: widget.data.substring(25),
-                      ),
-                    ),
-                  );
+                  Navigator.of(context).pop();
+                  authShowDialog(context, Text(response.message),
+                      error: true, close: true);
                 }
               },
               title: "Accept",
@@ -94,8 +101,21 @@ class AcceptTeamInvitationState extends State<AcceptTeamInvitation> {
             child: VerifyButton(
               title: "Decline",
               onPressed: () async {
-                String fundraiseId = widget.data.substring(25);
-                declineInvitaion(context, user!.email!, token!, fundraiseId);
+                String fundraiseId = widget.data;
+                await context
+                    .read<TeamMemberModel>()
+                    .verifyTeamMember(false, token!, fundraiseId);
+                Response response = context.read<TeamMemberModel>().response;
+                if (response.status == ResponseStatus.SUCCESS) {
+                  Navigator.of(context)
+                      .pushReplacementNamed(HomePage.routeName, arguments: 2);
+                } else if (response.status == ResponseStatus.LOADING) {
+                  loadingProgress(context);
+                } else {
+                  Navigator.of(context).pop();
+                  authShowDialog(context, Text(response.message),
+                      error: true, close: true);
+                }
               },
             ),
           )

@@ -10,8 +10,14 @@ class UserNotificationRepository {
     return await dataProvider.getUserNotifications(token);
   }
 
+  // update notification mark as viewd
+  Future<bool> updateNotificationi(
+      UserNotification notification, String token) async {
+    return await dataProvider.updateNotificaton(notification, token);
+  }
+
   // Delete notification
-  Future<void> deleteNotification(String id) async {
-    return await dataProvider.deleteNotification(id);
+  Future<bool> deleteNotification(String id, String token) async {
+    return await dataProvider.deleteNotification(id, token);
   }
 }

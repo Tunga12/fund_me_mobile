@@ -133,7 +133,7 @@ class _SignupPageState extends State<SignupPage> {
                       TextFormField(
                         keyboardType: TextInputType.phone,
                         onSaved: (value) {
-                          _userInfo['phone'] = value;
+                          _userInfo['phoneNumber'] = value;
                         },
                         validator: (value) {
                           if (value!.isEmpty) {
@@ -228,11 +228,11 @@ class _SignupPageState extends State<SignupPage> {
                             if (_formKey.currentState!.validate()) {
                               _formKey.currentState!.save();
                               print("Logging...");
-
                               User user = User(
                                 firstName: _userInfo['firstName'],
                                 lastName: _userInfo['lastName'],
                                 email: _userInfo['email'],
+                                phoneNumber: _userInfo['phoneNumber'],
                                 password: _userInfo['password'],
                               );
                               print("Signup user $user");
@@ -240,10 +240,6 @@ class _SignupPageState extends State<SignupPage> {
                               loadingProgress(context);
                               await context.read<AuthModel>().signupUser(user);
                               if (model.signupStatus == AuthStatus.REGISTERED) {
-                                print('signup user $user');
-                                if (widget.url != null)
-                                  acceptInvitation(context, user.email!,
-                                      model.response.data, widget.url!);
                                 await context.read<UserModel>().getUser(
                                     model.response.data, user.password!);
                                 Response response =

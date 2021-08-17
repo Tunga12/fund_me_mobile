@@ -60,7 +60,8 @@ class _UpdateTextViewState extends State<UpdateTextView> {
                           msg: "Successfully Updated!",
                           toastLength: Toast.LENGTH_LONG);
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                          HomePage.routeName, (route) => false);
+                          HomePage.routeName, (route) => false,
+                          arguments: 2);
                     }
                   }
                 },

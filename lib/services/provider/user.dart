@@ -56,7 +56,39 @@ class UserModel extends ChangeNotifier {
         Response(status: ResponseStatus.LOADING, data: null, message: '');
 
     try {
-      User userReponse = await userRepository.updateUser(user, token);
+      final userReponse = await userRepository.updateUser(user, token);
+      print(userReponse is User);
+      if (userReponse is User)
+        response = Response(
+            status: ResponseStatus.SUCCESS,
+            data: userReponse,
+            message: "Success");
+    } on SocketException catch (e) {
+      response = Response(
+          status: ResponseStatus.CONNECTIONERROR,
+          data: null,
+          message: "No internet connection");
+    } on FormatException catch (e) {
+      response = Response(
+          status: ResponseStatus.FORMATERROR,
+          data: null,
+          message: "Invalid response from the server");
+    } catch (e) {
+      print(e.toString());
+      response = Response(
+          status: ResponseStatus.MISMATCHERROR,
+          data: null,
+          message: "unable to update user");
+    }
+  }
+
+  // delete user
+  // get user informations
+  Future<void> deleteUser(String token) async {
+    try {
+      response =
+          Response(status: ResponseStatus.LOADING, data: null, message: '');
+      String userReponse = await userRepository.deleteuser(token);
       response = Response(
           status: ResponseStatus.SUCCESS,
           data: userReponse,
@@ -75,22 +107,50 @@ class UserModel extends ChangeNotifier {
       response = Response(
           status: ResponseStatus.MISMATCHERROR,
           data: null,
-          message: "failed to fetch notifications");
+          message: e.toString());
     }
   }
 
-  // delete user
-  // get user informations
-  Future<void> deleteUser(String token) async {
-    response =
-        Response(status: ResponseStatus.LOADING, data: null, message: '');
-
+  // forgot password
+  Future forgotPassword(String email) async {
     try {
-      String userReponse = await userRepository.deleteuser(token);
+      response =
+          Response(status: ResponseStatus.LOADING, data: null, message: '');
+      final userReponse = await userRepository.forgotPassword(email);
+      if (userReponse)
+        response = Response(
+            status: ResponseStatus.SUCCESS,
+            data: userReponse,
+            message: "Success");
+    } on SocketException catch (e) {
       response = Response(
-          status: ResponseStatus.SUCCESS,
-          data: userReponse,
-          message: "Success");
+          status: ResponseStatus.CONNECTIONERROR,
+          data: null,
+          message: "No internet connection");
+    } on FormatException catch (e) {
+      response = Response(
+          status: ResponseStatus.FORMATERROR,
+          data: null,
+          message: "Invalid response from the server");
+    } catch (e) {
+      response = Response(
+          status: ResponseStatus.MISMATCHERROR,
+          data: null,
+          message: e.toString());
+    }
+  }
+
+  // reset password
+  Future resetPassword(String password, String userId) async {
+    try {
+      response =
+          Response(status: ResponseStatus.LOADING, data: null, message: '');
+      final userReponse = await userRepository.resetPassword(password, userId);
+      if (userReponse is User)
+        response = Response(
+            status: ResponseStatus.SUCCESS,
+            data: userReponse,
+            message: "Success");
     } on SocketException catch (e) {
       response = Response(
           status: ResponseStatus.CONNECTIONERROR,

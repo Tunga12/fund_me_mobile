@@ -65,7 +65,9 @@ class _ManageBottomNavBarState extends State<ManageBottomNavBar> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => SharePage(),
+              builder: (context) => SharePage(
+                fundraise: widget.fundraise.id!,
+              ),
             ),
           );
           return;
@@ -98,7 +100,9 @@ class _ManageBottomNavBarState extends State<ManageBottomNavBar> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => SharePage(),
+              builder: (context) => SharePage(
+                fundraise: widget.fundraise.id!,
+              ),
             ),
           );
           return;

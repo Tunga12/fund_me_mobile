@@ -15,10 +15,11 @@ class UserNotificationDataProvider {
   Future<List<UserNotification>> getUserNotifications(String token) async {
     print(token);
     final response = await httpClient.get(
-        Uri.parse(
-          EndPoints.notificaions + "user",
-        ),
-        headers: <String, String>{'x-auth-token': token});
+      Uri.parse(
+        EndPoints.notificaions + "user",
+      ),
+      headers: <String, String>{'x-auth-token': token},
+    );
 
     if (response.statusCode == 200) {
       final notifications = jsonDecode(response.body) as List;
@@ -32,16 +33,35 @@ class UserNotificationDataProvider {
     }
   }
 
-  // Delete notification
-  Future<void> deleteNotification(String id) async {
-    final response = await httpClient.delete(
-      Uri.parse(
-        EndPoints.notificaions + id,
-      ),
+  // update Notification mark as viewed
+  Future<bool> updateNotificaton(
+      UserNotification notification, String token) async {
+    final response = await httpClient.put(
+      Uri.parse(EndPoints.notificaions + notification.id!),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+        'x-auth-token': token
+      },
     );
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print("Update exception ${response.body}");
+      throw Exception(response.body);
+    }
+  }
 
-    if (response.statusCode != 204) {
-      throw Exception('Failed to delete data');
+  // Delete notification
+  Future<bool> deleteNotification(String id, String token) async {
+    final response = await httpClient.delete(
+        Uri.parse(
+          EndPoints.notificaions + id,
+        ),
+        headers: <String, String>{'x-auth-token': token});
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception(response.body);
     }
   }
 }

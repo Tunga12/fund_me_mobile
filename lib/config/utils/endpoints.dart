@@ -63,4 +63,16 @@ class EndPoints {
 
   // create withdrawal
   static const String withdrawalUrl = baseURL + "/api/withdrawal/";
+
+  // search url
+  static const String searchURL = baseURL + '/api/fundraisers/title/';
+
+  // forget password
+  static const String forgotPasswordURL = baseURL + '/api/users/forget/';
+
+  // reset password
+  static const String resetPasswordURL = baseURL + '/api/users/reset/';
+
+  // paypal url
+  static const String paypalUrl = baseURL + "/donation/pay/";
 }

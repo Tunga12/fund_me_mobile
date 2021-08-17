@@ -168,6 +168,7 @@ class _EditPageState extends State<EditPage> {
                     height: size.height * 0.35,
                     child: _image == null
                         ? CustomCachedNetworkImage(
+                          isTopBorderd: false,
                             image: widget.fundraise.image!)
                         : Image.file(
                             _image!,

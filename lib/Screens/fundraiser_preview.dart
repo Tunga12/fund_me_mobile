@@ -1,5 +1,6 @@
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/fundraiser_details.dart';
+import 'package:crowd_funding_app/Screens/share_page.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/widgets/continue_button.dart';
@@ -88,7 +89,11 @@ class FundraiserPreview extends StatelessWidget {
                       title: "Share",
                       backgroundColor:
                           Theme.of(context).buttonColor.withAlpha(100),
-                      onPressed: () {},
+                      onPressed: () {
+                        // Navigator.of(context).push(MaterialPageRoute(
+                        //     builder: (context) =>
+                        //         SharePage(fundraise: '123456789')));
+                      },
                       leadingChild: Container(
                           padding: EdgeInsets.all(3.0),
                           decoration: BoxDecoration(
@@ -104,7 +109,11 @@ class FundraiserPreview extends StatelessWidget {
                     ),
                     PreviewTextButton(
                       title: "Donate now",
-                      onPressed: () {},
+                      onPressed: () {
+                        // Navigator.of(context).push(MaterialPageRoute(
+                        //     builder: (context) =>
+                        //         SharePage(fundraise: '123456789')));
+                      },
                       leadingChild: Container(
                         padding: EdgeInsets.all(3.0),
                         decoration: BoxDecoration(

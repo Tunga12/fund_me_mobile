@@ -1,5 +1,6 @@
 import 'package:crowd_funding_app/Models/notification.dart';
 import 'package:crowd_funding_app/Models/status.dart';
+import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:crowd_funding_app/Screens/loading_screen.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
@@ -21,6 +22,10 @@ class Notifications extends StatefulWidget {
 class _NotificationsState extends State<Notifications> {
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       new GlobalKey<RefreshIndicatorState>();
+  User? _user;
+  String? _token;
+  Response _value =
+      Response(status: ResponseStatus.LOADING, data: null, message: '');
   @override
   void initState() {
     getNotificaions();
@@ -30,9 +35,15 @@ class _NotificationsState extends State<Notifications> {
   getNotificaions() async {
     UserPreference userPreference = UserPreference();
     PreferenceData token = await userPreference.getUserToken();
-    await context
-        .read<UserNotificationModel>()
+    PreferenceData user = await userPreference.getUserInfromation();
+    await Provider.of<UserNotificationModel>(context, listen: false)
         .getAllUserNotifications(token.data);
+    Response _valueResponse = context.read<UserNotificationModel>().response;
+    setState(() {
+      _token = token.data;
+      _user = user.data;
+      _value = _valueResponse;
+    });
   }
 
   Future _refresh() async {
@@ -41,23 +52,23 @@ class _NotificationsState extends State<Notifications> {
 
   @override
   Widget build(BuildContext context) {
-    // getNotificaions();
-    Response value = context.watch<UserNotificationModel>().response;
-    print("screen data ${value.status}");
-
-    if (value.status == ResponseStatus.LOADING) {
+    if (_value.status == ResponseStatus.LOADING) {
       return LoadingScreen();
-    } else if (value.status == ResponseStatus.CONNECTIONERROR) {
+    } else if (_value.status == ResponseStatus.CONNECTIONERROR) {
       return ResponseAlert(
-        value.message,
+        _value.message,
         status: ResponseStatus.CONNECTIONERROR,
         retry: () => getNotificaions(),
       );
-    } else if (value.status == ResponseStatus.FORMATERROR) {
-      return ResponseAlert(value.message);
+    } else if (_value.status == ResponseStatus.MISMATCHERROR) {
+      return ResponseAlert(
+        _value.message,
+        retry: () => getNotificaions(),
+        status: ResponseStatus.MISMATCHERROR,
+      );
     } else {
-      print("Notification ${value.data}");
-      List<UserNotification> userNotificatons = value.data ?? [];
+      print("Notification ${_value.data}");
+      List<UserNotification> userNotificatons = _value.data ?? [];
       if (userNotificatons.isEmpty) {
         return EmptyBody(
           onPressed: () {
@@ -73,12 +84,21 @@ class _NotificationsState extends State<Notifications> {
       return RefreshIndicator(
         key: _refreshIndicatorKey,
         onRefresh: _refresh,
-        child: ListView.builder(
-          itemCount: userNotificatons.length,
-          itemBuilder: (context, index) {
-            return NotficationItem(
-              content: userNotificatons[index].content);
-          },
+        child: Container(
+          color: Theme.of(context).backgroundColor.withOpacity(0.8),
+          child: ListView.builder(
+            itemCount: userNotificatons.length,
+            itemBuilder: (context, index) {
+              return NotficationItem(
+                notifyCallback: () {
+                  getNotificaions();
+                },
+                user: _user!,
+                token: _token!,
+                notification: userNotificatons[index],
+              );
+            },
+          ),
         ),
       );
     }

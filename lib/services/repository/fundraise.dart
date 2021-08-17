@@ -17,8 +17,8 @@ class FundraiseRepository {
   }
 
   // Get popular fundraisers
-  Future<HomeFundraise> getPopularFundraises() async {
-    return await dataProvider.getPopularFundraises();
+  Future<HomeFundraise> getPopularFundraises(int page) async {
+    return await dataProvider.getPopularFundraises(page);
   }
 
   // Get single fundraise
@@ -38,12 +38,17 @@ class FundraiseRepository {
   }
 
   // get all fundraises created by user
-  Future<HomeFundraise> getUserFundaisers(String token) async {
-    return await dataProvider.getUserFundaisers(token);
+  Future<HomeFundraise> getUserFundaisers(String token, int page) async {
+    return await dataProvider.getUserFundaisers(token, page);
   }
 
   // get all fundraises created by user
-  Future<HomeFundraise> getMemberFundrases(String token) async {
-    return await dataProvider.getMemberFundrases(token);
+  Future<HomeFundraise> getMemberFundrases(String token, int page) async {
+    return await dataProvider.getMemberFundrases(token, page);
+  }
+
+  // search fundraise
+  Future<HomeFundraise> searchFundraises(String title, int pageNumber) async {
+    return await dataProvider.searchFundraises(title, pageNumber);
   }
 }

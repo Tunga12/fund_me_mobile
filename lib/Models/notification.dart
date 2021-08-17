@@ -1,47 +1,63 @@
 class UserNotification {
   String? id;
-  List<String>? userIDs;
-  String fundraiser;
-  String type;
-  String content;
+  String? fundraiser;
+  String? type;
+  String? title;
+  String? content;
+  List<String>? viewed;
+  List<String>? recipients;
+  String? date;
 
   UserNotification({
     this.id,
-    this.userIDs,
-    required this.fundraiser,
-    required this.type,
-    required this.content,
+    this.fundraiser,
+    this.type,
+    this.content,
+    this.viewed,
+    this.recipients,
+    this.date,
+    this.title,
   });
 
   // Parsing the json object to Notification object
   factory UserNotification.fromJson(Map<String, dynamic> data) {
     String id = data['_id'];
-    List<String> userIDs = data['userIds'];
-    String fundraiser = data['fundraiser'];
-    String type = data['type'];
+    String fundraiser = data['target'];
+    String type = data['notificationType'];
     String content = data['content'];
+    String date = data['date'];
+    List viewed = data['viewed'];
+    List recipients = data['recipients'];
+    String title = data['title'];
 
     return UserNotification(
-      userIDs: userIDs,
       fundraiser: fundraiser,
       type: type,
       content: content,
+      title: title,
+      date: date,
+      viewed: viewed.map((id) => id.toString()).toList(),
+      recipients: recipients.map((id) => id.toString()).toList(),
+      id: id,
     );
   }
 
   // Converting Notification object to map format.
   Map<String, dynamic> toJson() {
     return {
-      'userIds': userIDs,
       'fundraiser': fundraiser,
       'type': type,
       'content': content,
+      'recipients': recipients ?? [],
+      'viewed': viewed ?? [],
+      'notificationType': type,
+      'target': fundraiser,
     };
   }
 
   // The string representaion of the Notification object.
   @override
   String toString() {
-    return 'Notification( userIDs : $userIDs,fundraiser : $fundraiser, type : $toString(),content : $content,)';
+    return 'Notification(fundraiser : $fundraiser, type : $type,content : $content,)';
   }
 }

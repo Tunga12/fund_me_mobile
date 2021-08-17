@@ -17,6 +17,9 @@ class YourDonationDetail extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(
+            height: 20.0,
+          ),
           Text("Your donation",
               style: titleTextStyle.copyWith(
                   fontSize: 18.0,

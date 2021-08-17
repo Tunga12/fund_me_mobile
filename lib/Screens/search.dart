@@ -1,13 +1,10 @@
-import 'package:crowd_funding_app/Models/category.dart';
 import 'package:crowd_funding_app/Models/donation.dart';
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Screens/loading_screen.dart';
 import 'package:crowd_funding_app/Screens/popular_fundraise_detail.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
-import 'package:crowd_funding_app/services/provider/category.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
-import 'package:crowd_funding_app/widgets/authdialog.dart';
 import 'package:crowd_funding_app/widgets/campaign_card.dart';
 import 'package:crowd_funding_app/widgets/response_alert.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +20,11 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   bool textFieldIsFocused = true;
   TextEditingController searchController = TextEditingController();
+  ScrollController _campaignScrollController = ScrollController();
+  Response _response =
+      Response(status: ResponseStatus.SUCCESS, data: null, message: '');
+  String _searchTitle = '';
+  List<Fundraise> _searchedFundraises = [];
 
   toggleFocused() {
     setState(
@@ -32,25 +34,65 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
+  int _pageNumber = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _campaignScrollController.addListener(() async {
+      if (_campaignScrollController.position.pixels ==
+          _campaignScrollController.position.maxScrollExtent) {
+        _loadMore(_searchTitle, ++_pageNumber);
+      }
+    });
+  }
+
+  bool _bottomLoading = false;
+
+  bool _searching = false;
+
+  _searchFundraises(String title) async {
+    setState(() {
+      _searching = true;
+    });
+    await context.read<FundraiseModel>().searchFundraises(title, 0);
+    Response response = context.read<FundraiseModel>().response;
+    setState(() {
+      _searching = false;
+      _response = response;
+      _searchedFundraises.addAll(response.data.fundraises);
+    });
+  }
+
+  _loadMore(String title, int page) async {
+    setState(() {
+      _bottomLoading = true;
+    });
+    await context.read<FundraiseModel>().searchFundraises(_searchTitle, page);
+    Response _response = context.read<FundraiseModel>().response;
+    setState(() {
+      _searchedFundraises.addAll(_response.data.fundraises);
+      _bottomLoading = true;
+    });
+  }
+
   bool search = false;
-  List<Fundraise> searchFundraises = [];
+
   @override
   Widget build(BuildContext context) {
-    print('search $search');
-    final size = MediaQuery.of(context).size;
-    Response response = context.watch<CategoryModel>().response;
     FocusScopeNode currentFocus = FocusScope.of(context);
 
-    HomeFundraise homeFundraise = context.watch<FundraiseModel>().homeFundraise;
-    Response homeResponse = context.watch<FundraiseModel>().response;
-
-    if (response.status == ResponseStatus.CONNECTIONERROR &&
-        homeResponse.status == ResponseStatus.CONNECTIONERROR) {
-      return ResponseAlert(response.message);
-    } else if (response.status == ResponseStatus.LOADING &&
-        homeResponse.status == ResponseStatus.LOADING) {
+    if (_searching) {
       return LoadingScreen();
-    } else {
+    } else if (_response.status == ResponseStatus.CONNECTIONERROR) {
+      return ResponseAlert(
+        _response.message,
+        retry: () => _searchFundraises(_searchTitle),
+        status: ResponseStatus.CONNECTIONERROR,
+      );
+    } else if (_response.status == ResponseStatus.SUCCESS) {
+      List<Fundraise> searchFundraises = _searchedFundraises;
+
       return Scaffold(
         appBar: AppBar(
           title: Row(
@@ -64,13 +106,10 @@ class _SearchPageState extends State<SearchPage> {
                   onSubmitted: (value) {
                     print("the value is $value");
                     setState(() {
-                      searchFundraises = homeFundraise.fundraises!
-                          .where((fundraise) => fundraise.title!
-                              .toLowerCase()
-                              .contains(value.toLowerCase()))
-                          .toList();
                       search = true;
+                      _searchTitle = value;
                     });
+                    _searchFundraises(value);
                   },
                   controller: searchController,
                   decoration: InputDecoration(
@@ -124,39 +163,59 @@ class _SearchPageState extends State<SearchPage> {
                 : Container(
                     color:
                         Theme.of(context).secondaryHeaderColor.withOpacity(0.5),
-                    child: ListView.builder(
-                        primary: true,
-                        shrinkWrap: true,
-                        physics: ClampingScrollPhysics(),
-                        itemCount: searchFundraises.length,
-                        itemBuilder: (_, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              String id = searchFundraises[index].id!;
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => CampaignDetail(
-                                    id: id,
-                                  ),
+                    child: Scrollbar(
+                      controller: _campaignScrollController,
+                      isAlwaysShown: true,
+                      child: ListView(
+                        controller: _campaignScrollController,
+                        children: [
+                          ListView.builder(
+                            primary: true,
+                            shrinkWrap: true,
+                            physics: ClampingScrollPhysics(),
+                            itemCount: searchFundraises.length,
+                            itemBuilder: (_, index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  String id = searchFundraises[index].id!;
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => CampaignDetail(
+                                        id: id,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: CampaignCard(
+                                  fundraiseId: searchFundraises[index].id!,
+                                  image: searchFundraises[index].image!,
+                                  donation:
+                                      searchFundraises[index].donations!.length >
+                                              0
+                                          ? searchFundraises[index].donations![0]
+                                          : Donation(),
+                                  goalAmount: searchFundraises[index].goalAmount!,
+                                  locaion: 'location',
+                                  title: searchFundraises[index].title as String,
+                                  totalRaised:
+                                      searchFundraises[index].totalRaised!,
                                 ),
                               );
                             },
-                            child: CampaignCard(
-                              image: searchFundraises[index].image!,
-                              donation:
-                                  searchFundraises[index].donations!.length > 0
-                                      ? searchFundraises[index].donations![0]
-                                      : Donation(),
-                              goalAmount: searchFundraises[index].goalAmount!,
-                              locaion: 'location',
-                              title: searchFundraises[index].title as String,
-                              totalRaised: searchFundraises[index].totalRaised!,
-                            ),
-                          );
-                        }),
+                          ),
+                          if (_bottomLoading)
+                            Container(
+                              color: Theme.of(context).backgroundColor,
+                              padding: EdgeInsets.symmetric(vertical: 10.0),
+                              child: Center(
+                                child: CircularProgressIndicator(),
+                              ),
+                            )
+                        ],
+                      ),
+                    ),
                   )
             : SingleChildScrollView(
-                primary: true,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -172,6 +231,12 @@ class _SearchPageState extends State<SearchPage> {
                   ],
                 ),
               ),
+      );
+    } else {
+      return ResponseAlert(
+        _response.message,
+        retry: () => _searchFundraises(_searchTitle),
+        status: ResponseStatus.MISMATCHERROR,
       );
     }
   }

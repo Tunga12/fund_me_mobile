@@ -2,14 +2,19 @@ import 'package:crowd_funding_app/Models/donation.dart';
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Models/user.dart';
-import 'package:crowd_funding_app/Screens/popular_fundraise_detail.dart';
+import 'package:crowd_funding_app/Screens/home_page.dart';
+import 'package:crowd_funding_app/Screens/payment_button.dart';
+import 'package:crowd_funding_app/Screens/web_view.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/services/provider/donation.dart';
+import 'package:crowd_funding_app/widgets/authdialog.dart';
 import 'package:crowd_funding_app/widgets/bank_info.dart';
+import 'package:crowd_funding_app/widgets/comment_box.dart';
 import 'package:crowd_funding_app/widgets/continue_button.dart';
+import 'package:crowd_funding_app/widgets/custom_cached_network_image.dart';
 import 'package:crowd_funding_app/widgets/loading_progress.dart';
-import 'package:crowd_funding_app/widgets/response_alert.dart';
+import 'package:crowd_funding_app/widgets/refered_by.dart';
 import 'package:crowd_funding_app/widgets/your_donation_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -25,11 +30,15 @@ class DonationPage extends StatefulWidget {
 
 class DonationPageState extends State<DonationPage> {
   Map<String, dynamic> _myData = {};
+  String _memberId = '';
   getInformation() async {
     UserPreference userPreference = UserPreference();
     PreferenceData _userData = await userPreference.getUserInfromation();
     User _user = _userData.data;
     setState(() {
+      _memberId = widget.fundraise.teams!.isNotEmpty
+          ? widget.fundraise.teams!.first.member!.id!
+          : '0';
       _myData['email'] = _user.email;
       _myData['firstName'] = _user.firstName;
       _myData['lastName'] = _user.lastName;
@@ -49,12 +58,18 @@ class DonationPageState extends State<DonationPage> {
 
   double _tip = 0.0;
   bool _showDoantionInfo = false;
+  String _comment = 'New donation';
+
+  bool _isAnonymous = false;
 
   @override
   Widget build(BuildContext context) {
+    print(_isAnonymous);
+    print('MemberId');
+    print(_memberId);
     print("data is $_myData");
+    print(_comment);
     _tip = _sliderValue * 0.01;
-
     final size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
@@ -67,13 +82,12 @@ class DonationPageState extends State<DonationPage> {
             child: Column(
               children: [
                 Container(
-                  width: size.width,
-                  child: Image.asset(
-                    "assets/images/image1.png",
-                    fit: BoxFit.fill,
-                    height: size.height * 0.25,
-                  ),
-                ),
+                    width: size.width,
+                    height: size.height * 0.35,
+                    child: CustomCachedNetworkImage(
+                      isTopBorderd: false,
+                      image: widget.fundraise.image!,
+                    )),
                 Container(
                   padding: EdgeInsets.all(20.0),
                   width: size.width,
@@ -110,7 +124,7 @@ class DonationPageState extends State<DonationPage> {
                             ),
                             TextSpan(
                               text:
-                                  " ${widget.fundraise.beneficiary!.firstName} ${widget.fundraise.beneficiary!.lastName} ",
+                                  " ${widget.fundraise.organizer!.firstName} ${widget.fundraise.organizer!.lastName} ",
                               style: TextStyle(
                                   color: Colors.grey[600],
                                   fontWeight: FontWeight.bold),
@@ -281,9 +295,26 @@ class DonationPageState extends State<DonationPage> {
                             });
                           },
                         ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
+                      if (_showDoantionInfo)
+                        DonationCommentBox(commentCallback: (value) {
+                          setState(() {
+                            _comment = value;
+                          });
+                        }),
+                      if (_showDoantionInfo)
+                        RefferedBy(
+                          teams: widget.fundraise.teams!,
+                          memeberCallback: (value) {
+                            setState(() {
+                              _memberId = value;
+                            });
+                          },
+                          anonymousCallback: (value) {
+                            setState(() {
+                              _isAnonymous = value;
+                            });
+                          },
+                        ),
                       if (_showDoantionInfo)
                         YourDonationDetail(
                           donation: _donation,
@@ -292,51 +323,121 @@ class DonationPageState extends State<DonationPage> {
                       SizedBox(
                         height: 20.0,
                       ),
-                      ContinueButton(
-                          isValidate:
-                              _showDoantionInfo ? _bankInfoValidated : true,
+                      if (_showDoantionInfo)
+                        Text(
+                          'Paywith',
+                          style: labelTextStyle.copyWith(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).secondaryHeaderColor,
+                          ),
+                        ),
+                      SizedBox(
+                        height: 20.0,
+                      ),
+                      if (_showDoantionInfo)
+                        PaymentButton(
                           onPressed: () async {
-                            if (_showDoantionInfo) {
-                              if (_formKey.currentState!.validate()) {
-                                loadingProgress(context);
-                                UserPreference userPreference =
-                                    UserPreference();
-                                PreferenceData tokenData =
-                                    await userPreference.getUserToken();
-                                PreferenceData userData =
-                                    await userPreference.getUserInfromation();
-                                Donation donation = Donation(
-                                  amount: _donation,
-                                  userID: userData.data,
-                                  memberID: userData.data.id,
-                                  tip: double.parse(
-                                      (_tip * _donation).toStringAsFixed(1)),
-                                  comment:
-                                      'donated \$$_donation amount of money',
+                            if (_formKey.currentState!.validate()) {
+                              loadingProgress(context);
+                              UserPreference userPreference = UserPreference();
+                              PreferenceData tokenData =
+                                  await userPreference.getUserToken();
+                              PreferenceData userData =
+                                  await userPreference.getUserInfromation();
+                              Donation donation =
+                                  _memberId != '' && _memberId != "0"
+                                      ? Donation(
+                                          isAnonymous: _isAnonymous,
+                                          amount: _donation,
+                                          userID: userData.data,
+                                          memberID: _memberId,
+                                          tip: double.parse((_tip * _donation)
+                                              .toStringAsFixed(1)),
+                                          comment: _comment,
+                                        )
+                                      : Donation(
+                                          isAnonymous: _isAnonymous,
+                                          amount: _donation,
+                                          userID: userData.data,
+                                          tip: double.parse((_tip * _donation)
+                                              .toStringAsFixed(1)),
+                                          comment: _comment,
+                                        );
+                              await context.read<DonationModel>().payWithPayPal(
+                                    donation,
+                                    tokenData.data,
+                                    widget.fundraise.id!,
+                                  );
+                              Response response =
+                                  context.read<DonationModel>().response;
+                              if (response.status == ResponseStatus.SUCCESS) {
+                                Navigator.of(context).pop();
+                                print("Url is ");
+                                print(response.data);
+                                String url = response.data;
+                                final successDonation =
+                                    await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => WebBrowser(
+                                      url,
+                                    ),
+                                  ),
                                 );
+                                print('isSuccessFully donated');
+                                print(successDonation);
+                                if (successDonation) {
+                                  loadingProgress(context);
+                                  await context
+                                      .read<DonationModel>()
+                                      .createDonation(donation, tokenData.data,
+                                          widget.fundraise.id!);
+                                  Response _createResponse =
+                                      context.read<DonationModel>().response;
+                                  print("donation status is");
+                                  print(_createResponse.status);
 
-                                print(donation);
-
-                                await context
-                                    .read<DonationModel>()
-                                    .createDonation(donation, tokenData.data,
-                                        widget.fundraise.id!);
-                                Response response =
-                                    context.read<DonationModel>().response;
-                                if (response.status == ResponseStatus.SUCCESS) {
-                                  Navigator.of(context).pop();
-                                  Fluttertoast.showToast(msg: response.message);
-                                } else {
-                                  ResponseAlert(response.message);
+                                  if (_createResponse.status ==
+                                      ResponseStatus.SUCCESS) {
+                                    Fluttertoast.showToast(
+                                        msg:
+                                            "Successfully donated $_donation\$");
+                                    Navigator.of(context)
+                                        .pushNamedAndRemoveUntil(
+                                      HomePage.routeName,
+                                      (route) => false,
+                                    );
+                                  } else {
+                                    Navigator.of(context).pop();
+                                    print(_createResponse.message);
+                                    authShowDialog(
+                                      context,
+                                      Text(response.message),
+                                      close: true,
+                                      error: true,
+                                    );
+                                    Fluttertoast.showToast(
+                                        msg:
+                                            "Unable to donate please try again");
+                                  }
                                 }
+                              } else {
+                                authShowDialog(context, Text(response.message));
                               }
-                            } else {
+                            }
+                          },
+                          title: "PayPal",
+                        ),
+                      if (!_showDoantionInfo)
+                        ContinueButton(
+                            isValidate:
+                                _showDoantionInfo ? _bankInfoValidated : true,
+                            onPressed: () {
                               setState(() {
                                 _showDoantionInfo = true;
                               });
-                            }
-                          },
-                          title: _showDoantionInfo ? "Donate now" : "Continue")
+                            },
+                            title: "Continue")
                     ],
                   ),
                 )

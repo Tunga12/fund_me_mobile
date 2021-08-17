@@ -4,7 +4,6 @@ import 'package:crowd_funding_app/Screens/create_fundraiser_home.dart';
 import 'package:crowd_funding_app/Screens/loading_screen.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
-import 'package:crowd_funding_app/services/provider/notification.dart';
 import 'package:crowd_funding_app/widgets/empty_body.dart';
 import 'package:crowd_funding_app/widgets/manage_card.dart';
 import 'package:crowd_funding_app/widgets/response_alert.dart';
@@ -19,50 +18,68 @@ class Manage extends StatefulWidget {
 }
 
 class _ManageState extends State<Manage> {
-  List<Fundraise>? userFundraises;
+  Response _response =
+      Response(data: null, status: ResponseStatus.LOADING, message: '');
+  List<Fundraise>? userFundraises = [];
+  ScrollController _campaignScrollController = ScrollController();
+  int _page = 0;
+  List<Fundraise> _fundraises = [];
   @override
   void initState() {
     super.initState();
-    getUserFundraises();
+    getUserFundraises(_page);
+    _campaignScrollController.addListener(() async {
+      if (_campaignScrollController.position.pixels ==
+          _campaignScrollController.position.maxScrollExtent) {
+        getUserFundraises(++_page);
+      }
+    });
   }
 
-  getUserFundraises() async {
+  getUserFundraises(int page) async {
     UserPreference userPreference = UserPreference();
     PreferenceData token = await userPreference.getUserToken();
     await Provider.of<FundraiseModel>(context, listen: false)
-        .getUserFundaisers(token.data);
+        .getUserFundaisers(token.data, page);
     List<Fundraise> userFundraisesResponse =
         Provider.of<FundraiseModel>(context, listen: false)
             .homeFundraise
             .fundraises!;
     await Provider.of<FundraiseModel>(context, listen: false)
-        .getMemberFundrases(token.data);
+        .getMemberFundrases(token.data, _page);
     List<Fundraise> memberFundraisesResponse =
         Provider.of<FundraiseModel>(context, listen: false)
             .homeFundraise
             .fundraises!;
     setState(() {
+      _response = context.read<FundraiseModel>().response;
       userFundraisesResponse.addAll(memberFundraisesResponse);
-      userFundraises = userFundraisesResponse;
+      userFundraises!.addAll(userFundraisesResponse);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     print("user response fundraises $userFundraises");
-    final value = Provider.of<FundraiseModel>(context);
-    if (value.response.status == ResponseStatus.LOADING) {
+    if (_response.status == ResponseStatus.LOADING) {
       return LoadingScreen();
-    } else if (value.response.status == ResponseStatus.CONNECTIONERROR) {
+    } else if (_response.status == ResponseStatus.CONNECTIONERROR) {
       return ResponseAlert(
-        value.response.message,
+        _response.message,
         status: ResponseStatus.CONNECTIONERROR,
-        retry: () => getUserFundraises(),
+        retry: () => getUserFundraises(0),
       );
-    } else if (value.response.status == ResponseStatus.FORMATERROR) {
-      return ResponseAlert(value.response.message);
+    } else if (_response.status == ResponseStatus.MISMATCHERROR) {
+      return ResponseAlert(
+        _response.message,
+        retry: () => getUserFundraises(0),
+        status: ResponseStatus.MISMATCHERROR,
+      );
     } else {
-      List<Fundraise> fundraises = userFundraises ?? [];
+      List<Fundraise>? fundraises = userFundraises;
+      if (fundraises == null) {
+        return Container();
+      }
       return fundraises.isEmpty
           ? EmptyBody(
               text1: "Ready to fundraise?",
@@ -77,11 +94,14 @@ class _ManageState extends State<Manage> {
                     builder: (context) => CreateFundraiserHome(),
                   ),
                 );
-              })
+              },
+            )
           : Container(
-              color: Colors.grey,
               child: Scrollbar(
+                controller: _campaignScrollController,
+                isAlwaysShown: true,
                 child: ListView.builder(
+                    controller: _campaignScrollController,
                     itemCount: fundraises.length,
                     itemBuilder: (context, index) {
                       return ManageCard(

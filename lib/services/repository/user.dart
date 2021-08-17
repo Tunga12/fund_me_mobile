@@ -21,4 +21,14 @@ class UserRepository {
   Future<String> deleteuser(String token) async {
     return await dataProvider.deleteUser(token);
   }
+
+  // forgot password
+  Future<bool> forgotPassword(String email) async {
+    return await dataProvider.forgetPassword(email);
+  }
+
+  // reset password
+  Future<User> resetPassword(String password, String userId) async {
+    return await dataProvider.resetPassword(password, userId);
+  }
 }

@@ -1,12 +1,15 @@
+import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Models/user.dart';
+import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:crowd_funding_app/Screens/signin_page.dart';
+import 'package:crowd_funding_app/Screens/update_password_screen.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/services/provider/user.dart';
 import 'package:crowd_funding_app/widgets/authdialog.dart';
 import 'package:crowd_funding_app/widgets/loading_progress.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:progress_hud/progress_hud.dart';
 import 'package:provider/provider.dart';
 
 class AccountSettings extends StatefulWidget {
@@ -39,7 +42,6 @@ class _AccountSettingsState extends State<AccountSettings> {
   }
 
   IconData _iconData = Icons.visibility;
-  bool _isObscured = true;
 
   Map<String, dynamic> _userInfo = {};
 
@@ -75,17 +77,23 @@ class _AccountSettingsState extends State<AccountSettings> {
                 print("token $token");
                 await context.read<UserModel>().updateUser(formUser, token!);
 
-                User newUser = user!.copyWith(
+                User _newUser = user!.copyWith(
                   firstName: _userInfo['firstName'],
                   lastName: _userInfo['lastName'],
                   email: _userInfo['email'],
                   password: _userInfo['password'],
                 );
 
-                await UserPreference().storeUserInformation(newUser);
-
-                Navigator.of(context).pop();
-                Navigator.of(context).pop();
+                Response _response = context.read<UserModel>().response;
+                if (_response.status == ResponseStatus.SUCCESS) {
+                  await UserPreference().storeUserInformation(_newUser);
+                 Fluttertoast.showToast(msg: "successfully updated");
+                  Navigator.of(context).pushNamedAndRemoveUntil(HomePage.routeName, (route) => false, arguments: 2);
+                } else {
+                   Navigator.of(context).pop();
+                  authShowDialog(context, Text(_response.message),
+                      error: true, close: true);
+                }
               }
             },
             child: Text(
@@ -176,22 +184,25 @@ class _AccountSettingsState extends State<AccountSettings> {
                           },
                         ),
                         TextFormField(
-                          obscureText: _isObscured,
+                          readOnly: true,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => UpdatePassword(
+                                  user: user!,
+                                  token: token!,
+                                ),
+                              ),
+                            );
+                          },
+                          obscureText: true,
                           initialValue: user!.password,
                           decoration: InputDecoration(
-                            labelText: "Password",
-                            suffixIcon: IconButton(
-                              icon: Icon(_iconData),
-                              onPressed: () {
-                                setState(() {
-                                  _isObscured = !_isObscured;
-                                  _iconData = _isObscured
-                                      ? Icons.visibility
-                                      : Icons.visibility_off;
-                                });
-                              },
-                            ),
-                          ),
+                              labelText: "Password",
+                              suffixIcon: TextButton(
+                                child: Text('change'),
+                                onPressed: () {},
+                              )),
                           validator: (value) {
                             if (value!.isEmpty) {
                               return "Password must not empty";

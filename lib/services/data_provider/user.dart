@@ -68,6 +68,7 @@ class UserDataProvider {
     }
   }
 
+  // delete user
   Future<String> deleteUser(String token) async {
     final response = await httpClient.delete(
       Uri.parse(EndPoints.singleUser),
@@ -82,6 +83,49 @@ class UserDataProvider {
       return jsonDecode(response.body);
     } else {
       print("user delete error ${response.body}");
+      throw Exception(response.body);
+    }
+  }
+
+  // forgot password Request
+  Future<bool> forgetPassword(String email) async {
+    final response = await httpClient.post(
+      Uri.parse(EndPoints.forgotPasswordURL),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(
+        <String, dynamic>{'email': email},
+      ),
+    );
+    print(response.statusCode);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
+  // reset password request
+  Future<User> resetPassword(String password, String userId) async {
+    final response = await httpClient.put(
+      Uri.parse(EndPoints.resetPasswordURL + userId),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(
+        <String, dynamic>{'password': password},
+      ),
+    );
+
+    if (response.statusCode == 200) {
+      return User.fromJson(
+        jsonDecode(
+          response.body,
+        ),
+      );
+    } else {
       throw Exception(response.body);
     }
   }

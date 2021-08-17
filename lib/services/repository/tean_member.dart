@@ -7,7 +7,7 @@ class TeamMemberRepository {
     required this.teamMemberDataProvider,
   });
 
-  Future<TeamMember> createTeamMember(
+  Future<bool> createTeamMember(
       String email, String token, String fundraiseId) async {
     return await teamMemberDataProvider.createTeamMember(
         email, token, fundraiseId);
@@ -17,5 +17,9 @@ class TeamMemberRepository {
       bool status, String token, String fundraiseId) async {
     return await teamMemberDataProvider.verifyTeamMember(
         status, token, fundraiseId);
+  }
+
+  Future<bool> deleteFundraiser(String token, String memberId) async {
+    return await teamMemberDataProvider.deleteMember(token, memberId);
   }
 }

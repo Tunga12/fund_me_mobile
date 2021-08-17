@@ -16,6 +16,7 @@ enum ResponseStatus {
   FORMATERROR,
   SUCCESS,
   MISMATCHERROR,
+  
 }
 
 enum AuthStatus {

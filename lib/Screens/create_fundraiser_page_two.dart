@@ -121,6 +121,7 @@ class _CreateFundraiserPageTwoState extends State<CreateFundraiserPageTwo> {
                             // },
                             keyboardType: TextInputType.multiline,
                             maxLines: 6,
+                            maxLength: 255,
                             validator: (value) {
                               if (value!.isEmpty) {
                                 return "Field required!";

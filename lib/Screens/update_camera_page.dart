@@ -106,8 +106,7 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
                     Update update = Update(content: _updateData);
 
                     await context.read<UpdateModel>().createUpdate(
-                        update, preferenceData.data, widget.fundraiseId,
-                        image: _image);
+                        update, preferenceData.data, widget.fundraiseId,image: _image);
 
                     Response response = context.read<UpdateModel>().response;
                     if (response.status == ResponseStatus.SUCCESS) {
@@ -115,10 +114,10 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
                           msg: "Successfully Updated!",
                           toastLength: Toast.LENGTH_LONG);
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                          HomePage.routeName, (route) => false);
+                          HomePage.routeName, (route) => false,arguments: 2);
                     } else {
                       Navigator.pop(context);
-                      authShowDialog(context, Text(response.message),
+                      authShowDialog(context, Text("failed to update"),
                           close: true, error: true);
                     }
                   }

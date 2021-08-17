@@ -2,12 +2,12 @@ import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:crowd_funding_app/Screens/signup_page.dart';
-import 'package:crowd_funding_app/constants/actions.dart';
-import 'package:crowd_funding_app/services/data_provider/api_response.dart';
 import 'package:crowd_funding_app/services/provider/auth.dart';
 import 'package:crowd_funding_app/services/provider/user.dart';
 import 'package:crowd_funding_app/widgets/authdialog.dart';
+import 'package:crowd_funding_app/widgets/forgot_password_invitation.dart';
 import 'package:crowd_funding_app/widgets/loading_progress.dart';
+import 'package:crowd_funding_app/widgets/or.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -128,9 +128,7 @@ class _SigninPageState extends State<SigninPage> {
 
                               if (model.signinStatus == AuthStatus.LOGGEDIN) {
                                 print("login user $user");
-                                if (widget.url != null)
-                                  acceptInvitation(context, user.email!,
-                                      model.response.data, widget.url!);
+
                                 await context.read<UserModel>().getUser(
                                     model.response.data, user.password!);
                                 Response response =
@@ -188,36 +186,24 @@ class _SigninPageState extends State<SigninPage> {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _formKey.currentState!.save();
+                    print('User email is ');
+                    print(
+                      _userInfo['email'],
+                    );
+                    showDialog(
+                        context: context,
+                        builder: (context) => ForgotPasswordInvitaion(
+                              email: _userInfo['email'],
+                            ));
+                  },
                   child: Text(
                     'Forgot your password?',
                     style: TextStyle(fontSize: 18.0),
                   ),
                 ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Divider(
-                        thickness: 1.5,
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'or',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1!
-                            .copyWith(fontSize: 20.0),
-                      ),
-                    ),
-                    Expanded(
-                      child: Divider(
-                        thickness: 1.5,
-                      ),
-                    ),
-                  ],
-                ),
+                OrDivider(),
                 SizedBox(
                   width: size.width * 0.7,
                   child: TextButton(

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:crowd_funding_app/Screens/signin_page.dart';
+import 'package:crowd_funding_app/Screens/welcom_page.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:flutter/material.dart';
 
@@ -19,11 +20,13 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     getUser().whenComplete(() async {
       Timer(
-          Duration(seconds: 2),
-          () => user!.status
-              ? Navigator.of(context).pushReplacementNamed(HomePage.routeName)
-              : Navigator.of(context)
-                  .pushReplacementNamed(SigninPage.routeName));
+        Duration(seconds: 2),
+        () => user!.status
+            ? Navigator.of(context)
+                .pushNamedAndRemoveUntil(HomePage.routeName, (route) => false)
+            : Navigator.of(context).pushNamedAndRemoveUntil(
+              WelcomePage.routeName, (route) => false),
+      );
     });
   }
 

@@ -31,15 +31,17 @@ class UpdateDataProvider {
           )
         : await getImage(token, image).then((imageResponse) async {
             response = await httpClient.post(
-                Uri.parse(EndPoints.createUpdate + fundraiseId),
-                headers: <String, String>{
-                  'Content-Type': 'application/json; charset=UTF-8',
-                  'x-auth-token': token,
-                },
-                body: jsonEncode(<String, dynamic>{
-                  "content": update.content,
-                  "image": imageResponse
-                }));
+              Uri.parse(EndPoints.createUpdate + fundraiseId),
+              headers: <String, String>{
+                'Content-Type': 'application/json; charset=UTF-8',
+                'x-auth-token': token,
+              },
+              body: jsonEncode(<String, dynamic>{
+                "content": update.content,
+                "image":imageResponse
+               
+              }),
+            );
           });
     print(response!.statusCode);
     if (response!.statusCode == 201) {
@@ -50,7 +52,6 @@ class UpdateDataProvider {
       );
     }
   }
-
   Future<bool> deleteUpdate(String updateId, String token) async {
     final response = await httpClient.delete(
       Uri.parse(EndPoints.createUpdate + updateId),

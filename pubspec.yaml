@@ -40,10 +40,16 @@ dependencies:
   flutter_summernote:
   flutter_html:
   share: ^2.0.4
+  url_launcher: ^6.0.9
+  dio: ^4.0.0
+  carousel_slider: ^4.0.0
+  webview_flutter: ^2.0.12
   
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  mockito: ^5.0.14
+  build_runner: ^2.1.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

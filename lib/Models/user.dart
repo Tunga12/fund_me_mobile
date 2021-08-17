@@ -5,6 +5,7 @@ class User {
   String? email;
   String? password;
   String? paymentMethods;
+  String? phoneNumber;
   bool? emailNotification;
   bool? isDeactivated;
   bool? isAdmin;
@@ -15,6 +16,7 @@ class User {
     this.lastName,
     this.email,
     this.password,
+    this.phoneNumber,
     this.paymentMethods,
     this.emailNotification,
     this.isDeactivated,
@@ -28,6 +30,7 @@ class User {
     String? email,
     String? password,
     String? paymentMethods,
+    String? phoneNumber,
     bool? emailNotification,
     bool? isDeactivated,
     bool? isAdmin,
@@ -42,6 +45,7 @@ class User {
       emailNotification: emailNotification ?? this.emailNotification,
       isDeactivated: isDeactivated ?? this.isDeactivated,
       isAdmin: isAdmin ?? this.isAdmin,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
     );
   }
 
@@ -54,6 +58,7 @@ class User {
     bool emailNotification = data['emailNotification'] ?? false;
     bool isDeactivated = data['isDeactivated'] ?? false;
     bool isAdmin = data['isAdmin'] ?? false;
+    String phoneNumber = data['phoneNumber'] ?? '';
 
     print('json data 2 $data');
 
@@ -66,22 +71,10 @@ class User {
       emailNotification: emailNotification,
       isDeactivated: isDeactivated,
       isAdmin: isAdmin,
+      phoneNumber: phoneNumber,
     );
   }
 
-  // factory User.fromJson2(Map<String, dynamic> data) {
-  //   String id = data['_id'];
-  //   String firstName = data['firstName'];
-  //   String lastName = data['lastName'];
-  //   String email = data['email'];
-
-  //   return User(
-  //     id: id,
-  //     firstName: firstName,
-  //     lastName: lastName,
-  //     email: email,
-  //   );
-  // }
 
   Map<String, dynamic> toJson() {
     return {
@@ -93,6 +86,7 @@ class User {
       'emailNotification': emailNotification ?? false,
       'isDeactivated': isDeactivated ?? false,
       'isAdmin': isAdmin ?? false,
+      
     };
   }
 

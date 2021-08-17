@@ -24,7 +24,9 @@ class ResponseAlert extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.wifi_off_rounded,
+                status == ResponseStatus.CONNECTIONERROR
+                    ? Icons.wifi_off_rounded
+                    : Icons.error_outline,
                 color: Theme.of(context).accentColor,
                 size: 70.0,
               ),

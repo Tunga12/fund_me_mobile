@@ -1,7 +1,4 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:ffi';
-import 'dart:async';
 
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
@@ -20,8 +17,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
-import 'package:async/async.dart';
 
 class CreateFundraiserPageThree extends StatefulWidget {
   final Map<String, dynamic> fundraiseInfo;
@@ -33,6 +28,7 @@ class CreateFundraiserPageThree extends StatefulWidget {
 }
 
 class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
+  
   File? _image;
   final _imagePicker = ImagePicker();
 
@@ -329,13 +325,15 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                               await context
                                   .read<FundraiseModel>()
                                   .createFundraise(fundraise, token, _image!);
-
+                              response =
+                                  context.read<FundraiseModel>().response;
                               if (response.status == ResponseStatus.SUCCESS) {
                                 Fluttertoast.showToast(
                                     msg: "Successfully created!",
                                     toastLength: Toast.LENGTH_LONG);
                                 Navigator.of(context).pushNamedAndRemoveUntil(
-                                    HomePage.routeName, (route) => false);
+                                    HomePage.routeName, (route) => false,
+                                    arguments: 2);
                               } else {
                                 Navigator.pop(context);
                                 authShowDialog(context, Text(response.message),

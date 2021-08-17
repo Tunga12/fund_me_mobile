@@ -13,6 +13,7 @@ class CampaignCard extends StatelessWidget {
   int totalRaised;
   int goalAmount;
   Donation donation;
+  String fundraiseId;
 
   CampaignCard({
     required this.image,
@@ -21,6 +22,8 @@ class CampaignCard extends StatelessWidget {
     required this.totalRaised,
     required this.goalAmount,
     required this.donation,
+    required this.fundraiseId,
+   
   });
 
   double progress = 0.0;
@@ -51,6 +54,7 @@ class CampaignCard extends StatelessWidget {
                   width: size.width,
                   child: CustomCachedNetworkImage(
                     image: image,
+                    isTopBorderd: true,
                   ),
                 ),
                 Positioned(
@@ -68,7 +72,9 @@ class CampaignCard extends StatelessWidget {
                       ),
                       onPressed: () {
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => SharePage()));
+                            builder: (context) => SharePage(
+                                  fundraise: fundraiseId,
+                                ),),);
                       },
                     ),
                   ),
