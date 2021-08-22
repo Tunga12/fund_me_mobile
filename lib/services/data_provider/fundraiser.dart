@@ -5,9 +5,6 @@ import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/config/utils/endpoints.dart';
 import 'package:crowd_funding_app/constants/actions.dart';
 import 'package:http/http.dart' as http;
-import 'package:async/async.dart';
-import 'package:async/async.dart';
-import 'package:path/path.dart';
 
 class FundraiseDataProvider {
   final http.Client httpClient;
@@ -17,7 +14,7 @@ class FundraiseDataProvider {
   // creating a fundraise
   Future<bool> createFundraise(
       Fundraise fundraise, String token, File image) async {
-    print("create token $token");
+   
     http.Response? response;
     final imageResponse = await getImage(token, image).then((imageResp) async {
       print("the response image is $imageResp");

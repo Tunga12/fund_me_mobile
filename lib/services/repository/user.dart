@@ -23,7 +23,7 @@ class UserRepository {
   }
 
   // forgot password
-  Future<bool> forgotPassword(String email) async {
+  Future<String> forgotPassword(String email) async {
     return await dataProvider.forgetPassword(email);
   }
 

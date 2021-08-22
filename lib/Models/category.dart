@@ -8,7 +8,6 @@ class Category {
   });
 
   factory Category.fromJson(Map<String, dynamic> data) {
-    print("JsonData $data");
     String categoryID = data['_id'];
     String categoryName = data['name'];
 

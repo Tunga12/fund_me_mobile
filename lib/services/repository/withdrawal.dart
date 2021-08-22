@@ -12,4 +12,10 @@ class WithdrawalRepository {
     return await withdrawDataProvider.createWithdrawal(
         withdrwal, token, fundraiserId);
   }
+
+  Future<String> inviteBeneficiary(
+      String email, String token, String fundraiseId) async {
+    return await withdrawDataProvider.inviteBeneficiary(
+        email, token, fundraiseId);
+  }
 }

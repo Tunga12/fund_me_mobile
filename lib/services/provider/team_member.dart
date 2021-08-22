@@ -28,7 +28,7 @@ class TeamMemberModel extends ChangeNotifier {
           Response(status: ResponseStatus.LOADING, data: null, message: '');
       final data = await teamMemberRepository.createTeamMember(
           email, token, fundraiseId);
-      if (data)
+      if (data == 'created')
         response = Response(
             status: ResponseStatus.SUCCESS, data: data, message: "success");
       notifyListeners();
@@ -83,7 +83,7 @@ class TeamMemberModel extends ChangeNotifier {
       response =
           Response(status: ResponseStatus.LOADING, data: null, message: '');
       final data = await teamMemberRepository.deleteFundraiser(token, memberId);
-      if (data)
+      if (data == 'deleted')
         response = Response(
             status: ResponseStatus.SUCCESS, data: data, message: "success");
     } on SocketException catch (e) {

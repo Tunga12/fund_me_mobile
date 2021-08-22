@@ -48,7 +48,7 @@ class _ManageBottomNavBarState extends State<ManageBottomNavBar> {
             context,
             MaterialPageRoute(
               builder: (context) => WithdrawPage(
-                fundraise: widget.fundraise,
+                fundraise: widget.fundraise, isSetUped: false,
               ),
             ),
           );

@@ -23,7 +23,7 @@ class Donation {
       this.isDeleted});
 
   factory Donation.fromJson(Map<String, dynamic> data) {
-    print("donation data");
+    
     String id = data['_id'] ?? "";
     User userID =
         data['userId'] == null ? User() : User.fromJson(data['userId']);

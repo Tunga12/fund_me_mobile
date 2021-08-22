@@ -19,7 +19,7 @@ class UpdateRepository {
     );
   }
 
-  Future<bool> deleteUpdate(String updateId, String token) async {
+  Future<String> deleteUpdate(String updateId, String token) async {
     return await updateDataProvider.deleteUpdate(updateId, token);
   }
 }

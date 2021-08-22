@@ -3,6 +3,7 @@ import 'package:crowd_funding_app/Models/donation.dart';
 import 'package:crowd_funding_app/Models/team_member.dart';
 import 'package:crowd_funding_app/Models/update.dart';
 import 'package:crowd_funding_app/Models/user.dart';
+import 'package:crowd_funding_app/Models/withdrawal.dart';
 
 class Fundraise {
   String? id;
@@ -24,6 +25,7 @@ class Fundraise {
   // bool? isDelete;
   int? totalRaised;
   List<String>? likedBy;
+  Withdraw? withdraw;
 
   Fundraise({
     this.id,
@@ -44,6 +46,7 @@ class Fundraise {
     this.likeCount,
     this.totalRaised,
     this.likedBy,
+    this.withdraw,
   });
 
   Fundraise copyWith({
@@ -65,6 +68,7 @@ class Fundraise {
     int? likeCount,
     int? totalRaised,
     List<String>? likedBy,
+    Withdraw? withdraw,
   }) {
     return Fundraise(
       id: id ?? this.id,
@@ -85,14 +89,13 @@ class Fundraise {
       likeCount: likeCount ?? this.likeCount,
       totalRaised: totalRaised ?? this.totalRaised,
       likedBy: likedBy ?? this.likedBy,
+      withdraw: withdraw ?? this.withdraw,
     );
   }
 
   // parsing json object to Fundraise object
   factory Fundraise.fromJson(Map<String, dynamic> data) {
-    print("data $data");
     String dateString = data['dateCreated'] ?? '';
-    print(dateString);
     String id = data['_id'] ?? '';
     String title = data['title'] ?? '';
     String image = data['image'] ?? '';
@@ -119,7 +122,7 @@ class Fundraise {
     int likeCount = data['likeCount'] ?? 0;
     List likedBy = data['likedBy'] ?? [];
     // bool isDeleted = data['isDeleted'];
-    print('Data end $data');
+    Map<String, dynamic> withdraw = data['withdraw'] ?? {};
 
     return Fundraise(
       id: id,
@@ -138,9 +141,11 @@ class Fundraise {
       isPublished: isPublished,
       totalSharedCount: totalShareCount,
       likeCount: likeCount,
+      
       // isDelete: isDeleted,
       totalRaised: totalRaised,
       likedBy: likedBy.map((e) => e.toString()).toList(),
+      withdraw: withdraw.isNotEmpty ? Withdraw.fromJson(withdraw) : null,
     );
   }
 
@@ -165,7 +170,8 @@ class Fundraise {
     };
   }
 
-  // string representation of of Fundraise object.
+  // string representation of Fundraise object.
+
   @override
   String toString() {
     return '''Fundraise {title: ${title ?? ""}  ,image: ${image ?? ""},goalAmount: ${goalAmount ?? 0},story: ${story ?? ""},
@@ -180,6 +186,7 @@ class Fundraise {
       totalSharedCount: ${totalSharedCount ?? 0},
       likeCount: ${likeCount ?? 0},
       likedBy: ${likedBy ?? []},
+      withdraw: $withdraw
       }''';
   }
 }

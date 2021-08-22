@@ -117,7 +117,7 @@ class UserModel extends ChangeNotifier {
       response =
           Response(status: ResponseStatus.LOADING, data: null, message: '');
       final userReponse = await userRepository.forgotPassword(email);
-      if (userReponse)
+      if (userReponse == "deleted")
         response = Response(
             status: ResponseStatus.SUCCESS,
             data: userReponse,

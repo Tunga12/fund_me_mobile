@@ -69,10 +69,10 @@ class UpdateModel extends ChangeNotifier {
     response =
         Response(status: ResponseStatus.LOADING, data: null, message: '');
     try {
-      bool updateResponse =
+      final updateResponse =
           await updateRepository.deleteUpdate(updateId, token);
       print(" update Response $updateResponse");
-      if (updateResponse)
+      if (updateResponse == 'deleted')
         response = Response(
             status: ResponseStatus.SUCCESS,
             data: updateResponse,

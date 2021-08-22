@@ -11,13 +11,13 @@ class UserNotificationRepository {
   }
 
   // update notification mark as viewd
-  Future<bool> updateNotificationi(
+  Future<String> updateNotificationi(
       UserNotification notification, String token) async {
     return await dataProvider.updateNotificaton(notification, token);
   }
 
   // Delete notification
-  Future<bool> deleteNotification(String id, String token) async {
+  Future<String> deleteNotification(String id, String token) async {
     return await dataProvider.deleteNotification(id, token);
   }
 }

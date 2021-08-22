@@ -105,8 +105,10 @@ class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         FormLabelText(
+
                             text: "How much would you like to raise ?"),
                         TextFormField(
+                          
                           keyboardType: TextInputType.number,
                           onSaved: (value) {
                             _fundraiseInfo['goalAmount'] = value;
@@ -127,6 +129,7 @@ class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
                             text: 'what kind of fundraiser are you creating?'),
                         DropdownButtonFormField<String>(
                           value: _category,
+                          
                           onChanged: (value) {
                             setState(() {
                               _category = value!;

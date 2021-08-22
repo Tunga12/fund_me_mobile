@@ -2,7 +2,6 @@ import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:crowd_funding_app/Screens/signin_page.dart';
-import 'package:crowd_funding_app/constants/actions.dart';
 import 'package:crowd_funding_app/services/provider/auth.dart';
 import 'package:crowd_funding_app/services/provider/user.dart';
 import 'package:crowd_funding_app/widgets/authdialog.dart';
@@ -33,7 +32,6 @@ class _SignupPageState extends State<SignupPage> {
     final size = MediaQuery.of(context).size;
     return Consumer<AuthModel>(
       builder: (_, model, child) {
-        print(model.signupStatus);
         return Scaffold(
           appBar: AppBar(
             title: Text("Sign up"),
@@ -78,6 +76,7 @@ class _SignupPageState extends State<SignupPage> {
                   child: Column(
                     children: [
                       TextFormField(
+                        key: Key("signup_firstname"),
                         onSaved: (value) {
                           setState(() {
                             _userInfo['firstName'] = value;
@@ -96,6 +95,7 @@ class _SignupPageState extends State<SignupPage> {
                         height: 18.0,
                       ),
                       TextFormField(
+                        key: Key('signup_lastname'),
                         onSaved: (value) {
                           setState(() {
                             _userInfo['lastName'] = value;
@@ -114,6 +114,7 @@ class _SignupPageState extends State<SignupPage> {
                         height: 18.0,
                       ),
                       TextFormField(
+                        key: Key('signup_email'),
                         keyboardType: TextInputType.emailAddress,
                         onSaved: (value) {
                           _userInfo['email'] = value;
@@ -131,6 +132,8 @@ class _SignupPageState extends State<SignupPage> {
                         height: 18.0,
                       ),
                       TextFormField(
+                        key: Key('signup_phonenumber'),
+                        maxLength: 10,
                         keyboardType: TextInputType.phone,
                         onSaved: (value) {
                           _userInfo['phoneNumber'] = value;
@@ -148,6 +151,7 @@ class _SignupPageState extends State<SignupPage> {
                         height: 18.0,
                       ),
                       TextFormField(
+                        key: Key('signup_password'),
                         obscureText: _isObscured,
                         onSaved: (value) {
                           setState(() {
@@ -182,6 +186,7 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                       ),
                       TextFormField(
+                        key: Key('signup_confirmpassword'),
                         obscureText: _isObscured,
                         onSaved: (value) {
                           setState(() {
@@ -217,6 +222,7 @@ class _SignupPageState extends State<SignupPage> {
                         width: size.width,
                         height: size.height * 0.08,
                         child: TextButton(
+                          key: Key("signup_button"),
                           style: TextButton.styleFrom(
                             backgroundColor: isValidated
                                 ? Theme.of(context).accentColor

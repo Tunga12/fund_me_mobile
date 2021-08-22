@@ -106,8 +106,8 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final model = context.watch<FundraiseModel>();
-    print("fundraisers id ");
-    print(model.fundraise.id);
+    print("fundraise is ");
+    print(widget.fundraiseId);
     if (model.response.status == ResponseStatus.LOADING) {
       return LoadingScreen();
     } else if (model.response.status == ResponseStatus.CONNECTIONERROR) {
@@ -116,6 +116,7 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
       return ResponseAlert(model.response.message);
     }
     Fundraise _fundraise = model.fundraise;
+    print(_fundraise.withdraw);
     var days = Jiffy(_fundraise.dateCreated, "yyyy-MM-dd").fromNow();
     String totalShareCount = Counter.getCounter(_fundraise.totalSharedCount!);
     String totalLikeCount = Counter.getCounter(_fundraise.likeCount!);

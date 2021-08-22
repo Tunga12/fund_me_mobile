@@ -13,17 +13,15 @@ class UserNotificationDataProvider {
 
   // Getting all notifications for a single user.
   Future<List<UserNotification>> getUserNotifications(String token) async {
-    print(token);
     final response = await httpClient.get(
       Uri.parse(
         EndPoints.notificaions + "user",
       ),
       headers: <String, String>{'x-auth-token': token},
     );
-
+ 
     if (response.statusCode == 200) {
       final notifications = jsonDecode(response.body) as List;
-      print("notifications http $notifications");
 
       return notifications
           .map((notification) => UserNotification.fromJson(notification))
@@ -34,7 +32,7 @@ class UserNotificationDataProvider {
   }
 
   // update Notification mark as viewed
-  Future<bool> updateNotificaton(
+  Future<String> updateNotificaton(
       UserNotification notification, String token) async {
     final response = await httpClient.put(
       Uri.parse(EndPoints.notificaions + notification.id!),
@@ -44,22 +42,21 @@ class UserNotificationDataProvider {
       },
     );
     if (response.statusCode == 200) {
-      return true;
+      return "updated";
     } else {
-      print("Update exception ${response.body}");
       throw Exception(response.body);
     }
   }
 
   // Delete notification
-  Future<bool> deleteNotification(String id, String token) async {
+  Future<String> deleteNotification(String id, String token) async {
     final response = await httpClient.delete(
         Uri.parse(
           EndPoints.notificaions + id,
         ),
         headers: <String, String>{'x-auth-token': token});
     if (response.statusCode == 200) {
-      return true;
+      return 'deleted';
     } else {
       throw Exception(response.body);
     }

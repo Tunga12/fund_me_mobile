@@ -27,6 +27,10 @@ class StartPage extends StatelessWidget {
           } else if (data.substring(45).startsWith("api/users/verify")) {
             String userId = data.substring(62);
             return ForgotPassword(url: userId);
+          } else if (data
+              .substring(45)
+              .startsWith('api/withdrawal/invitation')) {
+            return Container();
           } else {
             return Scaffold(
               appBar: AppBar(

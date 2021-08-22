@@ -1,3 +1,4 @@
+import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
@@ -9,12 +10,14 @@ enum Method {
 }
 
 class BankInformation extends StatefulWidget {
+  final Fundraise fundraise;
   Map<String, dynamic> data;
 
   BankInformation({
     required this.callBack,
     required this.data,
     required this.validate,
+    required this.fundraise,
   });
   final Function(bool value) validate;
 
@@ -44,6 +47,8 @@ class _BankInformationState extends State<BankInformation> {
   @override
   Widget build(BuildContext context) {
     print('bank info $_bankInfo');
+    // print(widget.fundraise.withdraw.id.bankAccountNo);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -173,6 +178,9 @@ class _BankInformationState extends State<BankInformation> {
                         height: 10.0,
                       ),
                       TextFormField(
+                        initialValue: widget.fundraise.withdraw != null
+                            ? widget.fundraise.withdraw!.id.bankName
+                            : null,
                         onChanged: (value) {
                           setState(() {
                             _bankInfo['bankName'] = value;
@@ -193,6 +201,9 @@ class _BankInformationState extends State<BankInformation> {
                         height: 10.0,
                       ),
                       TextFormField(
+                        initialValue: widget.fundraise.withdraw != null
+                            ? widget.fundraise.withdraw!.id.bankAccountNo
+                            : null,
                         keyboardType: TextInputType.number,
                         onChanged: (value) {
                           setState(() {

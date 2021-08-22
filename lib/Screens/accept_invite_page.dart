@@ -1,9 +1,7 @@
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/home_page.dart';
-import 'package:crowd_funding_app/Screens/signin_page.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
-import 'package:crowd_funding_app/constants/actions.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/services/provider/team_member.dart';
 import 'package:crowd_funding_app/widgets/authdialog.dart';

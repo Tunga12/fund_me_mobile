@@ -52,7 +52,7 @@ class UpdateDataProvider {
       );
     }
   }
-  Future<bool> deleteUpdate(String updateId, String token) async {
+  Future<String> deleteUpdate(String updateId, String token) async {
     final response = await httpClient.delete(
       Uri.parse(EndPoints.createUpdate + updateId),
       headers: <String, String>{
@@ -62,7 +62,7 @@ class UpdateDataProvider {
     );
 
     if (response.statusCode == 200) {
-      return true;
+      return 'deleted';
     } else {
       throw Exception("unable to delete update");
     }

@@ -34,3 +34,13 @@ const bodyTextStyle2 = TextStyle(
   fontSize: 17.0,
   fontWeight: FontWeight.w400,
 );
+
+const kBodyTextStyle = TextStyle(
+  fontWeight: FontWeight.w400,
+  fontSize: 16.0,
+);
+
+const ksbodyTextStyle = TextStyle(
+  fontWeight: FontWeight.w400,
+  fontSize: 14.0,
+);

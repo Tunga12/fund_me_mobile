@@ -25,7 +25,6 @@ class UserPreference {
         'emailNotification', user.emailNotification!);
     await _sharedPreferences.setBool('isDeactivated', user.isDeactivated!);
     await _sharedPreferences.setBool('isAdmin', user.isAdmin!);
-    print("Shared preference $user");
   }
 
   Future<PreferenceData> getUserInfromation() async {
@@ -54,7 +53,7 @@ class UserPreference {
         await SharedPreferences.getInstance();
 
     await _sharedPreferences.setString('token', token);
-    print("Shared Preference token $token");
+    
   }
 
   Future<PreferenceData> getUserToken() async {

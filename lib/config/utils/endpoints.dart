@@ -75,4 +75,8 @@ class EndPoints {
 
   // paypal url
   static const String paypalUrl = baseURL + "/donation/pay/";
+
+  //withdrawal invitation
+  static const String inviteUrl =
+      baseURL + "/api/withdrawal/beneficiary/invitation/";
 }

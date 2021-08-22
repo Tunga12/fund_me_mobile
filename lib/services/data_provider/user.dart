@@ -21,12 +21,7 @@ class UserDataProvider {
       },
     );
 
-    print("user get status is ${response.statusCode}");
-    print("user get body is  ${response.body}");
-
     if (response.statusCode == 200) {
-      print("user get status 2 is ${response.statusCode}");
-      print("user get body is ${response.body}");
       final userString = jsonDecode(response.body);
       User user;
       try {
@@ -37,7 +32,6 @@ class UserDataProvider {
         throw Exception(e.toString());
       }
       User newUser = user.copyWith(password: password);
-      print("user form json $user");
       await preference.storeUserInformation(newUser);
       await preference.storeToken(token);
       return user;
@@ -60,10 +54,8 @@ class UserDataProvider {
     );
 
     if (response.statusCode == 200) {
-      print('user update success ${response.statusCode}');
       return User.fromJson(jsonDecode(response.body));
     } else {
-      print('user update Error ${response.body}');
       throw Exception(response.body);
     }
   }
@@ -77,18 +69,16 @@ class UserDataProvider {
         'x-auth-token': token,
       },
     );
-    print('delete user ${response.statusCode}');
+
     if (response.statusCode == 200) {
-      print("user deleted");
-      return jsonDecode(response.body);
+      return response.body.toString();
     } else {
-      print("user delete error ${response.body}");
       throw Exception(response.body);
     }
   }
 
   // forgot password Request
-  Future<bool> forgetPassword(String email) async {
+  Future<String> forgetPassword(String email) async {
     final response = await httpClient.post(
       Uri.parse(EndPoints.forgotPasswordURL),
       headers: <String, String>{
@@ -98,10 +88,9 @@ class UserDataProvider {
         <String, dynamic>{'email': email},
       ),
     );
-    print(response.statusCode);
 
     if (response.statusCode == 200) {
-      return true;
+      return "deleted";
     } else {
       throw Exception(response.body);
     }

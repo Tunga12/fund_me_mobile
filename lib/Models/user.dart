@@ -60,8 +60,7 @@ class User {
     bool isAdmin = data['isAdmin'] ?? false;
     String phoneNumber = data['phoneNumber'] ?? '';
 
-    print('json data 2 $data');
-
+   
     return User(
       id: id,
       firstName: firstName,

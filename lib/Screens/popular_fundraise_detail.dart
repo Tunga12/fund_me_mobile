@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:crowd_funding_app/Models/methods.dart';
 import 'package:crowd_funding_app/Models/donation.dart';
 import 'package:crowd_funding_app/Models/fundraise.dart';
@@ -21,10 +20,8 @@ import 'package:crowd_funding_app/widgets/custom_circle_avatar.dart';
 import 'package:crowd_funding_app/widgets/expandable_content.dart';
 import 'package:crowd_funding_app/widgets/response_alert.dart';
 import 'package:crowd_funding_app/widgets/title_row.dart';
-import 'package:crowd_funding_app/widgets/update_body.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 

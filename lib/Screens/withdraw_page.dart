@@ -1,13 +1,17 @@
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Screens/setup_withdrawal.dart';
+import 'package:crowd_funding_app/Screens/withdrawal_beneficairy_selection.dart';
 import 'package:crowd_funding_app/widgets/custom_card.dart';
 import 'package:crowd_funding_app/widgets/withdraw_note.dart';
+import 'package:crowd_funding_app/widgets/withdrawal_beneficiary_invited_body.dart';
 import 'package:flutter/material.dart';
 
 class WithdrawPage extends StatelessWidget {
-  const WithdrawPage({Key? key, required this.fundraise}) : super(key: key);
+  WithdrawPage({Key? key, required this.fundraise, this.isSetUped})
+      : super(key: key);
 
   final Fundraise fundraise;
+  bool? isSetUped = false;
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +22,7 @@ class WithdrawPage extends StatelessWidget {
           "Withdraw",
         ),
       ),
-      body: Container(
-          child: SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Column(
           children: [
             CustomCard(
@@ -56,103 +59,123 @@ class WithdrawPage extends StatelessWidget {
                   SizedBox(
                     height: 20.0,
                   ),
-                  SizedBox(
-                    width: size.width,
-                    child: TextButton(
-                        style: TextButton.styleFrom(
-                            backgroundColor: Theme.of(context).accentColor),
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => SetupWithdrawal(
-                                fundraiseId: fundraise.id!,
-                              ),
-                            ),
-                          );
-                        },
-                        child: Text(
-                          "Set up withdrawals",
-                          style: TextStyle(
-                            color: Theme.of(context).backgroundColor,
-                          ),
-                        )),
-                  ),
                   Divider(
                     thickness: 1.5,
                   ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Take a minute to review these important details: ",
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  Row(
-                    children: [
-                      Icon(Icons.check,
-                          size: 20.0, color: Theme.of(context).accentColor),
-                      SizedBox(
-                        width: 10.0,
-                      ),
-                      Expanded(
-                        child: RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                style: TextStyle(color: Colors.grey[700]),
-                                text:
-                                    "If you do not set up withdrawals within 90 days of your first donation,",
-                              ),
-                              TextSpan(
-                                  text: "all donations will be refunded",
+                  if (isSetUped != null)
+                    if (isSetUped == false)
+                      Container(
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              width: size.width,
+                              child: TextButton(
+                                style: TextButton.styleFrom(
+                                    backgroundColor:
+                                        Theme.of(context).accentColor),
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          WithdrawalBeneficiarySelection(fundraise),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  "Set up withdrawals",
                                   style: TextStyle(
-                                      color: Colors.grey[700],
-                                      fontWeight: FontWeight.bold))
-                            ],
-                          ),
+                                    color: Theme.of(context).backgroundColor,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Divider(
+                              thickness: 1.5,
+                            ),
+                            SizedBox(
+                              height: 20.0,
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 20.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Take a minute to review these important details: ",
+                                    style: TextStyle(
+                                      fontSize: 16.0,
+                                      fontWeight: FontWeight.w900,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 20.0,
+                                  ),
+                                  Row(
+                                    children: [
+                                      Icon(Icons.check,
+                                          size: 20.0,
+                                          color: Theme.of(context).accentColor),
+                                      SizedBox(
+                                        width: 10.0,
+                                      ),
+                                      Expanded(
+                                        child: RichText(
+                                          text: TextSpan(
+                                            children: [
+                                              TextSpan(
+                                                style: TextStyle(
+                                                    color: Colors.grey[700]),
+                                                text:
+                                                    "If you do not set up withdrawals within 90 days of your first donation,",
+                                              ),
+                                              TextSpan(
+                                                text:
+                                                    "all donations will be refunded",
+                                                style: TextStyle(
+                                                  color: Colors.grey[700],
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: 20.0,
+                                  ),
+                                  WithdrawNote(
+                                    "Settings up withdrawals will not end your campaign. Your Campaing will continue will continue to accept donations",
+                                  ),
+                                  SizedBox(
+                                    height: 20.0,
+                                  ),
+                                  WithdrawNote(
+                                    "Withdrawls to a bank account will start arriving in 2-5 business days after setup.",
+                                  ),
+                                  SizedBox(
+                                    height: 20.0,
+                                  ),
+                                  WithdrawNote(
+                                    "Need Someone else to withdrawals the money? No problem! You can grant them sole access as part of this process.",
+                                  )
+                                ],
+                              ),
+                            )
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  WithdrawNote(
-                    "Settings up withdrawals will not end your campaign. Your Campaing will continue will continue to accept donations",
-                  ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  WithdrawNote(
-                    "Withdrawls to a bank account will start arriving in 2-5 business days after setup.",
-                  ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  WithdrawNote(
-                    "Need Someone else to withdrawals the money? No problem! You can grant them sole access as part of this process.",
-                  )
+                      )
+                    else
+                      BeneficiaryVinvited(),
                 ],
               ),
-            )
+            ),
           ],
         ),
-      )),
+      ),
     );
   }
 }

@@ -9,15 +9,13 @@ import 'package:crowd_funding_app/widgets/authdialog.dart';
 import 'package:crowd_funding_app/widgets/bank_info.dart';
 import 'package:crowd_funding_app/widgets/continue_button.dart';
 import 'package:crowd_funding_app/widgets/loading_progress.dart';
-import 'package:crowd_funding_app/widgets/response_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 class SetupWithdrawal extends StatefulWidget {
-  const SetupWithdrawal({Key? key, required this.fundraiseId})
-      : super(key: key);
-  final String fundraiseId;
+  const SetupWithdrawal({Key? key, required this.fundraise}) : super(key: key);
+  final Fundraise fundraise;
 
   @override
   _SetupWithdrawalState createState() => _SetupWithdrawalState();
@@ -66,6 +64,7 @@ class _SetupWithdrawalState extends State<SetupWithdrawal> {
                 child: Column(
                   children: [
                     BankInformation(
+                      fundraise: widget.fundraise,
                       data: _myData,
                       validate: (value) {
                         setState(() {
@@ -82,37 +81,37 @@ class _SetupWithdrawalState extends State<SetupWithdrawal> {
                       height: 40.0,
                     ),
                     ContinueButton(
-                        isValidate: _bankInfoValidated,
-                        onPressed: () async {
-                          if (_bankInfoValidated) {
-                            loadingProgress(context);
-                            Withdrwal _withdrawal = Withdrwal(
-                              bankName: _myData['bankName'],
-                              bankAccountNo: _myData['bankAccountNo'],
-                              isOrganizer: true,
-                              beneficiary: "Beneficiary",
-                            );
-
-                            await context
-                                .read<WithdrawalModel>()
-                                .createWithdrawal(
-                                    _withdrawal, _token, widget.fundraiseId);
-                            Response response =
-                                context.read<WithdrawalModel>().response;
-                            if (response.status == ResponseStatus.SUCCESS) {
-                              Fluttertoast.showToast(
-                                  msg: "Withdraw pending",
-                                  toastLength: Toast.LENGTH_LONG);
-                              Navigator.of(context).pushNamedAndRemoveUntil(
-                                  HomePage.routeName, (route) => false);
-                            } else {
-                              Navigator.of(context).pop();
-                              authShowDialog(context, Text(response.message),
-                                  error: true, close: true);
-                            }
+                      isValidate: _bankInfoValidated || widget.fundraise.withdraw != null,
+                      onPressed: () async {
+                        if (_bankInfoValidated) {
+                          loadingProgress(context);
+                          Withdrwal _withdrawal = Withdrwal(
+                            bankName: _myData['bankName'],
+                            bankAccountNo: _myData['accountNumber'],
+                            isOrganizer: true,
+                            beneficiary: "Beneficiary",
+                          );
+                          await context
+                              .read<WithdrawalModel>()
+                              .createWithdrawal(
+                                  _withdrawal, _token, widget.fundraise.id!);
+                          Response response =
+                              context.read<WithdrawalModel>().response;
+                          if (response.status == ResponseStatus.SUCCESS) {
+                            Fluttertoast.showToast(
+                                msg: "Withdraw pending",
+                                toastLength: Toast.LENGTH_LONG);
+                            Navigator.of(context).pushNamedAndRemoveUntil(
+                                HomePage.routeName, (route) => false);
+                          } else {
+                            Navigator.of(context).pop();
+                            authShowDialog(context, Text(response.message),
+                                error: true, close: true);
                           }
-                        },
-                        title: "Withdraw")
+                        }
+                      },
+                      title: "Withdraw",
+                    )
                   ],
                 ),
               ),

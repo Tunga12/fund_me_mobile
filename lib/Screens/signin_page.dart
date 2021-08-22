@@ -33,8 +33,7 @@ class _SigninPageState extends State<SigninPage> {
     // AuthModel userModel = Provider.of<AuthModel>(context);
     return Consumer<AuthModel>(
       builder: (_, model, child) {
-        print(model.signinStatus);
-        // print(model.status);
+       
         return Scaffold(
           appBar: AppBar(
             title: Text("Sign in"),
@@ -61,6 +60,7 @@ class _SigninPageState extends State<SigninPage> {
                   child: Column(
                     children: [
                       TextFormField(
+                        key: Key("email_formfield"),
                         keyboardType: TextInputType.emailAddress,
                         onSaved: (value) {
                           this._userInfo['email'] = value;
@@ -71,6 +71,7 @@ class _SigninPageState extends State<SigninPage> {
                           }
                         },
                         decoration: InputDecoration(
+                          
                           labelText: "Email",
                         ),
                       ),
@@ -78,6 +79,7 @@ class _SigninPageState extends State<SigninPage> {
                         height: 18.0,
                       ),
                       TextFormField(
+                        key: Key('password_formfield'),
                         obscureText: _isObscured,
                         onSaved: (value) {
                           this._userInfo['password'] = value;
@@ -127,7 +129,7 @@ class _SigninPageState extends State<SigninPage> {
                               await context.read<AuthModel>().signinUser(user);
 
                               if (model.signinStatus == AuthStatus.LOGGEDIN) {
-                                print("login user $user");
+                               
 
                                 await context.read<UserModel>().getUser(
                                     model.response.data, user.password!);
@@ -186,6 +188,7 @@ class _SigninPageState extends State<SigninPage> {
                   ),
                 ),
                 TextButton(
+                  key: Key('signinbutton_key'),
                   onPressed: () {
                     _formKey.currentState!.save();
                     print('User email is ');

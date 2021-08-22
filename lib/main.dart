@@ -168,24 +168,28 @@ class CrowdFundingApp extends StatelessWidget {
                   withdrawalRepository: withdrawalRepository,
                 ))
       ],
-      child: MaterialApp(
-        onGenerateRoute: AppRoute.generateRoute,
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primarySwatch: MaterialColor(0xFF00B860, color),
-          primaryColor: MaterialColor(0xFF00B860, color),
-          accentColor: MaterialColor(0xFF08B868, color_two),
-          backgroundColor: Colors.white,
-          secondaryHeaderColor: Colors.grey[800],
-          buttonColor: Colors.amber[800],
-          appBarTheme: AppBarTheme(color: Colors.white),
-          textTheme: TextTheme(
-            bodyText1: TextStyle(color: Colors.grey, fontSize: 16.0),
-            bodyText2: TextStyle(
-                color: MaterialColor(0xFF08B868, color_two),
-                fontWeight: FontWeight.bold),
-          ),
-        ),
+      child: Builder(
+        builder: (BuildContext context) {
+          return MaterialApp(
+            onGenerateRoute: AppRoute.generateRoute,
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              primarySwatch: MaterialColor(0xFF00B860, color),
+              primaryColor: MaterialColor(0xFF00B860, color),
+              accentColor: MaterialColor(0xFF08B868, color_two),
+              backgroundColor: Colors.white,
+              secondaryHeaderColor: Colors.grey[800],
+              buttonColor: Colors.amber[800],
+              appBarTheme: AppBarTheme(color: Colors.white),
+              textTheme: TextTheme(
+                bodyText1: TextStyle(color: Colors.grey, fontSize: 16.0),
+                bodyText2: TextStyle(
+                    color: MaterialColor(0xFF08B868, color_two),
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

@@ -283,6 +283,7 @@ class DonationPageState extends State<DonationPage> {
                       ),
                       if (_showDoantionInfo)
                         BankInformation(
+                          fundraise: widget.fundraise,
                           data: _myData,
                           validate: (value) {
                             setState(() {

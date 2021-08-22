@@ -51,4 +51,34 @@ class WithdrawalModel extends ChangeNotifier {
           message: e.toString());
     }
   }
+
+  Future inviteBeneficiary(
+      String email, String token, String fundraiseId) async {
+    try {
+      response =
+          Response(status: ResponseStatus.LOADING, data: null, message: '');
+      final idResponse = await withdrawalRepository.inviteBeneficiary(
+          email, token, fundraiseId);
+      print("IS true ${idResponse.runtimeType is String}");
+        response = response = Response(
+            status: ResponseStatus.SUCCESS,
+            data: idResponse,
+            message: "Success");
+    } on SocketException catch (e) {
+      response = Response(
+          status: ResponseStatus.CONNECTIONERROR,
+          data: null,
+          message: "No internet connection");
+    } on FormatException catch (e) {
+      response = Response(
+          status: ResponseStatus.FORMATERROR,
+          data: null,
+          message: "Invalid response from the server");
+    } catch (e) {
+      response = Response(
+          status: ResponseStatus.MISMATCHERROR,
+          data: null,
+          message: e.toString());
+    }
+  }
 }

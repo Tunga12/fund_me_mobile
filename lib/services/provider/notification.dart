@@ -60,9 +60,9 @@ class UserNotificationModel extends ChangeNotifier {
     try {
       response =
           Response(status: ResponseStatus.LOADING, data: null, message: '');
-      bool updateResponse =
+      final updateResponse =
           await notificationRepository.updateNotificationi(notification, token);
-      if (updateResponse)
+      if (updateResponse == 'updated')
         response = response = Response(
             status: ResponseStatus.SUCCESS,
             data: updateResponse,
@@ -91,9 +91,9 @@ class UserNotificationModel extends ChangeNotifier {
     try {
       response =
           Response(status: ResponseStatus.LOADING, data: null, message: '');
-      bool deleteResponse =
+      final deleteResponse =
           await notificationRepository.deleteNotification(id, token);
-      if (deleteResponse)
+      if (deleteResponse == 'deleted')
         response = response = Response(
             status: ResponseStatus.SUCCESS,
             data: deleteResponse,
@@ -116,6 +116,7 @@ class UserNotificationModel extends ChangeNotifier {
       );
     }
   }
+
   Future signOut() async {
     response =
         Response(data: null, status: ResponseStatus.LOADING, message: "");
