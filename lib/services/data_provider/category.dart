@@ -36,7 +36,7 @@ class CategoryDataProvider {
     );
 
     if (response.statusCode == 200) {
-      final category = jsonDecode(response.body) as Map<String, dynamic>;
+      final category = jsonDecode(response.body);
       return Category.fromJson(category);
     } else {
       throw Exception('Failed to fetch single category');

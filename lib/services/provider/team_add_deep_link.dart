@@ -8,10 +8,11 @@ abstract class TeamProvider {
 
 class TeamAddModel extends TeamProvider {
   //Event Channel creation
-  static const stream = const EventChannel('https.shrouded-bastion-52038.herokuapp.com/events');
+  static const stream = const EventChannel('https:www.crowdfund.com/events');
 
   //Method channel creation
-  static const platform = const MethodChannel('https.shrouded-bastion-52038.herokuapp.com/channel');
+  static const platform =
+      const MethodChannel('https:www.crowdfund.com/channel');
 
   StreamController<String> _stateController = StreamController();
 

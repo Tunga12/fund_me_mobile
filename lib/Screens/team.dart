@@ -2,7 +2,6 @@ import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Models/team_member.dart';
 import 'package:crowd_funding_app/Models/user.dart';
-import 'package:crowd_funding_app/Screens/fundraiser_teammember_page.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/services/provider/team_member.dart';
 import 'package:crowd_funding_app/widgets/authdialog.dart';
@@ -12,7 +11,6 @@ import 'package:crowd_funding_app/widgets/team_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
-import 'package:share/share.dart';
 
 class Team extends StatefulWidget {
   Team(
@@ -30,10 +28,13 @@ class Team extends StatefulWidget {
 }
 
 class _TeamState extends State<Team> {
-  final String _teamLink =
-      'https://shrouded-bastion-52038.herokuapp.com/teamadd/';
+  // final String _teamLink =
+  //     'https://shrouded-bastion-52038.herokuapp.com/teamadd/';
 
   List<TeamMember> _teams = [];
+
+  TeamMember? _teamMember;
+  int _teamIndex = 0;
   @override
   void initState() {
     _getToken();
@@ -47,7 +48,11 @@ class _TeamState extends State<Team> {
     PreferenceData _prefrenceData = await _userPreference.getUserToken();
     setState(() {
       _token = _prefrenceData.data;
-      _teams = widget.teams;
+
+      _teams = widget.teams
+          .where((team) =>
+              team.member!.userID!.id != widget.fundraise.organizer!.id)
+          .toList();
     });
   }
 
@@ -193,14 +198,6 @@ class _TeamState extends State<Team> {
                             showDialog(
                                 context: context,
                                 builder: (context) => _chooseSource());
-                            // await context
-                            //     .read<TeamMemberModel>()
-                            //     .createTeamMember(
-                            //         _userEmail, _token!, widget.fundraise.id!);
-                            // Share.share(_teamLink + "${widget.fundraise.id}")
-                            //     .then((value) {
-                            //   print("The shared data is");
-                            // });
                           }
                         },
                       ),
@@ -222,58 +219,73 @@ class _TeamState extends State<Team> {
                 height: 10.0,
               ),
               Container(
-                  padding: EdgeInsets.all(20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Team member (${_teams.length + 1})",
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      _teams.isEmpty
-                          ? Text(
-                              "Team members you invite will show up here once they they accept your invite",
-                              style: Theme.of(context).textTheme.bodyText1,
-                            )
-                          : Column(
-                              children: _teams
-                                  .map((team) => TeamTile(
-                                      deleteCalback: () async {
-                                        print("deleteing member");
-                                        await context
-                                            .read<TeamMemberModel>()
-                                            .deleteTeamMember(
-                                                _token!, team.member!.id!);
-                                        Response _response = context
-                                            .read<TeamMemberModel>()
-                                            .response;
-                                        if (_response.status ==
-                                            ResponseStatus.SUCCESS) {
-                                          setState(() {
-                                            _teams.remove(team);
-                                          });
-                                        } else {
-                                          authShowDialog(
-                                              context, Text(_response.message),
-                                              close: true, error: true);
-                                        }
-                                      },
-                                      isOrganizer:
-                                          _teams.first.member!.userID!.id !=
-                                              widget.fundraise.organizer!.id,
-                                      firstName:
-                                          team.member!.userID!.firstName!,
-                                      lastName: team.member!.userID!.lastName!,
-                                      subTitle: _teams.first == team
-                                          ? "Organizer"
-                                          : "Team member"))
-                                  .toList(),
-                            )
-                    ],
-                  ))
+                padding: EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Team member (${_teams.length + 1})",
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                    SizedBox(
+                      height: 20.0,
+                    ),
+                    TeamTile(
+                      firstName: widget.fundraise.organizer!.firstName!,
+                      lastName: widget.fundraise.organizer!.lastName!,
+                      subTitle: "Organizer",
+                    ),
+                    _teams.isEmpty
+                        ? Text(
+                            "Team members you invite will show up here once they  accept your invite",
+                            style: Theme.of(context).textTheme.bodyText1,
+                          )
+                        : Column(
+                            children: _teams
+                                .map((team) => TeamTile(
+                                    deleteCalback: () async {
+                                      setState(() {
+                                        _teamMember = team;
+                                        _teamIndex = _teams.indexWhere(
+                                            (memeber) =>
+                                                memeber.member!.id ==
+                                                team.member!.id);
+                                        _teams.removeWhere(
+                                          (member) =>
+                                              member.member!.id ==
+                                              team.member!.id,
+                                        );
+                                      });
+                                      await context
+                                          .read<TeamMemberModel>()
+                                          .deleteTeamMember(
+                                              _token!, team.member!.id!);
+                                      Response _response = context
+                                          .read<TeamMemberModel>()
+                                          .response;
+                                      if (_response.status ==
+                                          ResponseStatus.SUCCESS) {
+                                      } else {
+                                        setState(() {
+                                          _teams.insert(
+                                              _teamIndex, _teamMember!);
+                                        });
+                                        Fluttertoast.showToast(
+                                          msg: _response.message,
+                                          toastLength: Toast.LENGTH_LONG,
+                                        );
+                                      }
+                                    },
+                                    isOrganizer: widget.user.id ==
+                                        widget.fundraise.organizer!.id,
+                                    firstName: team.member!.userID!.firstName!,
+                                    lastName: team.member!.userID!.lastName!,
+                                    subTitle: "Team member"))
+                                .toList(),
+                          )
+                  ],
+                ),
+              )
             ],
           ),
         ),

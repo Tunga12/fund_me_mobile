@@ -1,8 +1,17 @@
+import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 
 class BeneficiaryVinvited extends StatelessWidget {
-  const BeneficiaryVinvited({Key? key}) : super(key: key);
+  const BeneficiaryVinvited({
+    Key? key,
+    required this.beneficiary,
+    required this.isAccepted,
+    required this.isWithdrawn,
+  }) : super(key: key);
+  final User beneficiary;
+  final bool isAccepted;
+  final bool isWithdrawn;
 
   @override
   Widget build(BuildContext context) {
@@ -23,14 +32,14 @@ class BeneficiaryVinvited extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Fasikaw Kindye",
+                      beneficiary.firstName! + " " + beneficiary.firstName!,
                       style: kBodyTextStyle.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context).secondaryHeaderColor,
                       ),
                     ),
                     Text(
-                      "fasikawsoft@gmail.com",
+                      beneficiary.email!,
                       style: kBodyTextStyle.copyWith(
                         fontWeight: FontWeight.bold,
                         color: Theme.of(context)
@@ -52,7 +61,7 @@ class BeneficiaryVinvited extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Invitation sent to fasikawsoft@gmail.com",
+                    "Invitation sent to ${beneficiary.email}",
                     style: kBodyTextStyle.copyWith(
                       height: 2,
                       fontWeight: FontWeight.bold,
@@ -75,10 +84,10 @@ class BeneficiaryVinvited extends StatelessWidget {
           BeneficiaryStatus(
             showVertical: true,
             title: "Beneficiary accepted",
-            isCompleted: false,
+            isCompleted: isAccepted,
             child: Container(
               child: Text(
-                "Waiting on Fasikaw to accept their invitation",
+                "Waiting on ${beneficiary.firstName} to accept their invitation",
                 style: kBodyTextStyle.copyWith(
                   height: 2,
                   fontWeight: FontWeight.bold,
@@ -91,11 +100,11 @@ class BeneficiaryVinvited extends StatelessWidget {
           BeneficiaryStatus(
             showVertical: false,
             title: "Money withdrawn",
-            isCompleted: false,
+            isCompleted: isWithdrawn,
             child: Container(
               width: size.width * 0.8,
               child: Text(
-                'Fasikaw has not finished identification verification',
+                '${beneficiary.firstName} has not finished identification verification',
                 style: kBodyTextStyle.copyWith(
                   height: 2,
                   fontWeight: FontWeight.bold,

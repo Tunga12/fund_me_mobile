@@ -4,12 +4,14 @@ import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/services/provider/user.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/authdialog.dart';
 import 'package:crowd_funding_app/widgets/forgot_password_invitation.dart';
 import 'package:crowd_funding_app/widgets/loading_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class UpdatePassword extends StatefulWidget {
   final User user;
@@ -38,11 +40,12 @@ class _UpdatePasswordState extends State<UpdatePassword> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Set your password',
+          LocaleKeys.set_your_password_appbar_title_text.tr(),
           style: appbarTextStyle,
         ),
         actions: [
           TextButton(
+            key: Key('save_button'),
             onPressed: () async {
               _formKey.currentState!.save();
               if (_formKey.currentState!.validate()) {
@@ -70,7 +73,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
               }
             },
             child: Text(
-              "SAVE",
+              LocaleKeys.save_button_text.tr(),
               style: TextStyle(color: Theme.of(context).secondaryHeaderColor),
             ),
           ),
@@ -85,6 +88,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextFormField(
+                  key: Key('current_password'),
                   obscureText: _currentPassword,
                   onSaved: (value) {
                     setState(() {
@@ -93,16 +97,17 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                   },
                   validator: (value) {
                     if (value != widget.user.password) {
-                      return 'incorrect password';
+                      return LocaleKeys.incorrect_password_lable_text.tr();
                     }
                   },
                   decoration: InputDecoration(
-                    labelText: 'Current password',
+                    labelText: LocaleKeys.current_password_label_text.tr(),
                     contentPadding: EdgeInsets.symmetric(vertical: 0.0),
                     suffix: TextButton(
-                      child: Text(_currentPassword ? 'Show' : 'Hide'),
+                      child: Text(_currentPassword
+                          ? LocaleKeys.show_button_text.tr()
+                          : LocaleKeys.hide_button_text.tr()),
                       onPressed: () {
-                        print("show password");
                         setState(() {
                           _currentPassword = !_currentPassword;
                         });
@@ -115,14 +120,13 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                   child: Row(
                     children: [
                       Text(
-                        'forgot password or don\'t have one? ',
+                        LocaleKeys.forgot_password_or_text.tr(),
                         style: labelTextStyle.copyWith(
                             fontWeight: FontWeight.w500,
                             color: Theme.of(context).secondaryHeaderColor),
                       ),
                       GestureDetector(
                           onTap: () {
-                            print("reset password");
                             showDialog(
                                 context: context,
                                 builder: (context) => ForgotPasswordInvitaion(
@@ -131,7 +135,8 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                           },
                           child: Padding(
                             padding: const EdgeInsets.all(5.0),
-                            child: Text('Reset password'),
+                            child: Text(
+                                LocaleKeys.reset_password_button_text.tr()),
                           ))
                     ],
                   ),
@@ -140,6 +145,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                   height: 30.0,
                 ),
                 TextFormField(
+                  key: Key('new_password'),
                   obscureText: _newPassword,
                   onSaved: (value) {
                     setState(() {
@@ -148,14 +154,16 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                   },
                   validator: (value) {
                     if (value!.length <= 7) {
-                      return 'password must aleast 8 chars';
+                      return LocaleKeys.not_enough_password_error_text.tr();
                     }
                   },
                   decoration: InputDecoration(
-                    labelText: 'New password',
+                    labelText: LocaleKeys.new_password_label_text.tr(),
                     contentPadding: EdgeInsets.symmetric(vertical: 0.0),
                     suffix: TextButton(
-                      child: Text(_newPassword ? 'Show' : "Hide"),
+                      child: Text(_newPassword
+                          ? LocaleKeys.show_button_text.tr()
+                          : LocaleKeys.hide_button_text.tr()),
                       onPressed: () {
                         print("show password");
                         setState(() {
@@ -169,17 +177,20 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                   height: 30.0,
                 ),
                 TextFormField(
+                  key: Key('confirm_password'),
                   obscureText: _confirmPassword,
                   validator: (value) {
                     if (_passwordValue['newPassword'] != value) {
-                      return 'new password do not match';
+                      return LocaleKeys.new_password_dont_match_label_text.tr();
                     }
                   },
                   decoration: InputDecoration(
-                    labelText: 'Confirm new password',
+                    labelText: LocaleKeys.confirm_new_password_label_text.tr(),
                     contentPadding: EdgeInsets.symmetric(vertical: 0.0),
                     suffix: TextButton(
-                      child: Text(_confirmPassword ? 'Show' : "Hide"),
+                      child: Text(_confirmPassword
+                          ? LocaleKeys.show_button_text.tr()
+                          : LocaleKeys.hide_button_text.tr()),
                       onPressed: () {
                         print("show password");
                         setState(() {

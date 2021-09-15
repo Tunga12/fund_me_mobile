@@ -1,7 +1,7 @@
 import 'dart:async';
 
+import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/home_page.dart';
-import 'package:crowd_funding_app/Screens/signin_page.dart';
 import 'package:crowd_funding_app/Screens/welcom_page.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:flutter/material.dart';
@@ -20,35 +20,48 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     getUser().whenComplete(() async {
       Timer(
-        Duration(seconds: 2),
+        Duration(milliseconds: 100),
         () => user!.status
-            ? Navigator.of(context)
+            ? Navigator.of(context, rootNavigator: false)
                 .pushNamedAndRemoveUntil(HomePage.routeName, (route) => false)
-            : Navigator.of(context).pushNamedAndRemoveUntil(
-              WelcomePage.routeName, (route) => false),
+            : Navigator.of(context, rootNavigator: false)
+                .pushNamedAndRemoveUntil(
+                    WelcomePage.routeName, (route) => false),
       );
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   Future getUser() async {
     UserPreference userPreference = UserPreference();
     final loggedUser = await userPreference.getUserInfromation();
-
-    setState(() {
-      user = loggedUser;
-    });
+    // final loggedUser = User();
+    if (mounted)
+      setState(() {
+        user = loggedUser;
+      });
   }
 
   @override
   Widget build(BuildContext context) {
+    print("splash screen");
     final size = MediaQuery.of(context).size;
-    print("start Page");
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       body: Container(
-        child: Center(
-            child: Image.asset('assets/images/gofundme.png',
-                width: size.width * 0.6)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
+              child: Image.asset('assets/images/logo_image.PNG',
+                  width: size.width * 0.6),
+            ),
+          ],
+        ),
       ),
     );
   }

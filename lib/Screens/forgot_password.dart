@@ -41,6 +41,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             child: Column(
               children: [
                 TextFormField(
+                  key: Key("new_password"),
                   onSaved: (value) {
                     setState(() {
                       _password = value!;
@@ -74,6 +75,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   height: 20.0,
                 ),
                 TextFormField(
+                  key: Key('confirm_password'),
                   validator: (value) {
                     if (_password != value) {
                       return "password do not match";
@@ -103,6 +105,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   height: 50.0,
                   width: size.width,
                   child: TextButton(
+                    key: Key('forgot_password'),
                     style: TextButton.styleFrom(
                         backgroundColor: Theme.of(context).accentColor),
                     child: Text(
@@ -115,6 +118,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       if (_formKey.currentState!.validate()) {
                         print("validated");
                         print(_password);
+                        print(widget.url);
+
                         loadingProgress(context);
                         await context
                             .read<UserModel>()
@@ -122,11 +127,15 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             .then((value) async {
                           Response _user = context.read<UserModel>().response;
                           User _userNew = _user.data;
+                          print(_user.data);
                           User newUser = _userNew.copyWith(password: _password);
+                          print(newUser);
                           await context.read<AuthModel>().signinUser(newUser);
                           AuthStatus authModel =
                               context.read<AuthModel>().signinStatus;
-                          Response _response = context.read<AuthModel>().response;
+                          Response _response =
+                              context.read<AuthModel>().response;
+                          print(_response.status);
                           if (authModel == AuthStatus.LOGGEDIN) {
                             print("email");
                             print(_userNew.email);
@@ -148,7 +157,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           }
                         }).catchError((error) {
                           Navigator.of(context).pop();
-                          authShowDialog(context, Text(error.toString()),
+                          authShowDialog(context, Text('somthing went wrong'),
                               close: true, error: true);
                         });
                       }

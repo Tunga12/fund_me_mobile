@@ -15,8 +15,8 @@ import io.flutter.plugins.GeneratedPluginRegistrant
 
 class MainActivity: FlutterActivity() {
 
-    private val CHANNEL = "https.shrouded-bastion-52038.herokuapp.com/channel"
-    private val EVENTS = "https.shrouded-bastion-52038.herokuapp.com/events"
+    private val CHANNEL = "https:www.crowdfund.com/channel"
+    private val EVENTS = "https:www.crowdfund.com/events"
     private var startString: String? = null
     private var linksReceiver: BroadcastReceiver? = null
 

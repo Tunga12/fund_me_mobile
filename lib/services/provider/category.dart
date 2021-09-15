@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:crowd_funding_app/Models/category.dart';
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/services/repository/category.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
+import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CategoryModel extends ChangeNotifier {
   CategoryRepository categoryRepository;
@@ -30,14 +32,14 @@ class CategoryModel extends ChangeNotifier {
       print('categories $categories');
       categories.insert(
         0,
-        Category(categoryID: "0", categoryName: "select category"),
+        Category(categoryID: "0", categoryName: LocaleKeys.select_category_label_text.tr()),
       );
       response = Response(
           status: ResponseStatus.SUCCESS,
           data: categories,
           message: "successfully fetched");
     } on SocketException catch (e) {
-      print("Fundraise Error ${e.message}");
+     
       response = Response(
           status: ResponseStatus.CONNECTIONERROR,
           data: null,

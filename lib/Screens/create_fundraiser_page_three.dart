@@ -8,6 +8,7 @@ import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/authdialog.dart';
 import 'package:crowd_funding_app/widgets/form_progress.dart';
 import 'package:crowd_funding_app/widgets/loading_progress.dart';
@@ -16,6 +17,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class CreateFundraiserPageThree extends StatefulWidget {
@@ -28,7 +30,6 @@ class CreateFundraiserPageThree extends StatefulWidget {
 }
 
 class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
-  
   File? _image;
   final _imagePicker = ImagePicker();
 
@@ -45,7 +46,7 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
   // Choose whether to take image from gallery or take picture using camera.
   _chooseSource() {
     return AlertDialog(
-      title: Text("choose method"),
+      title: Text(LocaleKeys.choose_method_label_text.tr()),
       content: SingleChildScrollView(
         child: Column(
           children: [
@@ -55,7 +56,7 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                 Navigator.of(context).pop();
               },
               leading: Icon(Icons.add_a_photo),
-              title: Text("take a photo"),
+              title: Text(LocaleKeys.take_photo_label_text.tr()),
             ),
             ListTile(
               onTap: () {
@@ -63,7 +64,7 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                 Navigator.of(context).pop();
               },
               leading: Icon(Icons.collections),
-              title: Text("choose from gallery"),
+              title: Text(LocaleKeys.choose_gallary_label_text.tr()),
             ),
           ],
         ),
@@ -75,7 +76,6 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     Response response = Provider.of<FundraiseModel>(context).response;
-
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
@@ -107,7 +107,7 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'STEP 3 OF 3',
+                      LocaleKeys.step_3_of_3_label_text.tr(),
                       style: stepTextStyle.copyWith(
                           color: Theme.of(context)
                               .secondaryHeaderColor
@@ -117,7 +117,7 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                       height: 10.0,
                     ),
                     Text(
-                      "Almost done. Add a fundraiser photo",
+                      LocaleKeys.almost_done_label_text.tr(),
                       style: bodyHeaderTextStyle.copyWith(
                         color: Theme.of(context)
                             .secondaryHeaderColor
@@ -128,7 +128,7 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                       height: 10,
                     ),
                     Text(
-                      "A feature photo or video helps tell your story. you can also edit or add more photos later.",
+                      LocaleKeys.a_feature_photo_or_video_label_text.tr(),
                       style: bodyTextStyle.copyWith(
                           color: Theme.of(context)
                               .secondaryHeaderColor
@@ -161,7 +161,8 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                                     Icon(Icons.add_photo_alternate_outlined),
                                     SizedBox(height: 10.0),
                                     Text(
-                                      "Add photo or video",
+                                      LocaleKeys.add_photo_or_video_label_text
+                                          .tr(),
                                       style: bodyTextStyle,
                                     )
                                   ],
@@ -218,7 +219,8 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                                         children: [
                                           Icon(Icons.edit),
                                           Text(
-                                            "change photo",
+                                            LocaleKeys.change_photo_label_text
+                                                .tr(),
                                             style: bodyTextStyle,
                                           )
                                         ],
@@ -231,7 +233,8 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                                           _image = null;
                                         });
                                       },
-                                      child: Text("Remove"),
+                                      child: Text(
+                                          LocaleKeys.remove_button_text.tr()),
                                     )
                                   ],
                                 )
@@ -281,7 +284,8 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                     ),
                     _image == null
                         ? CompleteButton(
-                            child: Text("Complete fundraiser",
+                            child: Text(
+                                LocaleKeys.Complete_fundraiser_button_text.tr(),
                                 style: labelTextStyle.copyWith(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 17.0,
@@ -298,7 +302,7 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                           )
                         : CompleteButton(
                             child: Text(
-                              'Complete fundraiser',
+                              LocaleKeys.Complete_fundraiser_button_text.tr(),
                               style: labelTextStyle.copyWith(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 17.0,

@@ -14,12 +14,11 @@ class FundraiseDataProvider {
   // creating a fundraise
   Future<bool> createFundraise(
       Fundraise fundraise, String token, File image) async {
-   
     http.Response? response;
-    final imageResponse = await getImage(token, image).then((imageResp) async {
+     await getImage(token, image).then((imageResp) async {
       print("the response image is $imageResp");
       response = await httpClient.post(
-        Uri.parse(EndPoints.baseURL + '/api/fundraisers'),
+        Uri.parse(EndPoints.fundraises),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'x-auth-token': token,
@@ -49,28 +48,50 @@ class FundraiseDataProvider {
 
   // Get popular fundraisers
   Future<HomeFundraise> getPopularFundraises(int page) async {
-    var url =
-        Uri.parse(EndPoints.baseURL + '/api/fundraisers/popular/?page=$page');
-    final response = await httpClient.get(url);
+    print("geting popular fundraisers");
+    // var url = Uri.parse(EndPoints.popularFundraisers + '?page=$page');
+    final response = await httpClient.get(
+      Uri.parse(EndPoints.popularFundraisers + '?page=$page'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    print(response.body);
+    print("error");
+    print(response.statusCode);
     if (response.statusCode == 200) {
+      print("success popular fundraisers");
       final popularFundraises =
           jsonDecode(response.body) as Map<String, dynamic>;
+      print("success popular fundraisers");
       return HomeFundraise.fromJson(popularFundraises);
     } else {
+      print("The exception is ");
+      print(response.body);
       throw Exception(response.body);
     }
   }
 
   // Get single fundraise
   Future<Fundraise> getSingleFundraise(String id) async {
+    print('fundraise Id is $id');
+    print(
+      Uri.parse(EndPoints.fundraises + id),
+    );
     final response = await httpClient.get(
       Uri.parse(EndPoints.fundraises + id),
     );
 
+    print("response status");
+    print(response.statusCode);
+    print(response.body);
     if (response.statusCode == 200) {
+      print('jsonDecoded');
+      print(jsonDecode(response.body));
       final singleFundraise = jsonDecode(response.body);
       return Fundraise.fromJson(singleFundraise);
     } else {
+      print(response.body);
       throw Exception(response.body);
     }
   }
@@ -99,6 +120,8 @@ class FundraiseDataProvider {
               "isPublished": fundraise.isPublished,
               "totalShareCount": fundraise.totalSharedCount,
               "likeCount": fundraise.likeCount,
+              if (fundraise.beneficiary != null)
+                'beneficiary': fundraise.beneficiary!.id,
               "title": fundraise.title,
               "image": fundraise.image,
               "goalAmount": fundraise.goalAmount,
@@ -166,8 +189,7 @@ class FundraiseDataProvider {
 
   // get fundraisers created by a user
   Future<HomeFundraise> getUserFundaisers(String token, int page) async {
-    var url =
-        Uri.parse(EndPoints.baseURL + "/api/fundraisers/user/?page=$page");
+    var url = Uri.parse(EndPoints.fundraises + "user/?page=$page");
     print(url);
     final response = await httpClient.get(url, headers: <String, String>{
       'x-auth-token': token,
@@ -202,6 +224,23 @@ class FundraiseDataProvider {
     final response = await httpClient.get(
       Uri.parse(EndPoints.searchURL + title + "/?page=$pageNumber"),
     );
+
+    if (response.statusCode == 200) {
+      return HomeFundraise.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
+  // beneficiary fundraisers
+  Future<HomeFundraise> beneficiaryFundraisers(
+      String token, int pageNumber) async {
+    print(Uri.parse(EndPoints.benficiaryFundraiserURL + "/?page=$pageNumber"));
+    final response = await httpClient.get(
+        Uri.parse(EndPoints.benficiaryFundraiserURL + "/?page=$pageNumber"),
+        headers: <String, String>{
+          'x-auth-token': token,
+        });
 
     if (response.statusCode == 200) {
       return HomeFundraise.fromJson(jsonDecode(response.body));

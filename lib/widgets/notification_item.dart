@@ -1,15 +1,15 @@
+import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/notification.dart';
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/accept_invite_page.dart';
 import 'package:crowd_funding_app/Screens/popular_fundraise_detail.dart';
 import 'package:crowd_funding_app/Screens/share_page.dart';
-import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/services/provider/notification.dart';
 import 'package:crowd_funding_app/widgets/authdialog.dart';
-import 'package:crowd_funding_app/widgets/loading_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 
@@ -26,10 +26,12 @@ class NotficationItem extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    String date = Jiffy(notification.date, "yyyy-MM-dd").fromNow();
+    String date = Jiffy(notification.date).fromNow();
     final size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () async {
+        print("notification fundraiser id is");
+        print(notification.fundraiser);
         List<String> _views = notification.viewed!;
         print("Viewds $_views");
         _views.removeWhere((userId) => userId == user.id);
@@ -43,6 +45,7 @@ class NotficationItem extends StatelessWidget {
           await context
               .read<UserNotificationModel>()
               .updateNotification(_userNotification, token);
+              
           Response response = context.read<UserNotificationModel>().response;
           if (response.status == ResponseStatus.SUCCESS) {
             notifyCallback();
@@ -54,8 +57,9 @@ class NotficationItem extends StatelessWidget {
               ),
             );
           } else {
-            authShowDialog(context, Text(response.message),
-                error: true, close: true);
+            Fluttertoast.showToast(
+                msg: "unable to see notification",
+                toastLength: Toast.LENGTH_LONG);
           }
         } else {
           await context
@@ -72,8 +76,9 @@ class NotficationItem extends StatelessWidget {
               ),
             );
           } else {
-            authShowDialog(context, Text(response.message),
-                error: true, close: true);
+            Fluttertoast.showToast(
+                msg: "unable to see notification",
+                toastLength: Toast.LENGTH_LONG);
           }
         }
       },
@@ -99,7 +104,7 @@ class NotficationItem extends StatelessWidget {
               color: Colors.grey,
             ),
             Image.asset(
-              'assets/images/favicon.png',
+              'assets/images/icon_vector.PNG',
               height: size.height * 0.05,
             ),
             SizedBox(
@@ -122,7 +127,9 @@ class NotficationItem extends StatelessWidget {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => SharePage(
-                            fundraise: notification.fundraiser!,
+                            fundraise: Fundraise(
+                                id: notification.fundraiser,
+                                title: notification.title),
                           ),
                         ),
                       );
@@ -155,6 +162,7 @@ class NotficationItem extends StatelessWidget {
                 color: Theme.of(context).secondaryHeaderColor,
               ),
               onSelected: (value) async {
+                notifyCallback();
                 await context
                     .read<UserNotificationModel>()
                     .deleteNotification(notification.id!, token);

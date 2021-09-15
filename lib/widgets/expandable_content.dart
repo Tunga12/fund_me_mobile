@@ -1,6 +1,8 @@
 import 'package:crowd_funding_app/Models/update.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/update_body.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ExpandableContent extends StatefulWidget {
   const ExpandableContent({Key? key, required this.updates}) : super(key: key);
@@ -51,7 +53,7 @@ class _ExpandableContentState extends State<ExpandableContent> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: <Widget>[
                       Text(
-                        _flag ? "show more" : "show less",
+                        _flag ? LocaleKeys.show_more_button_text.tr() : LocaleKeys.show_less_button_text.tr(),
                         style: TextStyle(color: Theme.of(context).accentColor),
                       ),
                     ],

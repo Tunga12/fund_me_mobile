@@ -50,6 +50,7 @@ class User {
   }
 
   factory User.fromJson(Map<String, dynamic> data) {
+    print("user is $data");
     String id = data['_id'] ?? '';
     String firstName = data['firstName'] ?? '';
     String lastName = data['lastName'] ?? '';
@@ -60,7 +61,6 @@ class User {
     bool isAdmin = data['isAdmin'] ?? false;
     String phoneNumber = data['phoneNumber'] ?? '';
 
-   
     return User(
       id: id,
       firstName: firstName,
@@ -74,7 +74,6 @@ class User {
     );
   }
 
-
   Map<String, dynamic> toJson() {
     return {
       'firstName': firstName,
@@ -85,7 +84,6 @@ class User {
       'emailNotification': emailNotification ?? false,
       'isDeactivated': isDeactivated ?? false,
       'isAdmin': isAdmin ?? false,
-      
     };
   }
 

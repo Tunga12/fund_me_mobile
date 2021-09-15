@@ -5,12 +5,14 @@ import 'package:crowd_funding_app/Screens/signin_page.dart';
 import 'package:crowd_funding_app/Screens/update_password_screen.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/services/provider/user.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/authdialog.dart';
 import 'package:crowd_funding_app/widgets/loading_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AccountSettings extends StatefulWidget {
   const AccountSettings({Key? key}) : super(key: key);
@@ -55,7 +57,7 @@ class _AccountSettingsState extends State<AccountSettings> {
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
         title: Text(
-          "Account settings",
+          LocaleKeys.account_listitle_text.tr(),
           style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.bold),
         ),
         actions: [
@@ -87,17 +89,19 @@ class _AccountSettingsState extends State<AccountSettings> {
                 Response _response = context.read<UserModel>().response;
                 if (_response.status == ResponseStatus.SUCCESS) {
                   await UserPreference().storeUserInformation(_newUser);
-                 Fluttertoast.showToast(msg: "successfully updated");
-                  Navigator.of(context).pushNamedAndRemoveUntil(HomePage.routeName, (route) => false, arguments: 2);
+                  Fluttertoast.showToast(msg: "successfully updated");
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      HomePage.routeName, (route) => false,
+                      arguments: 2);
                 } else {
-                   Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                   authShowDialog(context, Text(_response.message),
                       error: true, close: true);
                 }
               }
             },
             child: Text(
-              "SAVE",
+              LocaleKeys.save_button_text.tr(),
               style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18.0,
@@ -126,7 +130,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                   child: Column(
                     children: [
                       Text(
-                        "General settings",
+                        LocaleKeys.general_settings_text.tr(),
                         style: Theme.of(context).textTheme.bodyText1!.copyWith(
                             color: Theme.of(context).secondaryHeaderColor),
                       )
@@ -138,15 +142,16 @@ class _AccountSettingsState extends State<AccountSettings> {
                     child: Column(
                       children: [
                         TextFormField(
+                          key: Key("first_name"),
                           initialValue: user!.firstName,
                           decoration: InputDecoration(
-                            labelText: "First name",
+                            labelText: LocaleKeys.first_name_text.tr(),
                           ),
                           validator: (value) {
                             if (value!.isEmpty) {
-                              return "First name must not empty";
+                              return LocaleKeys.first_name_mustnot_empty_text.tr();
                             } else if (value.length < 3) {
-                              return "field must be atleast 3 chars";
+                              return LocaleKeys.first_name_must_greater_than_three_text.tr();
                             }
                           },
                           onSaved: (value) {
@@ -156,13 +161,15 @@ class _AccountSettingsState extends State<AccountSettings> {
                           },
                         ),
                         TextFormField(
+                          key: Key('last_name'),
                           initialValue: user!.lastName,
-                          decoration: InputDecoration(labelText: "Last name"),
+                          decoration: InputDecoration(
+                              labelText: LocaleKeys.last_name_text.tr()),
                           validator: (value) {
                             if (value!.isEmpty) {
-                              return "Last name must not empty";
+                              return LocaleKeys.last_name_mustnot_empty_text.tr();
                             } else if (value.length < 3) {
-                              return "field must be atleast 3 chars";
+                              return LocaleKeys.last_name_must_greater_than_threww_text.tr();
                             }
                           },
                           onSaved: (value) {
@@ -170,8 +177,11 @@ class _AccountSettingsState extends State<AccountSettings> {
                           },
                         ),
                         TextFormField(
+                          key: Key('email'),
                           initialValue: user!.email,
-                          decoration: InputDecoration(labelText: "Email"),
+                          decoration: InputDecoration(
+                            labelText: LocaleKeys.email_text.tr(),
+                          ),
                           validator: (value) {
                             if (value!.isEmpty) {
                               return "Email must not empty";
@@ -184,6 +194,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                           },
                         ),
                         TextFormField(
+                          key: Key('password'),
                           readOnly: true,
                           onTap: () {
                             Navigator.of(context).push(
@@ -198,9 +209,9 @@ class _AccountSettingsState extends State<AccountSettings> {
                           obscureText: true,
                           initialValue: user!.password,
                           decoration: InputDecoration(
-                              labelText: "Password",
+                              labelText: LocaleKeys.Password_text.tr(),
                               suffixIcon: TextButton(
-                                child: Text('change'),
+                                child: Text(LocaleKeys.change_text.tr()),
                                 onPressed: () {},
                               )),
                           validator: (value) {
@@ -239,13 +250,13 @@ class _AccountSettingsState extends State<AccountSettings> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Connected accounts",
+                  LocaleKeys.connected_accounts_text.tr(),
                 ),
                 SizedBox(
                   height: 10.0,
                 ),
                 Text(
-                  "Connecting makes it easy for you to share",
+                  LocaleKeys.connecting_makes_it_easy_text.tr(),
                   style: Theme.of(context).textTheme.bodyText1,
                 ),
                 SizedBox(
@@ -260,7 +271,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                       size: 35.0,
                     ),
                     Text(
-                      "Facebook",
+                      LocaleKeys.facebook_text.tr(),
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                     SizedBox(
@@ -273,7 +284,9 @@ class _AccountSettingsState extends State<AccountSettings> {
                             padding: EdgeInsets.symmetric(horizontal: 30.0),
                             side: BorderSide(color: Colors.green, width: 1.5)),
                         onPressed: () {},
-                        child: Text("Connect"))
+                        child: Text(
+                          LocaleKeys.connect_button_text.tr(),
+                        ))
                   ],
                 )
               ],
@@ -288,7 +301,7 @@ class _AccountSettingsState extends State<AccountSettings> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Deleting your account will remove all of your activity and campaigns, and you will no longer be able to sign in with this account.",
+                  LocaleKeys.delete_account_description_text.tr(),
                   style: Theme.of(context)
                       .textTheme
                       .bodyText1!
@@ -296,7 +309,7 @@ class _AccountSettingsState extends State<AccountSettings> {
                 ),
                 TextButton(
                   child: Text(
-                    "Delete account",
+                    LocaleKeys.delete_account_butto_text.tr(),
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 20.0,

@@ -28,3 +28,17 @@ final mockUserJson = '''{"email": "mock@example.com",
     ''';
 
 final mockId = '6107eb047aed78001585293d';
+
+final mockCompleteUser = User(
+  email: "mock@example.com",
+  firstName: "Mock",
+  lastName: "Mock",
+  password: "123456789",
+  phoneNumber: "09111223344",
+  emailNotification: false,
+  id: '6107eb047aed78001585293d',
+  isAdmin: false,
+  isDeactivated: false,
+  paymentMethods: 'none',
+  
+);

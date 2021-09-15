@@ -1,37 +1,28 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:crowd_funding_app/Models/category.dart';
 import 'package:crowd_funding_app/Models/donation.dart';
 import 'package:crowd_funding_app/Models/fundraise.dart';
-import 'package:crowd_funding_app/Models/methods.dart';
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Models/team_member.dart';
 import 'package:crowd_funding_app/Models/update.dart';
 import 'package:crowd_funding_app/Models/user.dart';
-import 'package:crowd_funding_app/Screens/comments.dart';
 import 'package:crowd_funding_app/Screens/donation_page.dart';
-import 'package:crowd_funding_app/Screens/edit_page.dart';
 import 'package:crowd_funding_app/Screens/fundraise_donation_page.dart';
 import 'package:crowd_funding_app/Screens/loading_screen.dart';
-import 'package:crowd_funding_app/Screens/share_page.dart';
 import 'package:crowd_funding_app/Screens/team.dart';
-import 'package:crowd_funding_app/Screens/update_page.dart';
 import 'package:crowd_funding_app/Screens/update_view.dart';
-import 'package:crowd_funding_app/Screens/withdraw_page.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
-import 'package:crowd_funding_app/widgets/cached_network_image.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/custom_cached_network_image.dart';
 import 'package:crowd_funding_app/widgets/custom_raised_button.dart';
 import 'package:crowd_funding_app/widgets/expandable_content.dart';
 import 'package:crowd_funding_app/widgets/fundraiser_detail_element.dart';
 import 'package:crowd_funding_app/widgets/manage_bottom_bar.dart';
 import 'package:crowd_funding_app/widgets/response_alert.dart';
-import 'package:crowd_funding_app/widgets/update_body.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 const titleTextStyle = TextStyle(
   color: Colors.black,
@@ -106,39 +97,45 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final model = context.watch<FundraiseModel>();
-    print("fundraise is ");
-    print(widget.fundraiseId);
+   
     if (model.response.status == ResponseStatus.LOADING) {
       return LoadingScreen();
     } else if (model.response.status == ResponseStatus.CONNECTIONERROR) {
       return ResponseAlert(model.response.message);
     } else if (model.response.status == ResponseStatus.FORMATERROR) {
       return ResponseAlert(model.response.message);
+    } else if (model.response.status == ResponseStatus.MISMATCHERROR) {
+      return ResponseAlert(model.response.message);
     }
+
     Fundraise _fundraise = model.fundraise;
-    print(_fundraise.withdraw);
-    var days = Jiffy(_fundraise.dateCreated, "yyyy-MM-dd").fromNow();
-    String totalShareCount = Counter.getCounter(_fundraise.totalSharedCount!);
-    String totalLikeCount = Counter.getCounter(_fundraise.likeCount!);
+    print(_fundraise.withdrwal);
+
+    // String totalShareCount = Counter.getCounter(_fundraise.totalSharedCount!);
+    // String totalLikeCount = Counter.getCounter(_fundraise.likeCount!);
+
     Location? location = _fundraise.location;
     List<Update> updates = _fundraise.updates!;
-    List<TeamMember> teams = _fundraise.teams!;
+    List<TeamMember> teams = _fundraise.teams!
+        .where((team) => team.member!.userID!.id != _fundraise.organizer!.id)
+        .toList();
     List<Donation> donations = _fundraise.donations!;
     Category category = _fundraise.category!;
-    double process = 0.0;
+    // double process = 0.0;
     String title = _fundraise.title!;
     String image = _fundraise.image!;
     User? organizer = _fundraise.organizer;
-    User? beneficiary = _fundraise.beneficiary;
+    // User? beneficiary = _fundraise.beneficiary;
     int totalRaised = _fundraise.totalRaised!;
     int goalAmount = _fundraise.goalAmount!;
     String story = _fundraise.story!;
-    String lastUpdate = updates.isNotEmpty
-        ? Jiffy(_fundraise.updates![0].dateCreated, "yyyy-MM-dd").fromNow()
-        : "Just Now";
-    String lastDonation = donations.isNotEmpty
-        ? Jiffy(_fundraise.donations![0].date, "yyyy-MM-dd").fromNow()
-        : "Just Now";
+    // String lastUpdate = updates.isNotEmpty
+    //     ? Jiffy(_fundraise.updates![0].dateCreated, "yyyy-MM-dd").fromNow()
+    //     : "Just Now";
+    // String lastDonation = donations.isNotEmpty
+    //     ? Jiffy(_fundraise.donations![0].date, "yyyy-MM-dd").fromNow()
+    //     : "Just Now";
+    
     return Scaffold(
         body: CustomScrollView(
           controller: _scrollController,
@@ -232,14 +229,14 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                       Row(
                         children: [
                           Text(
-                            "$totalRaised\$ raised",
+                            "$totalRaised\$ ${LocaleKeys.raised_lable_text.tr()}",
                             style:
                                 Theme.of(context).textTheme.bodyText1!.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                           ),
                           Text(
-                            " of \$$goalAmount",
+                            " ${LocaleKeys.of_label_text.tr()} \$$goalAmount",
                             style: Theme.of(context).textTheme.bodyText1,
                           ),
                         ],
@@ -274,7 +271,7 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                               ),
                             );
                           },
-                          child: Text("Donate now"),
+                          child: Text(LocaleKeys.donate_now_button_text.tr()),
                         ),
                       ),
                       Row(
@@ -323,10 +320,10 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                               token: token!,
                             )));
                   },
-                  title: "Update (${updates.length})",
+                  title: " ${LocaleKeys.updates_title_text.tr()} (${updates.length})",
                   body: updates.isEmpty
                       ? Text(
-                          "Keep your donor's up-to-date with what's going on with your fundraiser.",
+                          LocaleKeys.keep_your_donaors_label_text.tr(),
                           style: Theme.of(context)
                               .textTheme
                               .bodyText1!
@@ -352,19 +349,21 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                       EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => Team(
-                          teams: _fundraise.teams!,
-                          fundraise: _fundraise,
-                          user: user!,
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => Team(
+                            teams: _fundraise.teams!,
+                            fundraise: _fundraise,
+                            user: user!,
+                          ),
                         ),
-                      ));
+                      );
                     },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Team (${user!.id != organizer!.id ? teams.length + 2 : teams.length + 1})",
+                          "${LocaleKeys.team_title_text.tr()} (${user!.id == organizer!.id ? teams.length + 1 : teams.length + 1})",
                           style: titleTextStyle,
                         ),
                         SizedBox(
@@ -384,7 +383,7 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                               width: 20.0,
                             ),
                             Text(
-                              "Fundraising Team",
+                              LocaleKeys.fundraising_team_text.tr(),
                               style: titleTextStyle.copyWith(fontSize: 25.0),
                             )
                           ],
@@ -404,7 +403,7 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                               width: 10.0,
                             ),
                             Text(
-                              'You are fundraising as  a team',
+                              LocaleKeys.you_are_fundraising_as_ateam_label_text.tr(),
                               overflow: TextOverflow.ellipsis,
                               style: Theme.of(context).textTheme.bodyText1,
                             )
@@ -419,18 +418,18 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                 ),
                 FundraiserDetailElements(
                   onPressed: () {
-                    print('I am tapped');
+                    
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => FundraiseDonationPage(
                         donations: donations,
                       ),
                     ));
                   },
-                  title: "Donation (${donations.length})",
+                  title: "${LocaleKeys.donations_title_text.tr()} (${donations.length})",
                   body: donations.isEmpty
                       ? Text(
-                          "Share your compaign with your friends and family to start getting activity.",
-                          style: Theme.of(context)
+                        LocaleKeys.share_your_campaign_with_your_friends.tr(),
+                            style: Theme.of(context)
                               .textTheme
                               .bodyText1!
                               .copyWith(height: 1.8),
@@ -456,7 +455,10 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
         ),
         bottomNavigationBar: ManageBottomNavBar(
           fundraise: _fundraise,
-          isOrganizer: user!.id == _fundraise.organizer!.id,
+          isOrganizer: _fundraise.beneficiary!.id == null
+              ? user!.id == _fundraise.organizer!.id
+              : user!.id == _fundraise.beneficiary!.id ||
+                  user!.id == _fundraise.organizer!.id,
         ));
   }
 }

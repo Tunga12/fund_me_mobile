@@ -13,7 +13,7 @@ main() {
         bankAccountNo: '123456789',
         bankName: "MOCKCBE",
         isOrganizer: true,
-        beneficiary: "1234567890p",
+       
       );
     });
 
@@ -24,7 +24,6 @@ main() {
       // Begin Test...
       expect(_withdrwal!.bankName, 'MOCKCBE');
       expect(_withdrwal!.bankAccountNo, startsWith("123"));
-      expect(_withdrwal!.beneficiary, isNotEmpty);
       expect(_withdrwal!.isOrganizer, isTrue);
     });
   });

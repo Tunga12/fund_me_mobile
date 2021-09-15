@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
 class PaymentButton extends StatelessWidget {
-  PaymentButton({Key? key, required this.onPressed, required this.title});
+  PaymentButton({Key? key, required this.onPressed});
 
   final Function onPressed;
-  final String title;
 
   @override
   Widget build(BuildContext context) {

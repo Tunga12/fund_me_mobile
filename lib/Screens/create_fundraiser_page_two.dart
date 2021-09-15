@@ -1,10 +1,11 @@
 import 'package:crowd_funding_app/Screens/create_fundraiser_page_three.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/continue_button.dart';
 import 'package:crowd_funding_app/widgets/form_label_text.dart';
 import 'package:crowd_funding_app/widgets/form_progress.dart';
-import 'package:crowd_funding_app/widgets/rich_text_editor.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CreateFundraiserPageTwo extends StatefulWidget {
   CreateFundraiserPageTwo({required this.fundraiseInfo});
@@ -59,7 +60,7 @@ class _CreateFundraiserPageTwoState extends State<CreateFundraiserPageTwo> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'STEP 2 OF 3',
+                      LocaleKeys.step_2_of_label_text.tr(),
                       style: stepTextStyle.copyWith(
                           color: Theme.of(context)
                               .secondaryHeaderColor
@@ -69,7 +70,7 @@ class _CreateFundraiserPageTwoState extends State<CreateFundraiserPageTwo> {
                       height: 10.0,
                     ),
                     Text(
-                      "Describe why you're fundraising",
+                      LocaleKeys.describe_why_you_are_label_text.tr(),
                       style: bodyHeaderTextStyle.copyWith(
                         color: Theme.of(context)
                             .secondaryHeaderColor
@@ -87,11 +88,11 @@ class _CreateFundraiserPageTwoState extends State<CreateFundraiserPageTwo> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          FormLabelText(text: 'Give your fundraise a title.'),
+                          FormLabelText(text: LocaleKeys.give_your_fundraiser_title_label_text.tr()),
                           TextFormField(
                             validator: (value) {
                               if (value!.isEmpty) {
-                                return 'field required!';
+                                return LocaleKeys.title_required_label_text.tr();
                               }
                             },
                             onSaved: (value) {
@@ -100,10 +101,10 @@ class _CreateFundraiserPageTwoState extends State<CreateFundraiserPageTwo> {
                               });
                             },
                             decoration: InputDecoration(
-                                hintText: 'e.g. Help Gabriel attend college'),
+                                hintText: LocaleKeys.help_gabriel_attend_label_text.tr()),
                           ),
                           FormLabelText(
-                              text: 'Describe your need and situation'),
+                              text: LocaleKeys.desctibe_your_need_label_text.tr()),
                           TextFormField(
                             initialValue: _initialStory,
                             // onTap: () async {
@@ -124,9 +125,9 @@ class _CreateFundraiserPageTwoState extends State<CreateFundraiserPageTwo> {
                             maxLength: 255,
                             validator: (value) {
                               if (value!.isEmpty) {
-                                return "Field required!";
+                                return LocaleKeys.description_required_label_text.tr();
                               } else if (value.length < 30) {
-                                return "must be atleast 30 chars";
+                                return LocaleKeys.desctipion_must_bea_atleast_30_label_text.tr();
                               } else {
                                 return null;
                               }
@@ -152,7 +153,7 @@ class _CreateFundraiserPageTwoState extends State<CreateFundraiserPageTwo> {
                           ),
                           isEnabled
                               ? ContinueButton(
-                                  title: "continue",
+                                  title: LocaleKeys.continue_button_text.tr(),
                                   isValidate: true,
                                   onPressed: () {
                                     _formKey.currentState!.save();
@@ -177,7 +178,7 @@ class _CreateFundraiserPageTwoState extends State<CreateFundraiserPageTwo> {
                                     );
                                   })
                               : ContinueButton(
-                                  title: "continue",
+                                  title: LocaleKeys.continue_button_text.tr(),
                                   isValidate: false,
                                   onPressed: () {},
                                 )

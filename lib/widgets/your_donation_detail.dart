@@ -60,7 +60,7 @@ class YourDonationDetail extends StatelessWidget {
                         .withOpacity(0.5)),
               ),
               Text(
-                "\$${(tip * donation).toStringAsFixed(0)}.00",
+                "\$${(tip * donation).toStringAsFixed(2)}",
                 style: labelTextStyle.copyWith(
                     color: Theme.of(context)
                         .secondaryHeaderColor
@@ -87,7 +87,7 @@ class YourDonationDetail extends StatelessWidget {
                     color: Theme.of(context).secondaryHeaderColor),
               ),
               Text(
-                "\$${donation + int.parse((tip * donation).toStringAsFixed(0))}.00",
+                "\$${(donation + tip * donation).toStringAsFixed(2)}",
                 style: labelTextStyle.copyWith(
                     color: Theme.of(context).secondaryHeaderColor),
               ),

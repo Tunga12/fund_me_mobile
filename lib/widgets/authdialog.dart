@@ -16,6 +16,7 @@ Future<void> authShowDialog(BuildContext context, Widget child,
           actions: close!
               ? <Widget>[
                   TextButton(
+                    key: Key("dialog_close_button"),
                     child: Text('Cancel'),
                     onPressed: () {
                       Navigator.of(context).pop();

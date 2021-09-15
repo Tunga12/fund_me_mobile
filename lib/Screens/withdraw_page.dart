@@ -1,21 +1,90 @@
 import 'package:crowd_funding_app/Models/fundraise.dart';
+import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/setup_withdrawal.dart';
+import 'package:crowd_funding_app/Screens/withdraw_user_info.dart';
 import 'package:crowd_funding_app/Screens/withdrawal_beneficairy_selection.dart';
+import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/widgets/custom_card.dart';
 import 'package:crowd_funding_app/widgets/withdraw_note.dart';
 import 'package:crowd_funding_app/widgets/withdrawal_beneficiary_invited_body.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-class WithdrawPage extends StatelessWidget {
-  WithdrawPage({Key? key, required this.fundraise, this.isSetUped})
+class WithdrawPage extends StatefulWidget {
+  WithdrawPage(
+      {Key? key,
+      required this.fundraise,
+      this.isSetUped,
+      this.beneficiary,
+      required this.isAccepted,
+      required this.isWithdawn})
       : super(key: key);
 
   final Fundraise fundraise;
   bool? isSetUped = false;
+  User? beneficiary;
+  final bool isWithdawn;
+  final bool isAccepted;
+
+  @override
+  _WithdrawPageState createState() => _WithdrawPageState();
+}
+
+class _WithdrawPageState extends State<WithdrawPage> {
+  User? _user;
+  _getUserInformation() async {
+    UserPreference userPreference = UserPreference();
+    PreferenceData userData = await userPreference.getUserInfromation();
+    PreferenceData tokeData = await userPreference.getUserToken();
+
+    setState(() {
+      _user = userData.data;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getUserInformation();
+  }
+
+  String _getTitle() {
+    if (widget.fundraise.withdrwal!.id == '') {
+      return "Set up withdrawals";
+    } else if (widget.fundraise.withdrwal!.status == 'pending') {
+      return 'Withdrawal Pending...';
+    } else if (widget.fundraise.withdrwal!.status == 'declined') {
+      return 'Set up withdrawals';
+    } else {
+      return 'View previous withdrawals';
+    }
+  }
+
+  _showPreviousWithdrawals() {
+    return AlertDialog(
+      title: Text('Total withdrawal'),
+      content: SingleChildScrollView(
+        child: Column(
+          children: widget.fundraise.totalWithdrawal!
+              .map((prev) => ListTile(
+                    title: Text("$prev"),
+                  ))
+              .toList(),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    print("is setuped");
+    print(widget.isSetUped);
+    if (widget.isSetUped!) {
+      if (widget.beneficiary!.id == _user!.id) {
+        return WithdrawalUserInfo(widget.fundraise, true);
+      }
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -50,7 +119,7 @@ class WithdrawPage extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "\$${fundraise.totalRaised}.00",
+                    "\$${widget.fundraise.totalRaised}.00",
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -62,8 +131,8 @@ class WithdrawPage extends StatelessWidget {
                   Divider(
                     thickness: 1.5,
                   ),
-                  if (isSetUped != null)
-                    if (isSetUped == false)
+                  if (widget.isSetUped != null)
+                    if (widget.isSetUped == false)
                       Container(
                         child: Column(
                           children: [
@@ -74,15 +143,30 @@ class WithdrawPage extends StatelessWidget {
                                     backgroundColor:
                                         Theme.of(context).accentColor),
                                 onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          WithdrawalBeneficiarySelection(fundraise),
-                                    ),
-                                  );
+                                  if (_getTitle() == 'Set up withdrawals')
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            WithdrawalBeneficiarySelection(
+                                                widget.fundraise),
+                                      ),
+                                    );
+                                  else if (_getTitle() ==
+                                      'View previous withdrawals') {
+                                    print('view previous donations...');
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            _showPreviousWithdrawals());
+                                  } else if (_getTitle() ==
+                                      'Withdrawal Pending...') {
+                                    Fluttertoast.showToast(
+                                        msg:
+                                            "Withdrawal is pending, please wait for approval");
+                                  }
                                 },
                                 child: Text(
-                                  "Set up withdrawals",
+                                  _getTitle(),
                                   style: TextStyle(
                                     color: Theme.of(context).backgroundColor,
                                   ),
@@ -169,7 +253,11 @@ class WithdrawPage extends StatelessWidget {
                         ),
                       )
                     else
-                      BeneficiaryVinvited(),
+                      BeneficiaryVinvited(
+                        beneficiary: widget.beneficiary!,
+                        isAccepted: widget.isAccepted,
+                        isWithdrawn: widget.isWithdawn,
+                      ),
                 ],
               ),
             ),

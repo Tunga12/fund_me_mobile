@@ -1,13 +1,12 @@
-import 'dart:io';
-
-import 'package:crowd_funding_app/Screens/welcom_page.dart';
 import 'package:crowd_funding_app/config/utils/routes.dart';
 import 'package:crowd_funding_app/constants/colors.dart';
 import 'package:crowd_funding_app/services/data_provider/category.dart';
 import 'package:crowd_funding_app/services/data_provider/donation.dart';
 import 'package:crowd_funding_app/services/data_provider/fundraiser.dart';
 import 'package:crowd_funding_app/services/data_provider/auth.dart';
+import 'package:crowd_funding_app/services/data_provider/help.dart';
 import 'package:crowd_funding_app/services/data_provider/notification.dart';
+import 'package:crowd_funding_app/services/data_provider/report.dart';
 import 'package:crowd_funding_app/services/data_provider/team_member.dart';
 import 'package:crowd_funding_app/services/data_provider/update.dart';
 import 'package:crowd_funding_app/services/data_provider/user.dart';
@@ -16,7 +15,10 @@ import 'package:crowd_funding_app/services/provider/auth.dart';
 import 'package:crowd_funding_app/services/provider/category.dart';
 import 'package:crowd_funding_app/services/provider/donation.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
+import 'package:crowd_funding_app/services/provider/help.dart';
 import 'package:crowd_funding_app/services/provider/notification.dart';
+import 'package:crowd_funding_app/services/provider/notification_real_time.dart';
+import 'package:crowd_funding_app/services/provider/report.dart';
 import 'package:crowd_funding_app/services/provider/team_add_deep_link.dart';
 import 'package:crowd_funding_app/services/provider/team_member.dart';
 import 'package:crowd_funding_app/services/provider/update.dart';
@@ -26,17 +28,25 @@ import 'package:crowd_funding_app/services/repository/category.dart';
 import 'package:crowd_funding_app/services/repository/donation.dart';
 import 'package:crowd_funding_app/services/repository/fundraise.dart';
 import 'package:crowd_funding_app/services/repository/auth.dart';
+import 'package:crowd_funding_app/services/repository/help.dart';
 import 'package:crowd_funding_app/services/repository/notification.dart';
+import 'package:crowd_funding_app/services/repository/report.dart';
 import 'package:crowd_funding_app/services/repository/tean_member.dart';
 import 'package:crowd_funding_app/services/repository/update.dart';
 import 'package:crowd_funding_app/services/repository/user.dart';
 import 'package:crowd_funding_app/services/repository/withdrawal.dart';
+import 'package:crowd_funding_app/translations/codegen_loader.g.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+import 'package:easy_localization/easy_localization.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
+
   final FundraiseRepository fundraiseRepository = FundraiseRepository(
     dataProvider: FundraiseDataProvider(
       httpClient: http.Client(),
@@ -84,34 +94,55 @@ Future<void> main() async {
       httpClient: http.Client(),
     ),
   );
+  final HelpRepository helpRepository = HelpRepository(
+      helpDataProvider: HelpDataProvider(httpClient: http.Client()));
+
+  final ReportRepository reportRepository = ReportRepository(
+      reportDataProvider: ReportDataProvider(httpClient: http.Client()));
+
   runApp(
-    CrowdFundingApp(
-      fundraiseRepository: fundraiseRepository,
-      authRepository: authRepository,
-      userRepository: userRepository,
-      categoryRepository: categoryRepository,
-      notificationRepository: userNotificationRepository,
-      updateRepository: updateRepository,
-      donationRepository: donationReponsitory,
-      teamMemberRepository: teamMemberRepository,
-      withdrawalRepository: withdrawalRepository,
+    EasyLocalization(
+      supportedLocales: [
+        Locale('en'),
+        Locale('am'),
+        Locale('or'),
+        Locale('tr')
+      ],
+      assetLoader: CodegenLoader(),
+      fallbackLocale: Locale('en'),
+      path: 'assets/translations',
+      child: CrowdFundingApp(
+        fundraiseRepository: fundraiseRepository,
+        authRepository: authRepository,
+        userRepository: userRepository,
+        categoryRepository: categoryRepository,
+        notificationRepository: userNotificationRepository,
+        updateRepository: updateRepository,
+        donationRepository: donationReponsitory,
+        teamMemberRepository: teamMemberRepository,
+        withdrawalRepository: withdrawalRepository,
+        helpRepository: helpRepository,
+        reportRepository: reportRepository,
+      ),
     ),
   );
 }
 
 class CrowdFundingApp extends StatelessWidget {
-  CrowdFundingApp({
-    Key? key,
-    required this.fundraiseRepository,
-    required this.authRepository,
-    required this.userRepository,
-    required this.categoryRepository,
-    required this.notificationRepository,
-    required this.updateRepository,
-    required this.donationRepository,
-    required this.teamMemberRepository,
-    required this.withdrawalRepository,
-  }) : super(key: key);
+  CrowdFundingApp(
+      {Key? key,
+      required this.fundraiseRepository,
+      required this.authRepository,
+      required this.userRepository,
+      required this.categoryRepository,
+      required this.notificationRepository,
+      required this.updateRepository,
+      required this.donationRepository,
+      required this.teamMemberRepository,
+      required this.withdrawalRepository,
+      required this.helpRepository,
+      required this.reportRepository})
+      : super(key: key);
 
   final FundraiseRepository fundraiseRepository;
   final AuthRepository authRepository;
@@ -122,9 +153,12 @@ class CrowdFundingApp extends StatelessWidget {
   final DonationRepository donationRepository;
   final TeamMemberRepository teamMemberRepository;
   final WithdrawalRepository withdrawalRepository;
+  final HelpRepository helpRepository;
+  final ReportRepository reportRepository;
 
   @override
   Widget build(BuildContext context) {
+   
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(statusBarColor: Colors.white));
@@ -166,11 +200,23 @@ class CrowdFundingApp extends StatelessWidget {
         ChangeNotifierProvider<WithdrawalModel>(
             create: (context) => WithdrawalModel(
                   withdrawalRepository: withdrawalRepository,
-                ))
+                )),
+        ChangeNotifierProvider<HelpModel>(
+            create: (context) => HelpModel(
+                  helpRepository: helpRepository,
+                )),
+        ChangeNotifierProvider(
+            create: (context) => NotificationRealTimeModel()),
+        ChangeNotifierProvider<ReportModel>(
+            create: (context) =>
+                ReportModel(reportRepository: reportRepository))
       ],
       child: Builder(
         builder: (BuildContext context) {
           return MaterialApp(
+            supportedLocales: context.supportedLocales,
+            localizationsDelegates: context.localizationDelegates,
+            locale: context.locale,
             onGenerateRoute: AppRoute.generateRoute,
             debugShowCheckedModeBanner: false,
             theme: ThemeData(

@@ -1,11 +1,13 @@
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class FundraiserCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Container(
-      height: size.height * 0.6,
+      height: size.height * 0.65,
       width: size.width,
       decoration: BoxDecoration(
           color: Theme.of(context).backgroundColor,
@@ -19,61 +21,68 @@ class FundraiserCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12.0)),
       child: Column(
         children: [
-          Container(
-            padding: EdgeInsets.all(
-              40.0,
-            ),
-            child: Column(
-              children: [
-                Text(
-                  "Help your local community. Explore the fundraisers around you.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Theme.of(context)
-                          .secondaryHeaderColor
-                          .withOpacity(0.6)),
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                          side:
-                              BorderSide(color: Theme.of(context).primaryColor),
-                          borderRadius: BorderRadius.circular(20.0))),
-                  onPressed: () {},
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.my_location,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      SizedBox(
-                        width: 10.0,
-                      ),
-                      Text(
-                        "Use current location",
-                        style: TextStyle(color: Theme.of(context).primaryColor),
-                      )
-                    ],
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.all(
+                40.0,
+              ),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Text(
+                      LocaleKeys.healp_your_community_text.tr(),textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: Theme.of(context)
+                              .secondaryHeaderColor
+                              .withOpacity(0.6)),
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: 20.0,
-                ),
-                GestureDetector(
-                  onTap: () {},
-                  child: Center(
-                    child: Text("or enter a location",
-                        style: TextStyle(
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  Expanded(
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              side:
+                                  BorderSide(color: Theme.of(context).primaryColor),
+                              borderRadius: BorderRadius.circular(20.0))),
+                      onPressed: () {},
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.my_location,
                             color: Theme.of(context).primaryColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.0)),
+                          ),
+                          SizedBox(
+                            width: 10.0,
+                          ),
+                          Text(
+                            LocaleKeys.user_current_location_text.tr(),
+                            style: TextStyle(color: Theme.of(context).primaryColor),
+                          )
+                        ],
+                      ),
+                    ),
                   ),
-                )
-              ],
+                  SizedBox(
+                    height: 20.0,
+                  ),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () {},
+                      child: Center(
+                        child: Text(LocaleKeys.enter_locaton_text.tr(),
+                            style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16.0)),
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
           Expanded(

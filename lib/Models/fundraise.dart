@@ -22,32 +22,33 @@ class Fundraise {
   bool? isPublished;
   int? totalSharedCount;
   int? likeCount;
+  List<int>? totalWithdrawal;
   // bool? isDelete;
   int? totalRaised;
   List<String>? likedBy;
-  Withdraw? withdraw;
+  Withdrwal? withdrwal;
 
-  Fundraise({
-    this.id,
-    this.title,
-    this.image,
-    this.goalAmount,
-    this.story,
-    this.category,
-    this.location,
-    this.dateCreated,
-    this.organizer,
-    this.beneficiary,
-    this.donations,
-    this.updates,
-    this.teams,
-    this.isPublished,
-    this.totalSharedCount,
-    this.likeCount,
-    this.totalRaised,
-    this.likedBy,
-    this.withdraw,
-  });
+  Fundraise(
+      {this.id,
+      this.title,
+      this.image,
+      this.goalAmount,
+      this.story,
+      this.category,
+      this.location,
+      this.dateCreated,
+      this.organizer,
+      this.beneficiary,
+      this.donations,
+      this.updates,
+      this.teams,
+      this.isPublished,
+      this.totalSharedCount,
+      this.likeCount,
+      this.totalRaised,
+      this.likedBy,
+      this.withdrwal,
+      this.totalWithdrawal});
 
   Fundraise copyWith({
     String? id,
@@ -68,33 +69,35 @@ class Fundraise {
     int? likeCount,
     int? totalRaised,
     List<String>? likedBy,
-    Withdraw? withdraw,
+    Withdrwal? withdrwal,
+    List<int>? totalWithdrawal,
   }) {
     return Fundraise(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      image: image ?? this.image,
-      goalAmount: goalAmount ?? this.goalAmount,
-      story: story ?? this.story,
-      category: category ?? this.category,
-      location: location ?? this.location,
-      dateCreated: dateCreated ?? this.dateCreated,
-      organizer: organizer ?? this.organizer,
-      beneficiary: beneficiary ?? this.beneficiary,
-      donations: donations ?? this.donations,
-      updates: updates ?? this.updates,
-      teams: teams ?? this.teams,
-      isPublished: isPublished ?? this.isPublished,
-      totalSharedCount: totalSharedCount ?? this.totalSharedCount,
-      likeCount: likeCount ?? this.likeCount,
-      totalRaised: totalRaised ?? this.totalRaised,
-      likedBy: likedBy ?? this.likedBy,
-      withdraw: withdraw ?? this.withdraw,
-    );
+        id: id ?? this.id,
+        title: title ?? this.title,
+        image: image ?? this.image,
+        goalAmount: goalAmount ?? this.goalAmount,
+        story: story ?? this.story,
+        category: category ?? this.category,
+        location: location ?? this.location,
+        dateCreated: dateCreated ?? this.dateCreated,
+        organizer: organizer ?? this.organizer,
+        beneficiary: beneficiary ?? this.beneficiary,
+        donations: donations ?? this.donations,
+        updates: updates ?? this.updates,
+        teams: teams ?? this.teams,
+        isPublished: isPublished ?? this.isPublished,
+        totalSharedCount: totalSharedCount ?? this.totalSharedCount,
+        likeCount: likeCount ?? this.likeCount,
+        totalRaised: totalRaised ?? this.totalRaised,
+        likedBy: likedBy ?? this.likedBy,
+        withdrwal: withdrwal ?? this.withdrwal,
+        totalWithdrawal: totalWithdrawal ?? this.totalWithdrawal);
   }
 
   // parsing json object to Fundraise object
   factory Fundraise.fromJson(Map<String, dynamic> data) {
+    
     String dateString = data['dateCreated'] ?? '';
     String id = data['_id'] ?? '';
     String title = data['title'] ?? '';
@@ -123,30 +126,35 @@ class Fundraise {
     List likedBy = data['likedBy'] ?? [];
     // bool isDeleted = data['isDeleted'];
     Map<String, dynamic> withdraw = data['withdraw'] ?? {};
+    List<dynamic> totalWithdrawal = data['totalWithdraw'] ?? [];
+
+   
 
     return Fundraise(
-      id: id,
-      title: title,
-      image: image,
-      goalAmount: goalAmount,
-      story: story,
-      category: category,
-      location: location,
-      dateCreated: dateCreated,
-      organizer: organizer,
-      beneficiary: beneficiary,
-      donations: donationDynamic.map((e) => Donation.fromJson(e)).toList(),
-      updates: updatesDynamic.map((e) => Update.fromJson(e)).toList(),
-      teams: teamsDynamic.map((team) => TeamMember.fromJson(team)).toList(),
-      isPublished: isPublished,
-      totalSharedCount: totalShareCount,
-      likeCount: likeCount,
-      
-      // isDelete: isDeleted,
-      totalRaised: totalRaised,
-      likedBy: likedBy.map((e) => e.toString()).toList(),
-      withdraw: withdraw.isNotEmpty ? Withdraw.fromJson(withdraw) : null,
-    );
+        id: id,
+        title: title,
+        image: image,
+        goalAmount: goalAmount,
+        story: story,
+        category: category,
+        location: location,
+        dateCreated: dateCreated,
+        organizer: organizer,
+        beneficiary: beneficiary,
+        donations: donationDynamic.map((e) => Donation.fromJson(e)).toList(),
+        updates: updatesDynamic.map((e) => Update.fromJson(e)).toList(),
+        teams: teamsDynamic.map((team) => TeamMember.fromJson(team)).toList(),
+        isPublished: isPublished,
+        totalSharedCount: totalShareCount,
+        likeCount: likeCount,
+
+        // isDelete: isDeleted,
+        totalRaised: totalRaised,
+        likedBy: likedBy.map((e) => e.toString()).toList(),
+        withdrwal: Withdrwal.fromJson(withdraw),
+        totalWithdrawal: totalWithdrawal
+            .map((amount) => int.parse(amount.toString()))
+            .toList());
   }
 
   Map<String, dynamic> toJson() {
@@ -186,7 +194,7 @@ class Fundraise {
       totalSharedCount: ${totalSharedCount ?? 0},
       likeCount: ${likeCount ?? 0},
       likedBy: ${likedBy ?? []},
-      withdraw: $withdraw
+      withdraw: $withdrwal
       }''';
   }
 }

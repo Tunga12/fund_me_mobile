@@ -6,7 +6,9 @@ import 'package:crowd_funding_app/Screens/team.dart';
 import 'package:crowd_funding_app/Screens/update_page.dart';
 import 'package:crowd_funding_app/Screens/withdraw_page.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ManageBottomNavBar extends StatefulWidget {
   ManageBottomNavBar({
@@ -44,12 +46,26 @@ class _ManageBottomNavBarState extends State<ManageBottomNavBar> {
     bottomNavBarAction(int index) {
       switch (index) {
         case 0:
+        
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => WithdrawPage(
-                fundraise: widget.fundraise, isSetUped: false,
-              ),
+              builder: (context) => widget.fundraise.beneficiary!.id == null
+                  ? WithdrawPage(
+                      fundraise: widget.fundraise,
+                      isSetUped: false,
+                      isAccepted: false,
+                      isWithdawn: false,
+                    )
+                  : WithdrawPage(
+                      fundraise: widget.fundraise,
+                      isSetUped: true,
+                      beneficiary: widget.fundraise.beneficiary,
+                      isAccepted: true,
+                      isWithdawn: widget.fundraise.withdrwal!.id == null
+                          ? false
+                          : widget.fundraise.withdrwal!.status == 'accepted',
+                    ),
             ),
           );
           return;
@@ -57,7 +73,9 @@ class _ManageBottomNavBarState extends State<ManageBottomNavBar> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => EditPage(widget.fundraise),
+              builder: (context) => EditPage(
+                widget.fundraise,
+              ),
             ),
           );
           return;
@@ -66,7 +84,7 @@ class _ManageBottomNavBarState extends State<ManageBottomNavBar> {
             context,
             MaterialPageRoute(
               builder: (context) => SharePage(
-                fundraise: widget.fundraise.id!,
+                fundraise: widget.fundraise,
               ),
             ),
           );
@@ -101,7 +119,7 @@ class _ManageBottomNavBarState extends State<ManageBottomNavBar> {
             context,
             MaterialPageRoute(
               builder: (context) => SharePage(
-                fundraise: widget.fundraise.id!,
+                fundraise: widget.fundraise,
               ),
             ),
           );
@@ -132,23 +150,23 @@ class _ManageBottomNavBarState extends State<ManageBottomNavBar> {
               items: [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.money),
-                  label: "withdraw",
+                  label:LocaleKeys.withdraw_bottom_bar_button.tr(),
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.edit),
-                  label: "Edit",
+                  label: LocaleKeys.edit_bottom_bar_button.tr(),
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.ios_share),
-                  label: "Share",
+                  label: LocaleKeys.share_bottom_bar_button.tr(),
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.add_box_outlined),
-                  label: "Update",
+                  label: LocaleKeys.update_bottom_bar_button.tr(),
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.group_outlined),
-                  label: "Team",
+                  label: LocaleKeys.team_bottom_bar_button.tr(),
                 ),
               ],
             ),
@@ -166,11 +184,11 @@ class _ManageBottomNavBarState extends State<ManageBottomNavBar> {
               items: [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.ios_share),
-                  label: "Share",
+                  label:LocaleKeys.share_bottom_bar_button.tr(),
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.add_box_outlined),
-                  label: "Update",
+                  label: LocaleKeys.update_bottom_bar_button.tr(),
                 ),
               ],
             ),

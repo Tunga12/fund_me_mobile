@@ -1,10 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Screens/fundraiser_details.dart';
 import 'package:crowd_funding_app/Screens/share_page.dart';
 import 'package:crowd_funding_app/widgets/custom_cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+// ignore: must_be_immutable
 class ManageCard extends StatelessWidget {
   String image;
   String title;
@@ -67,7 +67,7 @@ class ManageCard extends StatelessWidget {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) => SharePage(
-                                    fundraise: fundraiseId,
+                                    fundraise: Fundraise(title: title, id: fundraiseId),
                                   ),
                                 ),
                               );

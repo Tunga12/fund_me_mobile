@@ -1,10 +1,13 @@
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:easy_localization/easy_localization.dart';
 
+// ignore: must_be_immutable
 class CampainBottomNavBar extends StatelessWidget {
   final Function likeAction;
   final Function shareAction;
   final Function donateAction;
+  final Function reportAction;
   String likeText;
   String shareCount;
   bool isLiked;
@@ -13,6 +16,7 @@ class CampainBottomNavBar extends StatelessWidget {
     required this.likeAction,
     required this.shareAction,
     required this.donateAction,
+    required this.reportAction,
     required this.likeText,
     required this.shareCount,
     required this.isLiked,
@@ -52,11 +56,23 @@ class CampainBottomNavBar extends StatelessWidget {
                   color: Colors.grey,
                 ),
                 label: Text(
-                  "$shareCount",
+                  "",
                   style: TextStyle(color: Colors.grey[700]),
                 ),
               ),
             ],
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+                padding: EdgeInsets.symmetric(horizontal: 15.0),
+                backgroundColor: Theme.of(context).accentColor),
+            onPressed: () {
+              reportAction();
+            },
+            child: Text(
+              LocaleKeys.report_button_text.tr(),
+              style: TextStyle(color: Theme.of(context).backgroundColor),
+            ),
           ),
           Container(
             margin: EdgeInsets.only(right: 20.0),
@@ -68,7 +84,7 @@ class CampainBottomNavBar extends StatelessWidget {
                 donateAction();
               },
               child: Text(
-                "Donate now",
+                LocaleKeys.donate_now_button_text.tr(),
                 style: TextStyle(color: Theme.of(context).backgroundColor),
               ),
             ),

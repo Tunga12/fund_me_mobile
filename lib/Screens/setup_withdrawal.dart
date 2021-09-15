@@ -81,7 +81,8 @@ class _SetupWithdrawalState extends State<SetupWithdrawal> {
                       height: 40.0,
                     ),
                     ContinueButton(
-                      isValidate: _bankInfoValidated || widget.fundraise.withdraw != null,
+                      isValidate: _bankInfoValidated ||
+                          widget.fundraise.withdrwal != null,
                       onPressed: () async {
                         if (_bankInfoValidated) {
                           loadingProgress(context);
@@ -89,7 +90,6 @@ class _SetupWithdrawalState extends State<SetupWithdrawal> {
                             bankName: _myData['bankName'],
                             bankAccountNo: _myData['accountNumber'],
                             isOrganizer: true,
-                            beneficiary: "Beneficiary",
                           );
                           await context
                               .read<WithdrawalModel>()
@@ -105,6 +105,7 @@ class _SetupWithdrawalState extends State<SetupWithdrawal> {
                                 HomePage.routeName, (route) => false);
                           } else {
                             Navigator.of(context).pop();
+
                             authShowDialog(context, Text(response.message),
                                 error: true, close: true);
                           }

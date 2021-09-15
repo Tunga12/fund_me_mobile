@@ -2,7 +2,7 @@ class EndPoints {
   EndPoints._();
 
   // base url
-  static const String baseURL = 'https://shrouded-bastion-52038.herokuapp.com';
+  static const String baseURL = 'http://178.62.55.81';
 
   // receiveTimeout
   static const int receiveTimeout = 15000;
@@ -48,7 +48,7 @@ class EndPoints {
   static const String createUpdate = baseURL + "/api/updates/";
 
   // create donation
-  static const String createDonation = baseURL + "/api/donations/";
+  static const String createDonation = baseURL + "/api/donations/pay";
 
   // create team member
   static const String createTeamMember = baseURL + "/api/members/";
@@ -79,4 +79,14 @@ class EndPoints {
   //withdrawal invitation
   static const String inviteUrl =
       baseURL + "/api/withdrawal/beneficiary/invitation/";
+
+// help URL
+  static const String helpURL = baseURL + "/api/help";
+
+  // beneficiary fundraiser URL
+  static const String benficiaryFundraiserURL =
+      baseURL + '/api/fundraisers/beneficiary';
+
+  // report fundraisers
+  static const String reportFundraiserURL = baseURL + "/api/report";
 }

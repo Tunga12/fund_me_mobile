@@ -10,19 +10,19 @@ import 'package:crowd_funding_app/constants/actions.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/services/provider/category.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/authdialog.dart';
-import 'package:crowd_funding_app/widgets/cached_network_image.dart';
 import 'package:crowd_funding_app/widgets/custom_cached_network_image.dart';
 import 'package:crowd_funding_app/widgets/custom_card.dart';
 import 'package:crowd_funding_app/widgets/loading_progress.dart';
 import 'package:crowd_funding_app/widgets/response_alert.dart';
-import 'package:crowd_funding_app/widgets/settings_item.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class EditPage extends StatefulWidget {
   final Fundraise fundraise;
@@ -58,7 +58,7 @@ class _EditPageState extends State<EditPage> {
   File? _image;
   _chooseSource() {
     return AlertDialog(
-      title: Text("choose method"),
+      title: Text(LocaleKeys.choose_method_label_text.tr()),
       content: SingleChildScrollView(
         child: Column(
           children: [
@@ -74,7 +74,7 @@ class _EditPageState extends State<EditPage> {
                 Navigator.of(context).pop();
               },
               leading: Icon(Icons.add_a_photo),
-              title: Text("take a photo"),
+              title: Text(LocaleKeys.take_photo_label_text.tr()),
             ),
             ListTile(
               onTap: () async {
@@ -86,7 +86,7 @@ class _EditPageState extends State<EditPage> {
                 Navigator.of(context).pop();
               },
               leading: Icon(Icons.collections),
-              title: Text("choose from gallery"),
+              title: Text(LocaleKeys.choose_gallary_label_text.tr()),
             ),
           ],
         ),
@@ -111,7 +111,7 @@ class _EditPageState extends State<EditPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Edit",
+          LocaleKeys.edit_bottom_bar_button.tr(),
         ),
         actions: [
           TextButton(
@@ -154,7 +154,7 @@ class _EditPageState extends State<EditPage> {
                   }
                 }
               },
-              child: Text('SAVE'))
+              child: Text(LocaleKeys.save_button_text.tr()))
         ],
       ),
       body: Container(
@@ -182,7 +182,7 @@ class _EditPageState extends State<EditPage> {
                       child: TextButton(
                         style: TextButton.styleFrom(
                             backgroundColor: Colors.black.withOpacity(0.2)),
-                        child: Text("Change Cover",
+                        child: Text(LocaleKeys.change_cover_button_text.tr(),
                             style: TextStyle(color: Colors.white)),
                         onPressed: () {
                           showDialog(
@@ -218,7 +218,7 @@ class _EditPageState extends State<EditPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Campaign Overview",
+                                LocaleKeys.campaign_overview_label_text.tr(),
                                 style: Theme.of(context).textTheme.bodyText1,
                               ),
                               TextFormField(
@@ -234,7 +234,7 @@ class _EditPageState extends State<EditPage> {
                                   }
                                 },
                                 decoration: InputDecoration(
-                                  labelText: "Title",
+                                  labelText: LocaleKeys.title_label_text.tr(),
                                 ),
                               ),
                               SizedBox(
@@ -255,7 +255,7 @@ class _EditPageState extends State<EditPage> {
                                   }
                                 },
                                 decoration: InputDecoration(
-                                  labelText: "Goal Ammount",
+                                  labelText: LocaleKeys.goal_amount_label_text.tr(),
                                 ),
                               ),
                               SizedBox(
@@ -275,7 +275,7 @@ class _EditPageState extends State<EditPage> {
                                   }
                                 },
                                 decoration: InputDecoration(
-                                  labelText: "Story ",
+                                  labelText: LocaleKeys.story_label_text.tr(),
                                 ),
                               ),
                             ],
@@ -303,22 +303,22 @@ class _EditPageState extends State<EditPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Campaign Details",
+                                LocaleKeys.campaign_detail_label_text.tr(),
                                 style: Theme.of(context).textTheme.bodyText1,
                               ),
-                              TextFormField(
-                                initialValue: "https://go.fundme.com/sample",
-                                maxLines: 2,
-                                onChanged: (value) {},
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return "Campaign Link required!";
-                                  }
-                                },
-                                decoration: InputDecoration(
-                                  labelText: "Campaign Link",
-                                ),
-                              ),
+                              // TextFormField(
+                              //   initialValue: "https://go.fundme.com/sample",
+                              //   maxLines: 2,
+                              //   onChanged: (value) {},
+                              //   validator: (value) {
+                              //     if (value!.isEmpty) {
+                              //       return "Campaign Link required!";
+                              //     }
+                              //   },
+                              //   decoration: InputDecoration(
+                              //     labelText: "Campaign Link",
+                              //   ),
+                              // ),
                               SizedBox(
                                 height: 18.0,
                               ),
@@ -349,7 +349,7 @@ class _EditPageState extends State<EditPage> {
                                   }
                                 },
                                 decoration: InputDecoration(
-                                  labelText: "Category",
+                                  labelText: LocaleKeys.category_label_text.tr(),
                                 ),
                               ),
                               SizedBox(
@@ -402,7 +402,7 @@ class _EditPageState extends State<EditPage> {
                                 height: 20.0,
                               ),
                               Text(
-                                "Campaign created on 07/14/2021",
+                                LocaleKeys.campaign_created_label_text.tr(),
                                 style: Theme.of(context).textTheme.bodyText1,
                               )
                             ],
@@ -416,79 +416,79 @@ class _EditPageState extends State<EditPage> {
               SizedBox(
                 height: 10.0,
               ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.grey.withOpacity(0.4),
-                        spreadRadius: 1.0,
-                        blurRadius: 1.0,
-                        offset: Offset(0, 3))
-                  ],
-                ),
-                padding: EdgeInsets.symmetric(
-                  vertical: 20.0,
-                  horizontal: 20.0,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Team",
-                      style: Theme.of(context).textTheme.bodyText1,
-                    ),
-                    SizedBox(
-                      height: 15.0,
-                    ),
-                    Text(
-                      "Fundraise with a team will display their name(s) on your campaign page, allow them to thank donors and keep them updated.",
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1!
-                          .copyWith(height: 1.5),
-                    )
-                  ],
-                ),
-              ),
-              SizedBox(
-                height: 10.0,
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.grey.withOpacity(0.4),
-                        spreadRadius: 1.0,
-                        blurRadius: 1.0,
-                        offset: Offset(0, 3))
-                  ],
-                ),
-                padding: EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Fundraise Settings",
-                      style: Theme.of(context).textTheme.bodyText1,
-                    ),
-                    FundraiseSettingItem(
-                      title: 'Allow donors to leave comments on my fundraiser.',
-                    ),
-                    FundraiseSettingItem(
-                      title: "Allow donations to my fundraiser",
-                    ),
-                    FundraiseSettingItem(
-                      title: "Allow my fundraiser to appear in search results",
-                    ),
-                    Text(
-                      "Your fundraiser will appear in GoFundMe search results and other online search engines (if this is turned off people will still be able to view your fundraiser if you have the link). ",
-                      style: Theme.of(context).textTheme.bodyText1,
-                    ),
-                  ],
-                ),
-              ),
+              // Container(
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     boxShadow: [
+              //       BoxShadow(
+              //           color: Colors.grey.withOpacity(0.4),
+              //           spreadRadius: 1.0,
+              //           blurRadius: 1.0,
+              //           offset: Offset(0, 3))
+              //     ],
+              //   ),
+              //   padding: EdgeInsets.symmetric(
+              //     vertical: 20.0,
+              //     horizontal: 20.0,
+              //   ),
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Text(
+              //         "Team",
+              //         style: Theme.of(context).textTheme.bodyText1,
+              //       ),
+              //       SizedBox(
+              //         height: 15.0,
+              //       ),
+              //       Text(
+              //         "Fundraise with a team will display their name(s) on your campaign page, allow them to thank donors and keep them updated.",
+              //         style: Theme.of(context)
+              //             .textTheme
+              //             .bodyText1!
+              //             .copyWith(height: 1.5),
+              //       )
+              //     ],
+              //   ),
+              // ),
+              // SizedBox(
+              //   height: 10.0,
+              // ),
+              // Container(
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     boxShadow: [
+              //       BoxShadow(
+              //           color: Colors.grey.withOpacity(0.4),
+              //           spreadRadius: 1.0,
+              //           blurRadius: 1.0,
+              //           offset: Offset(0, 3))
+              //     ],
+              //   ),
+              //   padding: EdgeInsets.all(20.0),
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Text(
+              //         "Fundraise Settings",
+              //         style: Theme.of(context).textTheme.bodyText1,
+              //       ),
+              //       FundraiseSettingItem(
+              //         title: 'Allow donors to leave comments on my fundraiser.',
+              //       ),
+              //       FundraiseSettingItem(
+              //         title: "Allow donations to my fundraiser",
+              //       ),
+              //       FundraiseSettingItem(
+              //         title: "Allow my fundraiser to appear in search results",
+              //       ),
+              //       Text(
+              //         "Your fundraiser will appear in GoFundMe search results and other online search engines (if this is turned off people will still be able to view your fundraiser if you have the link). ",
+              //         style: Theme.of(context).textTheme.bodyText1,
+              //       ),
+              //     ],
+              //   ),
+              // ),
               SizedBox(
                 height: 10.0,
               ),
@@ -497,7 +497,7 @@ class _EditPageState extends State<EditPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Team",
+                      LocaleKeys.team_title_text.tr(),
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                     SizedBox(
@@ -508,19 +508,13 @@ class _EditPageState extends State<EditPage> {
                         children: [
                           TextSpan(
                             text:
-                                "You will no longer have access to this fundraiser after deleting. People who donated to your fundraiser will still be able to view a summary. For more information visit our",
+                                LocaleKeys.you_will_nolonger_have_access_label_text.tr(),
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1!
                                 .copyWith(fontSize: 15.0),
                           ),
-                          TextSpan(
-                            text: " help center",
-                            recognizer: TapGestureRecognizer()..onTap = () {},
-                            style: TextStyle(
-                              color: Theme.of(context).accentColor,
-                            ),
-                          )
+                  
                         ],
                       ),
                     ),
@@ -560,7 +554,7 @@ class _EditPageState extends State<EditPage> {
                           }
                         },
                         child: Text(
-                          "Delete fundraiser",
+                         LocaleKeys.delete_fundraiser_button_text.tr(),
                           style: TextStyle(
                             color: Colors.red.shade900,
                             fontWeight: FontWeight.bold,

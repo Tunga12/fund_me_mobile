@@ -1,6 +1,7 @@
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Screens/setup_withdrawal.dart';
 import 'package:crowd_funding_app/Screens/withdraw_invite_beneficiary.dart';
+import 'package:crowd_funding_app/Screens/withdraw_user_info.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/widgets/continue_button.dart';
 import 'package:flutter/material.dart';
@@ -222,11 +223,9 @@ class _WithdrawalBeneficiarySelectionState
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       if (_formData['beneficiary'] == '1') {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => SetupWithdrawal(
-                                  fundraise: widget.fundraise)),
-                        );
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) =>
+                                WithdrawalUserInfo(widget.fundraise, false)));
                       } else if (_formData['beneficiary'] == '2') {
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) =>

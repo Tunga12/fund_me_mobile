@@ -13,6 +13,8 @@ class UserNotificationModel extends ChangeNotifier {
 
   bool _deleteUpdate = false;
 
+  
+
   // get Response
   Response get response => _response;
 
@@ -22,18 +24,16 @@ class UserNotificationModel extends ChangeNotifier {
   }
 
   Future<void> getAllUserNotifications(String token) async {
-    print("getting all user notification");
     try {
       response =
           Response(status: ResponseStatus.LOADING, data: null, message: '');
       List<UserNotification> userNotifications =
           await notificationRepository.getUserNotifications(token);
-      print("user notificatons $userNotifications");
+
       response = Response(
           status: ResponseStatus.SUCCESS,
           data: userNotifications,
           message: "successfully fetched notifications");
-      print(_response.status);
     } on SocketException catch (e) {
       response = Response(
           status: ResponseStatus.CONNECTIONERROR,

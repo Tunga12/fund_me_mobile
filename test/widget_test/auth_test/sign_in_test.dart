@@ -1,4 +1,3 @@
-import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:crowd_funding_app/Screens/signin_page.dart';
 import 'package:crowd_funding_app/services/data_provider/auth.dart';
 import 'package:crowd_funding_app/services/provider/auth.dart';

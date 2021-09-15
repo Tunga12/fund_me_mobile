@@ -26,10 +26,11 @@ class UserModel extends ChangeNotifier {
 
   // get single user user informations
   Future<void> getUser(String token, String password) async {
-    response =
-        Response(status: ResponseStatus.LOADING, data: null, message: '');
     try {
+      response =
+          Response(status: ResponseStatus.LOADING, data: null, message: '');
       User user = await userRepository.getUser(token, password);
+      print("user is $user");
       response = Response(
           status: ResponseStatus.SUCCESS, data: user, message: "Success");
     } on SocketException catch (e) {

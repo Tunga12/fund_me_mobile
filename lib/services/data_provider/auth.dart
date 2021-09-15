@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/config/utils/endpoints.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 class AuthDataProvider {
@@ -12,10 +11,10 @@ class AuthDataProvider {
     required this.httpClient,
     // required this.preference,
   });
-
+// Uri.http('shrouded-bastion-52038.herokuapp.com', '/api/users'),
   Future<String> createUser(User user) async {
     final response = await httpClient.post(
-      Uri.http('shrouded-bastion-52038.herokuapp.com', '/api/users'),
+      Uri.parse(EndPoints.registerUser),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

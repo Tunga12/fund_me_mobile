@@ -13,17 +13,20 @@ import 'package:crowd_funding_app/Screens/share_page.dart';
 import 'package:crowd_funding_app/Screens/signin_page.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/campaign_bottom_navbar.dart';
 import 'package:crowd_funding_app/widgets/custom_cached_network_image.dart';
 import 'package:crowd_funding_app/widgets/custom_card.dart';
 import 'package:crowd_funding_app/widgets/custom_circle_avatar.dart';
 import 'package:crowd_funding_app/widgets/expandable_content.dart';
+import 'package:crowd_funding_app/widgets/report_dialog.dart';
 import 'package:crowd_funding_app/widgets/response_alert.dart';
 import 'package:crowd_funding_app/widgets/title_row.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 const titleTextStyle = TextStyle(fontSize: 25.0, color: Colors.black);
 
@@ -100,7 +103,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
   }
 
   Future getSingleFundraise() async {
-    print("fundraise id${widget.id}");
+
     await Future.delayed(
       Duration(milliseconds: 1),
       () => context.read<FundraiseModel>().getSingleFundraise(widget.id),
@@ -152,7 +155,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
       return LoadingScreen();
     } else if (_response.status == ResponseStatus.CONNECTIONERROR) {
       return ResponseAlert(
-        _response.message,
+        'no internet connection',
         retry: () {
           getSingleFundraise();
         },
@@ -166,8 +169,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
       );
     } else if (_response.status == ResponseStatus.SUCCESS) {
       if (_fundraise == null) return Container();
-      print("fundraise is");
-      print(_fundraise);
+      
       // var days = Jiffy(_fundraise!.dateCreated, "yyyy-MM-dd").fromNow();
       String totalShareCount =
           Counter.getCounter(_fundraise!.totalSharedCount!);
@@ -175,20 +177,20 @@ class _CampaignDetailState extends State<CampaignDetail> {
       List<Update> updates = _fundraise!.updates!;
       List<TeamMember> teams = _fundraise!.teams!;
       List<Donation> donations = _fundraise!.donations!;
-      double process = 0.0;
+      // double process = 0.0;
       String title = _fundraise!.title!;
       String image = _fundraise!.image!;
       User? organizer = _fundraise!.organizer;
-      User? beneficiary = _fundraise!.beneficiary;
+      // User? beneficiary = _fundraise!.beneficiary;
       int totalRaised = _fundraise!.goalAmount!;
       int goalAmount = _fundraise!.goalAmount!;
       String story = _fundraise!.story!;
 
       print('Updates time');
       // print(_fundraise!.updates![0].dateCreated);
-      String lastUpdate = updates.isNotEmpty
-          ? Jiffy(_fundraise!.updates![0].dateCreated, "yyyy-MM-dd").fromNow()
-          : "Just Now";
+      // String lastUpdate = updates.isNotEmpty
+      //     ? Jiffy(_fundraise!.updates![0].dateCreated, "yyyy-MM-dd").fromNow()
+      //     : "Just Now";
       print("donation time");
       // print(_fundraise!.donations![0].date);
       String lastDonation = donations.isNotEmpty
@@ -287,7 +289,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
                       Row(
                         children: [
                           Text(
-                            "$totalRaised\$ raised",
+                            "$totalRaised\$ ${LocaleKeys.raised_lable_text.tr()}",
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1!
@@ -296,7 +298,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
                                     color: Colors.black),
                           ),
                           Text(
-                            " of \$$goalAmount goal",
+                            " ${LocaleKeys.of_label_text.tr()} \$$goalAmount ${LocaleKeys.goal_label_text.tr()}",
                             style: Theme.of(context).textTheme.bodyText1,
                           ),
                         ],
@@ -365,17 +367,17 @@ class _CampaignDetailState extends State<CampaignDetail> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       TitleRow(
-                        leadingTitle: "Updates",
+                        leadingTitle: LocaleKeys.updates_title_text.tr(),
                         trailingTitle: updates.length > 0
                             ? updates.length.toString()
-                            : "No updates",
+                            : LocaleKeys.no_update_text.tr(),
                       ),
                       SizedBox(
                         height: 20.0,
                       ),
                       updates.isEmpty
                           ? Text(
-                              "No updates yet",
+                              LocaleKeys.no_updates_yet_text.tr(),
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText1!
@@ -406,16 +408,16 @@ class _CampaignDetailState extends State<CampaignDetail> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       TitleRow(
-                        leadingTitle: "Donations",
+                        leadingTitle: LocaleKeys.donations_title_text.tr(),
                         trailingTitle: donations.length > 0
                             ? donations.length.toString()
-                            : "No doantions",
+                            : LocaleKeys.no_donation_label_text.tr(),
                       ),
                       SizedBox(
                         height: 20.0,
                       ),
                       Text(
-                        "Last donation $lastDonation",
+                        "${LocaleKeys.last_donation_label_text.tr()} $lastDonation",
                         style: TextStyle(color: Colors.grey),
                       ),
                       SizedBox(
@@ -423,7 +425,8 @@ class _CampaignDetailState extends State<CampaignDetail> {
                       ),
                       donations.isEmpty
                           ? Text(
-                              "Share your compaign with your friends and family to start getting activity.",
+                              LocaleKeys.share_your_campaign_with_your_friends
+                                  .tr(),
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText1!
@@ -462,7 +465,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Team ",
+                        LocaleKeys.team_title_text.tr(),
                         style: titleTextStyle,
                       ),
                       SizedBox(
@@ -482,7 +485,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
                             width: 20.0,
                           ),
                           Text(
-                            "Fundraising Team",
+                            LocaleKeys.fundraising_team_text.tr(),
                             style: titleTextStyle.copyWith(fontSize: 25.0),
                           )
                         ],
@@ -527,8 +530,16 @@ class _CampaignDetailState extends State<CampaignDetail> {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => SharePage(
-                  fundraise: _fundraise!.id!,
+                  fundraise: _fundraise!,
                 ),
+              ),
+            );
+          },
+          reportAction: () {
+            showDialog(
+              context: context,
+              builder: (context) => ReportDialog(
+                _fundraise!,
               ),
             );
           },
@@ -545,7 +556,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
       );
     } else {
       return ResponseAlert(
-        _response.message,
+        'failed to fetch fundraiser',
         retry: () => getSingleFundraise(),
         status: ResponseStatus.MISMATCHERROR,
       );

@@ -23,6 +23,8 @@ class UserDataProvider {
 
     if (response.statusCode == 200) {
       final userString = jsonDecode(response.body);
+      print('user response ');
+      print(userString);
       User user;
       try {
         user = User.fromJson(
@@ -36,6 +38,7 @@ class UserDataProvider {
       await preference.storeToken(token);
       return user;
     } else {
+      print("response status${response.body}");
       throw Exception("${response.body}");
     }
   }

@@ -2,10 +2,12 @@ import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:crowd_funding_app/Screens/popular_fundraise_detail.dart';
 import 'package:crowd_funding_app/Screens/signin_page.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/continue_button.dart';
 import 'package:crowd_funding_app/widgets/or.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class WelcomePage extends StatefulWidget {
   WelcomePage({Key? key}) : super(key: key);
@@ -26,6 +28,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print("welcome page");
     final size = MediaQuery.of(context).size;
     return Scaffold(
       body: Scrollbar(
@@ -100,15 +103,18 @@ class _WelcomePageState extends State<WelcomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Image.asset(
-                      'assets/images/gofundme.png',
+                    Image(
+                      image: AssetImage(
+                        'assets/images/logo_image.PNG',
+                      ),
                       width: size.width * 0.4,
+                      fit: BoxFit.fill,
                     ),
                     SizedBox(
                       height: 20.0,
                     ),
                     Text(
-                      "The #1 and most trusted fundraising platform ",
+                      LocaleKeys.the_number_one_label_text.tr(),
                       textAlign: TextAlign.center,
                       style: titleTextStyle.copyWith(
                           height: 1.8,
@@ -123,7 +129,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     ContinueButton(
                       isValidate: true,
                       onPressed: () {},
-                      title: "Start a GoFundMe",
+                      title: LocaleKeys.start_a_legas_text.tr(),
                     ),
                     SizedBox(
                       height: 20.0,
@@ -132,6 +138,7 @@ class _WelcomePageState extends State<WelcomePage> {
                       height: 45.0,
                       width: size.width,
                       child: TextButton(
+                        key: Key("welcome_page_signin_button"),
                         style: TextButton.styleFrom(
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(5.0),
@@ -142,7 +149,7 @@ class _WelcomePageState extends State<WelcomePage> {
                               SigninPage.routeName, (route) => false);
                         },
                         child: Text(
-                          'Sign in',
+                          LocaleKeys.login_appbar_title.tr(),
                           style: labelTextStyle.copyWith(
                               fontSize: 17.0, fontWeight: FontWeight.bold),
                         ),
@@ -155,12 +162,12 @@ class _WelcomePageState extends State<WelcomePage> {
                             HomePage.routeName, (route) => false);
                       },
                       child: Text(
-                        "Browse fundraisers",
+                        LocaleKeys.browse_fundraisers_text.tr(),
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
                     Text(
-                      'By continuing, you agree with the GoFundMe terms and privacy policy. ',
+                      LocaleKeys.legas_policy_text.tr(),
                       style: TextStyle(
                           fontSize: 11.0,
                           color: Theme.of(context).secondaryHeaderColor),

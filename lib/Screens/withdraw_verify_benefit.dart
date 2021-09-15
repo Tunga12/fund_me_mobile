@@ -1,8 +1,10 @@
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
+import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/withdraw_page.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/services/provider/withdrawal.dart';
+import 'package:crowd_funding_app/widgets/authdialog.dart';
 import 'package:crowd_funding_app/widgets/continue_button.dart';
 import 'package:crowd_funding_app/widgets/loading_progress.dart';
 import 'package:flutter/material.dart';
@@ -77,14 +79,25 @@ class WithdrawVerifyBeneficiary extends StatelessWidget {
                           'Successfully invited you will get notification when the user accept ',
                       toastLength: Toast.LENGTH_LONG,
                     );
+                    User _beneficiary = User(
+                        email: data['email'],
+                        firstName: data['firstName'],
+                        lastName: data['lastName']);
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => WithdrawPage(
                           fundraise: Fundraise(totalRaised: 0),
                           isSetUped: true,
+                          beneficiary: _beneficiary,
+                          isAccepted: false,
+                          isWithdawn: false,
                         ),
                       ),
                     );
+                  } else {
+                    Navigator.of(context).pop();
+                    authShowDialog(context, Text("Something went wrong"),
+                        close: true, error: true);
                   }
                 },
                 title: "Invite beneficiary")

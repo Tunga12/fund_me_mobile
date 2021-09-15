@@ -1,11 +1,51 @@
+import 'package:crowd_funding_app/Models/fundraise.dart';
+import 'package:crowd_funding_app/Models/status.dart';
+import 'package:crowd_funding_app/Models/user.dart';
+import 'package:crowd_funding_app/Models/withdrawal.dart';
+import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:crowd_funding_app/Screens/withdrawal_bank_info.dart';
+import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
+import 'package:crowd_funding_app/services/provider/withdrawal.dart';
 import 'package:crowd_funding_app/widgets/continue_button.dart';
+import 'package:crowd_funding_app/widgets/loading_progress.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
-class WithdrawalUserInfoView extends StatelessWidget {
-  const WithdrawalUserInfoView(this.data, {Key? key}) : super(key: key);
+class WithdrawalUserInfoView extends StatefulWidget {
+  WithdrawalUserInfoView(this.data, this.fundraise,
+      {Key? key, required this.isBeneficiary})
+      : super(key: key);
   final Map<String, dynamic> data;
+  final bool isBeneficiary;
+  final Fundraise fundraise;
+
+  @override
+  _WithdrawalUserInfoViewState createState() => _WithdrawalUserInfoViewState();
+}
+
+class _WithdrawalUserInfoViewState extends State<WithdrawalUserInfoView> {
+  User? _user;
+  String? _token;
+
+  _getUserInformation() async {
+    UserPreference userPreference = UserPreference();
+    PreferenceData _userPreferenceData =
+        await userPreference.getUserInfromation();
+    PreferenceData _tokenPreferenceData = await userPreference.getUserToken();
+
+    setState(() {
+      _user = _userPreferenceData.data;
+      _token = _tokenPreferenceData.data;
+    });
+  }
+
+  @override
+  void initState() {
+    _getUserInformation();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,54 +89,64 @@ class WithdrawalUserInfoView extends StatelessWidget {
                 height: 10.0,
               ),
               UserInfoList(
-                trailingTitle: data['firstName'],
+                trailingTitle: widget.data['firstName'],
                 leadingTitle: "First name",
               ),
               UserInfoList(
-                trailingTitle: data['lastName'],
+                trailingTitle: widget.data['lastName'],
                 leadingTitle: "Last name",
               ),
               UserInfoList(
-                trailingTitle: data['streetAddress'],
-                leadingTitle: "Street address",
+                trailingTitle: widget.data['email'],
+                leadingTitle: "Email",
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Divider(
+                thickness: 1.5,
+              ),
+              SizedBox(height: 10.0),
+              UserInfoList(
+                trailingTitle: widget.data['bankName'],
+                leadingTitle: "Bank Name",
               ),
               UserInfoList(
-                trailingTitle: data['city'],
-                leadingTitle: "City",
-              ),
-              UserInfoList(
-                trailingTitle: data['code'],
-                leadingTitle: "Zip code",
-              ),
-              UserInfoList(
-                trailingTitle: data['country'],
-                leadingTitle: "country",
-              ),
-              UserInfoList(
-                trailingTitle: data['phoneNumber'],
-                leadingTitle: "Phone Number",
-              ),
-              UserInfoList(
-                trailingTitle: data['ssn'],
-                leadingTitle: "Social security number",
-              ),
-              UserInfoList(
-                trailingTitle: data['date'],
-                leadingTitle: "Date of birth",
+                trailingTitle: widget.data['accountNumber'],
+                leadingTitle: "Account Number",
               ),
               SizedBox(
                 height: 30.0,
               ),
               ContinueButton(
                 isValidate: true,
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => WithdrawalBankInfo(data),
-                    ),
+                onPressed: () async {
+                  loadingProgress(context);
+                  Withdrwal _withdrawal = Withdrwal(
+                    bankName: widget.data['bankName'],
+                    bankAccountNo: widget.data['accountNumber'],
+                    isOrganizer: !widget.isBeneficiary,
+                  
                   );
+
+                  await context.read<WithdrawalModel>().createWithdrawal(
+                      _withdrawal, _token!, widget.fundraise.id!);
+                  Response response = context.read<WithdrawalModel>().response;
+                  if (response.status == ResponseStatus.SUCCESS) {
+                    Fluttertoast.showToast(
+                        msg: "Withdraw pending",
+                        toastLength: Toast.LENGTH_LONG);
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        HomePage.routeName, (route) => false,
+                        arguments: 2);
+                  } else {
+                    Navigator.of(context).pop();
+
+                    Fluttertoast.showToast(
+                        msg: response.message, toastLength: Toast.LENGTH_LONG);
+                  }
                 },
-                title: 'Confirm your information',
+                title: 'Confirm withdrawal',
               ),
               SizedBox(
                 height: 20.0,

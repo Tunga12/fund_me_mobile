@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/create_fundraiser_home.dart';
 import 'package:crowd_funding_app/Screens/manage.dart';
@@ -6,8 +9,14 @@ import 'package:crowd_funding_app/Screens/search.dart';
 import 'package:crowd_funding_app/Screens/settings.dart';
 import 'package:crowd_funding_app/Screens/signin_page.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
+import 'package:crowd_funding_app/constants/actions.dart';
+import 'package:crowd_funding_app/services/provider/notification.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/home_body.dart';
 import 'package:flutter/material.dart';
+import 'package:badges/badges.dart';
+import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = "/homePage";
@@ -20,11 +29,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   User? _user;
+  String? _token;
+  Timer? _timer;
   List<Widget> _bodyChild = [];
   List<Widget> _appBarChild = [];
 
   bool textFieldIsFocused = true;
   bool tapped = false;
+  int _unviewedNotifications = 0;
 
   void toggleWidget() {}
 
@@ -68,8 +80,24 @@ class _HomePageState extends State<HomePage> {
   getUser() async {
     UserPreference _userPreference = UserPreference();
     PreferenceData preferenceData = await _userPreference.getUserInfromation();
+    PreferenceData _tokenPreferenceData = await _userPreference.getUserToken();
     setState(() {
       _user = preferenceData.data;
+      _token = _tokenPreferenceData.data;
+    });
+  }
+
+  getNotificaions() async {
+    await Future.delayed(
+      Duration(milliseconds: 1),
+      () => Provider.of<UserNotificationModel>(context, listen: false)
+          .getAllUserNotifications(_token!),
+    );
+    Response _response = context.read<UserNotificationModel>().response;
+    setState(() {
+      if (_response.status == ResponseStatus.SUCCESS)
+        _unviewedNotifications =
+            unviewedNotifications(_response.data, _user!.id!);
     });
   }
 
@@ -77,14 +105,31 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     _setIndex();
     getUser();
+    _timer = Timer.periodic(Duration(seconds: 2), (_) => getNotificaions());
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _timer!.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     _bodyChild = [
       HomeBody(),
-      _user != null ? Notifications() : SigninPage(),
+      _user != null
+          ? Notifications(() {
+              Response _response =
+                  context.read<UserNotificationModel>().response;
+              setState(() {
+                if (_response.status == ResponseStatus.SUCCESS)
+                  _unviewedNotifications =
+                      unviewedNotifications(_response.data, _user!.id!);
+              });
+            })
+          : SigninPage(),
       _user != null ? Manage() : SigninPage(),
       Container(),
     ];
@@ -102,7 +147,7 @@ class _HomePageState extends State<HomePage> {
             onTap: () {},
             decoration: InputDecoration(
                 contentPadding: EdgeInsets.all(5.0),
-                hintText: "Search",
+                hintText: LocaleKeys.home_body_search_label_text.tr(),
                 prefixIcon: Icon(Icons.search),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(7.0))),
@@ -110,11 +155,11 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       Text(
-        "Notifications",
+        LocaleKeys.notifications_label_text.tr(),
         style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
       ),
       Text(
-        "Your fundraisers",
+        LocaleKeys.your_fundraisers_text.tr(),
         style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
       ),
     ];
@@ -151,6 +196,7 @@ class _HomePageState extends State<HomePage> {
       body: _bodyChild[_selectedIndex],
       floatingActionButton: _selectedIndex == 2
           ? FloatingActionButton(
+            
               child: Icon(
                 Icons.add,
                 color: Theme.of(context).backgroundColor,
@@ -166,6 +212,7 @@ class _HomePageState extends State<HomePage> {
             )
           : null,
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         enableFeedback: false,
         currentIndex: _selectedIndex,
         onTap: _onTappedTapped,
@@ -179,22 +226,42 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
               icon: Icon(
                 Icons.home_outlined,
+                key: Key("home_page_discover_button"),
               ),
-              label: "Discover"),
+              label: LocaleKeys.discover_label_text.tr()),
           BottomNavigationBarItem(
-              icon: Icon(
-                Icons.notifications_outlined,
+              icon: Container(
+                key: Key("home_page_notification_button"),
+                child: _unviewedNotifications == 0
+                    ? Icon(
+                        Icons.notifications_outlined,
+                      )
+                    : Badge(
+                        badgeContent: Text(
+                          "$_unviewedNotifications",
+                          style: TextStyle(
+                              color: Theme.of(context).backgroundColor),
+                        ),
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        child: Icon(
+                          Icons.notifications_outlined,
+                        )),
               ),
-              label: "Notifications"),
+              label: LocaleKeys.notifications_label_text.tr()),
           BottomNavigationBarItem(
-            icon: Icon(Icons.description),
-            label: "Manage",
+            icon: Icon(
+              Icons.description,
+              key: Key("home_page_manage_button"),
+            ),
+            label: LocaleKeys.manage_label_text.tr(),
           ),
           BottomNavigationBarItem(
-              icon: Icon(
-                Icons.account_circle_outlined,
-              ),
-              label: "Me"),
+            icon: Icon(
+              Icons.account_circle_outlined,
+              key: Key("home_page_me_button"),
+            ),
+            label: LocaleKeys.me_label_text.tr(),
+          ),
         ],
       ),
     );

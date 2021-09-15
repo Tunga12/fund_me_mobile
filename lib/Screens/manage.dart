@@ -51,16 +51,22 @@ class _ManageState extends State<Manage> {
         Provider.of<FundraiseModel>(context, listen: false)
             .homeFundraise
             .fundraises!;
+    await Provider.of<FundraiseModel>(context, listen: false)
+        .benficiaryFundraiser(token.data, page);
+    List<Fundraise> beneficiaryFundraisesResponse =
+        Provider.of<FundraiseModel>(context, listen: false)
+            .homeFundraise
+            .fundraises!;
     setState(() {
       _response = context.read<FundraiseModel>().response;
       userFundraisesResponse.addAll(memberFundraisesResponse);
+      userFundraisesResponse.addAll(beneficiaryFundraisesResponse);
       userFundraises!.addAll(userFundraisesResponse);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    print("user response fundraises $userFundraises");
     if (_response.status == ResponseStatus.LOADING) {
       return LoadingScreen();
     } else if (_response.status == ResponseStatus.CONNECTIONERROR) {

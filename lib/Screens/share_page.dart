@@ -1,15 +1,16 @@
 import 'package:crowd_funding_app/Models/fundraise.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/preview_text_button.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:share/share.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SharePage extends StatelessWidget {
   SharePage({Key? key, required this.fundraise}) : super(key: key);
-  final String fundraise;
+  final Fundraise fundraise;
 
-  final String _link =
-      "https://shrouded-bastion-52038.herokuapp.com/fundraiser/";
+  final String _link = "https://www.crowdfund.com/fundraiser/";
 
   @override
   Widget build(BuildContext context) {
@@ -18,16 +19,17 @@ class SharePage extends StatelessWidget {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Share"),
+            Text(LocaleKeys.Help_listtile_text.tr()),
             SizedBox(
               height: 10.0,
             ),
-            Text("Help Dave continued his journey")
+            Text(fundraise.title!)
           ],
         ),
       ),
       body: SingleChildScrollView(
         child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(
             children: [
               SizedBox(
@@ -38,7 +40,7 @@ class SharePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Share as much as possible",
+                      LocaleKeys.share_as_much_as_possible_label_text.tr(),
                       style: TextStyle(
                         color: Colors.black.withOpacity(0.7),
                         fontSize: 20.0,
@@ -48,7 +50,7 @@ class SharePage extends StatelessWidget {
                       height: 10.0,
                     ),
                     Text(
-                      'Fundraise shared on social networks raise up to 10x more.',
+                     LocaleKeys.fundraise_shared_on_social_label_text.tr(),
                       style: TextStyle(color: Colors.grey),
                     )
                   ],
@@ -63,7 +65,7 @@ class SharePage extends StatelessWidget {
                   // color: Colors.lin,
                 ),
                 title: Text(
-                  "Fundraise link",
+                  LocaleKeys.fundraise_link_label_text.tr(),
                   style: TextStyle(fontWeight: FontWeight.w200),
                 ),
                 subtitle: Container(
@@ -81,7 +83,7 @@ class SharePage extends StatelessWidget {
                         ),
                         suffix: TextButton(
                           onPressed: () {},
-                          child: Text("copy Link"),
+                          child: Text(LocaleKeys.copy_link_button_text.tr()),
                         ),
                       ),
                     ),
@@ -90,12 +92,12 @@ class SharePage extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(
-                    vertical: 30.0, horizontal: 20.0),
+                    vertical: 30.0),
                 child: PreviewTextButton(
-                  title: "Share",
+                  title: LocaleKeys.share_lable_text.tr(),
                   backgroundColor: Theme.of(context).buttonColor.withAlpha(100),
                   onPressed: () {
-                    Share.share(_link + fundraise);
+                    Share.share(_link + fundraise.id!);
                   },
                   leadingChild: Container(
                       padding: EdgeInsets.all(3.0),

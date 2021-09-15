@@ -38,9 +38,10 @@ class FundraiseModel extends ChangeNotifier {
   }
 
   Future getPopularFundraises(int page) async {
-    response =
-        Response(status: ResponseStatus.LOADING, data: null, message: '');
+   
     try {
+       response =
+        Response(status: ResponseStatus.LOADING, data: null, message: '');
       HomeFundraise _homeFundraise =
           await fundraiseRepository.getPopularFundraises(page);
       response = Response(
@@ -48,11 +49,7 @@ class FundraiseModel extends ChangeNotifier {
           data: _homeFundraise.fundraises,
           message: "success");
       homeFundraise = _homeFundraise;
-      print("In popular fundraise model");
-      print(response.status);
-      notifyListeners();
     } on SocketException catch (e) {
-      print("Fundraise Error ${e.message}");
       response = Response(
           status: ResponseStatus.CONNECTIONERROR,
           data: null,
@@ -77,6 +74,7 @@ class FundraiseModel extends ChangeNotifier {
         Response(status: ResponseStatus.LOADING, data: null, message: '');
     try {
       final _fundraise = await fundraiseRepository.getSingleFundraise(id);
+
       if (_fundraise is Fundraise)
         response = Response(
             status: ResponseStatus.SUCCESS,
@@ -84,7 +82,6 @@ class FundraiseModel extends ChangeNotifier {
             message: "success");
       fundraise = _fundraise;
     } on SocketException catch (e) {
-      print("Fundraise Error ${e.message}");
       response = Response(
           status: ResponseStatus.CONNECTIONERROR,
           data: null,
@@ -92,9 +89,7 @@ class FundraiseModel extends ChangeNotifier {
     } on FormatException catch (e) {
       print('Fundraise Error ${e.message}');
       response = Response(
-          status: ResponseStatus.FORMATERROR,
-          data: null,
-          message: "Invalid response from the server");
+          status: ResponseStatus.FORMATERROR, data: null, message: e.message);
     } catch (e) {
       response = Response(
           status: ResponseStatus.MISMATCHERROR,
@@ -157,7 +152,40 @@ class FundraiseModel extends ChangeNotifier {
       print(response.status);
       notifyListeners();
     } on SocketException catch (e) {
-      print("Fundraise Error ${e.message}");
+      response = Response(
+          status: ResponseStatus.CONNECTIONERROR,
+          data: null,
+          message: "No internet connection");
+    } on FormatException catch (e) {
+      print('Fundraise Error ${e.message}');
+      response = Response(
+          status: ResponseStatus.FORMATERROR,
+          data: null,
+          message: "Invalid response from the server");
+    } catch (e) {
+      response = Response(
+          status: ResponseStatus.MISMATCHERROR,
+          data: null,
+          message: "failed to fetch your fundraisers.");
+    }
+  }
+
+  Future benficiaryFundraiser(String token, int page) async {
+    response =
+        Response(status: ResponseStatus.LOADING, data: null, message: '');
+    try {
+      final _homeFundraise =
+          await fundraiseRepository.beneficiaryFundraisers(token, page);
+      if (_homeFundraise is HomeFundraise)
+        response = Response(
+            status: ResponseStatus.SUCCESS,
+            data: _homeFundraise.fundraises,
+            message: "success");
+      homeFundraise = _homeFundraise;
+      print("In popular fundraise model");
+      print(response.status);
+      notifyListeners();
+    } on SocketException catch (e) {
       response = Response(
           status: ResponseStatus.CONNECTIONERROR,
           data: null,
@@ -271,7 +299,6 @@ class FundraiseModel extends ChangeNotifier {
       print(response.status);
       notifyListeners();
     } on SocketException catch (e) {
-      print("Fundraise Error ${e.message}");
       response = Response(
           status: ResponseStatus.CONNECTIONERROR,
           data: null,

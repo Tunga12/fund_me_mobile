@@ -23,10 +23,8 @@ The navigation delegate is set to block navigation to the youtube website.
 ''';
 
 class WebBrowser extends StatefulWidget {
-  WebBrowser(this.url, {Key? key})
-      : super(key: key);
+  WebBrowser(this.url, {Key? key}) : super(key: key);
   final String url;
- 
 
   @override
   _WebBrowserState createState() => _WebBrowserState();
@@ -45,7 +43,7 @@ class _WebBrowserState extends State<WebBrowser> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:  Text('${widget.url}'),
+        title: Text('${widget.url}'),
         // This drop down menu demonstrates that Flutter widgets can be shown over the web view.
         actions: <Widget>[
           NavigationControls(_controller.future),
@@ -101,7 +99,6 @@ class _WebBrowserState extends State<WebBrowser> {
           gestureNavigationEnabled: true,
         );
       }),
-      floatingActionButton: favoriteButton(),
     );
   }
 
@@ -113,27 +110,6 @@ class _WebBrowserState extends State<WebBrowser> {
           Scaffold.of(context).showSnackBar(
             SnackBar(content: Text(message.message)),
           );
-        });
-  }
-
-  Widget favoriteButton() {
-    return FutureBuilder<WebViewController>(
-        future: _controller.future,
-        builder: (BuildContext context,
-            AsyncSnapshot<WebViewController> controller) {
-          if (controller.hasData) {
-            return FloatingActionButton(
-              onPressed: () async {
-                final String url = (await controller.data!.currentUrl())!;
-                // ignore: deprecated_member_use
-                Scaffold.of(context).showSnackBar(
-                  SnackBar(content: Text('Favorited $url')),
-                );
-              },
-              child: const Icon(Icons.favorite),
-            );
-          }
-          return Container();
         });
   }
 }

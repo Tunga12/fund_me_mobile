@@ -178,8 +178,8 @@ class _BankInformationState extends State<BankInformation> {
                         height: 10.0,
                       ),
                       TextFormField(
-                        initialValue: widget.fundraise.withdraw != null
-                            ? widget.fundraise.withdraw!.id.bankName
+                        initialValue: widget.fundraise.withdrwal != null
+                            ? widget.fundraise.withdrwal!.bankName
                             : null,
                         onChanged: (value) {
                           setState(() {
@@ -201,8 +201,8 @@ class _BankInformationState extends State<BankInformation> {
                         height: 10.0,
                       ),
                       TextFormField(
-                        initialValue: widget.fundraise.withdraw != null
-                            ? widget.fundraise.withdraw!.id.bankAccountNo
+                        initialValue: widget.fundraise.withdrwal != null
+                            ? widget.fundraise.withdrwal!.bankAccountNo
                             : null,
                         keyboardType: TextInputType.number,
                         onChanged: (value) {

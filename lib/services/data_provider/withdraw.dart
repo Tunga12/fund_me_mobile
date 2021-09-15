@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:crowd_funding_app/Models/withdrawal.dart';
 import 'package:crowd_funding_app/config/utils/endpoints.dart';
@@ -23,6 +22,7 @@ class WithdrawDataProvider {
           'bankName': withdrwal.bankName,
           'bankAccountNo': withdrwal.bankAccountNo.toString(),
           'isOrganizer': withdrwal.isOrganizer,
+          // if (!withdrwal.isOrganizer) 'beneficiary': withdrwal.beneficiary
         },
       ),
     );
@@ -32,6 +32,7 @@ class WithdrawDataProvider {
     if (response.statusCode == 201) {
       return true;
     } else {
+      print(response.body);
       print("exception creating withdrawal");
       throw Exception("unable to request withdrawal");
     }
@@ -52,12 +53,12 @@ class WithdrawDataProvider {
       ),
     );
     print(response.statusCode);
+    print(response.body);
 
     if (response.statusCode >= 200 && response.statusCode < 250) {
       print("entering condition");
-      Map<String, dynamic> _data = jsonDecode(response.body);
-      String _id = _data['id'];
-      return _id;
+
+      return response.body;
     } else {
       throw Exception(response.body);
     }

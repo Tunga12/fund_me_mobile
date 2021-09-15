@@ -3,11 +3,13 @@ import 'package:crowd_funding_app/Models/update.dart';
 import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/services/provider/update.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/authdialog.dart';
 import 'package:crowd_funding_app/widgets/loading_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class UpdateTextView extends StatefulWidget {
   const UpdateTextView({Key? key, required this.fundraiseId}) : super(key: key);
@@ -32,7 +34,7 @@ class _UpdateTextViewState extends State<UpdateTextView> {
             Navigator.of(context).pop();
           },
         ),
-        title: Text("Story"),
+        title: Text(LocaleKeys.story_label_text.tr()),
         actions: [
           if (_post)
             TextButton(
@@ -65,7 +67,7 @@ class _UpdateTextViewState extends State<UpdateTextView> {
                     }
                   }
                 },
-                child: Text("POST")),
+                child: Text(LocaleKeys.post_label_label_text.tr())),
         ],
       ),
       body: SingleChildScrollView(
@@ -86,12 +88,12 @@ class _UpdateTextViewState extends State<UpdateTextView> {
             },
             validator: (value) {
               if (value!.isEmpty) {
-                return "Field empty";
+                return LocaleKeys.story_required_label_text.tr();
               }
             },
             decoration: InputDecoration(
                 hintText:
-                    "Share a new developments or progress updates about your GoFundMe..."),
+                   LocaleKeys.share.tr()),
             maxLines: size.height.toInt(),
           ),
         ),

@@ -1,4 +1,6 @@
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CommunityCard extends StatelessWidget {
   @override
@@ -26,7 +28,7 @@ class CommunityCard extends StatelessWidget {
                         color: Colors.grey.shade400,
                         borderRadius: BorderRadius.circular(20.0)),
                     child: Text(
-                      "New",
+                      LocaleKeys.new_label_text.tr(),
                       style: TextStyle(
                           color: Colors.purple, fontWeight: FontWeight.bold),
                     ),
@@ -35,7 +37,7 @@ class CommunityCard extends StatelessWidget {
                     height: 15.0,
                   ),
                   Text(
-                    "Join the GoFundMe Community",
+                    LocaleKeys.join_the_legas_label_text.tr(),
                     style: TextStyle(
                         color: Theme.of(context)
                             .secondaryHeaderColor
@@ -46,13 +48,16 @@ class CommunityCard extends StatelessWidget {
                   SizedBox(
                     height: 10.0,
                   ),
-                  Text(
-                    "Connect with other organizers and learn about fundraising strategies in the GoFundMe Community",
-                    style: TextStyle(
-                        fontSize: 16.0,
-                        color: Theme.of(context)
-                            .secondaryHeaderColor
-                            .withOpacity(0.6)),
+                  Expanded(
+                    child: Text(
+                      LocaleKeys.connect_with_other_label_text.tr(),
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context)
+                              .secondaryHeaderColor
+                              .withOpacity(0.6)),
+                    ),
                   ),
                   SizedBox(
                     height: 10.0,
@@ -76,7 +81,7 @@ class CommunityCard extends StatelessWidget {
             child: GestureDetector(
               onTap: () {},
               child: Center(
-                child: Text("Visit the Community",
+                child: Text(LocaleKeys.visit_community_buton_text.tr(),
                     style: TextStyle(
                         color: Theme.of(context).accentColor,
                         fontWeight: FontWeight.bold,

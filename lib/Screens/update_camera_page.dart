@@ -7,6 +7,7 @@ import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/constants/actions.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/services/provider/update.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/authdialog.dart';
 import 'package:crowd_funding_app/widgets/loading_progress.dart';
 import 'package:dotted_border/dotted_border.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import "package:provider/provider.dart";
+import 'package:easy_localization/easy_localization.dart';
 
 class UpdateCameraPage extends StatefulWidget {
   const UpdateCameraPage({Key? key, required this.fundraiseId})
@@ -30,20 +32,9 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
   final _formKey = GlobalKey<FormState>();
   bool _post = false;
   String _updateData = "";
-  // image picker
-  // _getImage(ImageSource imageSource) async {
-  //   XFile? imageFile = await _imagePicker.pickImage(source: imageSource);
-
-  //   if (imageFile == null) return;
-  //   setState(() {
-  //     _image = File(imageFile.path);
-  //   });
-  // }
-
-  // Choose whether to take image from gallery or take picture using camera.
   _chooseSource() {
     return AlertDialog(
-      title: Text("choose method"),
+      title: Text(LocaleKeys.choose_method_label_text.tr()),
       content: SingleChildScrollView(
         child: Column(
           children: [
@@ -59,7 +50,7 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
                 Navigator.of(context).pop();
               },
               leading: Icon(Icons.add_a_photo),
-              title: Text("take a photo"),
+              title: Text(LocaleKeys.take_photo_label_text.tr()),
             ),
             ListTile(
               onTap: () async {
@@ -71,7 +62,7 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
                 Navigator.of(context).pop();
               },
               leading: Icon(Icons.collections),
-              title: Text("choose from gallery"),
+              title: Text(LocaleKeys.choose_gallary_label_text.tr()),
             ),
           ],
         ),
@@ -84,7 +75,7 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Story"),
+        title: Text(LocaleKeys.story_label_text.tr()),
         leading: IconButton(
           icon: Icon(Icons.close),
           onPressed: () {
@@ -94,35 +85,40 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
         actions: [
           if (_post && _image != null)
             TextButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    loadingProgress(context);
+              onPressed: () async {
+                if (_formKey.currentState!.validate()) {
+                  _formKey.currentState!.save();
+                  loadingProgress(context);
 
-                    UserPreference userPreference = UserPreference();
-                    PreferenceData preferenceData =
-                        await userPreference.getUserToken();
+                  UserPreference userPreference = UserPreference();
+                  PreferenceData preferenceData =
+                      await userPreference.getUserToken();
 
-                    Update update = Update(content: _updateData);
+                  Update update = Update(content: _updateData);
 
-                    await context.read<UpdateModel>().createUpdate(
-                        update, preferenceData.data, widget.fundraiseId,image: _image);
+                  await context.read<UpdateModel>().createUpdate(
+                      update, preferenceData.data, widget.fundraiseId,
+                      image: _image);
 
-                    Response response = context.read<UpdateModel>().response;
-                    if (response.status == ResponseStatus.SUCCESS) {
-                      Fluttertoast.showToast(
-                          msg: "Successfully Updated!",
-                          toastLength: Toast.LENGTH_LONG);
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          HomePage.routeName, (route) => false,arguments: 2);
-                    } else {
-                      Navigator.pop(context);
-                      authShowDialog(context, Text("failed to update"),
-                          close: true, error: true);
-                    }
+                  Response response = context.read<UpdateModel>().response;
+                  if (response.status == ResponseStatus.SUCCESS) {
+                    Fluttertoast.showToast(
+                        msg: "Successfully Updated!",
+                        toastLength: Toast.LENGTH_LONG);
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        HomePage.routeName, (route) => false,
+                        arguments: 2);
+                  } else {
+                    Navigator.pop(context);
+                    authShowDialog(context, Text("failed to update"),
+                        close: true, error: true);
                   }
-                },
-                child: Text("POST")),
+                }
+              },
+              child: Text(
+                LocaleKeys.post_label_label_text.tr(),
+              ),
+            ),
         ],
       ),
       body: _image == null
@@ -151,7 +147,7 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
                           Icon(Icons.add_photo_alternate_outlined),
                           SizedBox(height: 10.0),
                           Text(
-                            "Add photo",
+                            LocaleKeys.add_photoo_button_text.tr(),
                             style: bodyTextStyle,
                           )
                         ],
@@ -209,7 +205,7 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
                             children: [
                               Icon(Icons.edit),
                               Text(
-                                "change photo",
+                                LocaleKeys.change_photo_label_text.tr(),
                                 style: bodyTextStyle,
                               )
                             ],
@@ -222,7 +218,7 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
                               _image = null;
                             });
                           },
-                          child: Text("Remove"),
+                          child: Text(LocaleKeys.remove_button_text.tr()),
                         )
                       ],
                     ),
@@ -244,12 +240,12 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
                         },
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Field required";
+                            return LocaleKeys.story_required_label_text.tr();
                           }
                         },
                         maxLines: 5,
                         decoration: InputDecoration(
-                            labelText: "Add a Story",
+                            labelText: LocaleKeys.add_story_label_text.tr(),
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12.0),
                                 borderSide: BorderSide(
@@ -257,7 +253,7 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
                                     color: Theme.of(context)
                                         .secondaryHeaderColor))),
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),

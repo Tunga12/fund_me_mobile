@@ -5,6 +5,7 @@ import 'package:crowd_funding_app/Screens/create_fundraiser_page_two.dart';
 import 'package:crowd_funding_app/Screens/loading_screen.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/services/provider/category.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/continue_button.dart';
 import 'package:crowd_funding_app/widgets/form_label_text.dart';
 import 'package:crowd_funding_app/widgets/form_progress.dart';
@@ -12,6 +13,7 @@ import 'package:crowd_funding_app/widgets/response_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CreateFundraiserPageOne extends StatefulWidget {
   const CreateFundraiserPageOne({Key? key}) : super(key: key);
@@ -25,7 +27,7 @@ class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
   final _formKey = GlobalKey<FormState>();
   String _category = '0';
   bool btnEnabled = false;
-  String locationValue = 'choose your location';
+  String locationValue = LocaleKeys.choose_your_label_text.tr();
   Map<String, dynamic> _fundraiseInfo = {};
   @override
   void initState() {
@@ -44,6 +46,7 @@ class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
       return ResponseAlert(response.message);
     }
     List<Category> categories = response.data;
+    print("category is $categories");
 
     return Scaffold(
       appBar: AppBar(),
@@ -77,7 +80,7 @@ class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'STEP 1 OF 3',
+                    LocaleKeys.step_1_of_3_label_text.tr(),
                     style: stepTextStyle.copyWith(
                         color: Theme.of(context)
                             .secondaryHeaderColor
@@ -87,7 +90,7 @@ class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
                     height: 10.0,
                   ),
                   Text(
-                    "Fundraiser details",
+                    LocaleKeys.fundraiser_detail_lable_text.tr(),
                     style: bodyHeaderTextStyle.copyWith(
                       color:
                           Theme.of(context).secondaryHeaderColor.withAlpha(250),
@@ -105,31 +108,34 @@ class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         FormLabelText(
-
-                            text: "How much would you like to raise ?"),
+                            text: LocaleKeys.how_much_would_label_text.tr()),
                         TextFormField(
-                          
+                          key: Key("goal_amount_mount_field"),
                           keyboardType: TextInputType.number,
                           onSaved: (value) {
                             _fundraiseInfo['goalAmount'] = value;
                           },
                           validator: (value) {
                             if (value!.isEmpty) {
-                              return "amount required!";
+                              return LocaleKeys.amount_required_label_text.tr();
                             }
                           },
                           textAlignVertical: TextAlignVertical.center,
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.only(bottom: 0.0),
-                            hintText: "\$ Enter amount",
-                            suffixIcon: buildCustomSuffixIcon("USD"),
+                            hintText:
+                                "\$ ${LocaleKeys.enter_amount_label_text.tr()}",
+                            suffixIcon: buildCustomSuffixIcon(
+                              LocaleKeys.usd_label_text.tr(),
+                            ),
                           ),
                         ),
                         FormLabelText(
-                            text: 'what kind of fundraiser are you creating?'),
+                            text: LocaleKeys.what_kind_of_fundrsing_label_text
+                                .tr()),
                         DropdownButtonFormField<String>(
+                          key: Key("category_selection_field"),
                           value: _category,
-                          
                           onChanged: (value) {
                             setState(() {
                               _category = value!;
@@ -143,13 +149,16 @@ class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
                           },
                           validator: (value) {
                             if (value == '0') {
-                              return "select a category";
+                              return LocaleKeys.select_category_label_text.tr();
                             }
                           },
                           items: categories
                               .map(
                                 (category) => DropdownMenuItem<String>(
-                                  child: Text("${category.categoryName}"),
+                                  child: Text(
+                                    "${category.categoryName}",
+                                    key: Key('${category.categoryID}'),
+                                  ),
                                   value: category.categoryID,
                                 ),
                               )
@@ -162,6 +171,7 @@ class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             IconButton(
+                              key: Key("choose_location_button"),
                               onPressed: () async {
                                 Position position =
                                     await Geolocator.getCurrentPosition(
@@ -198,11 +208,12 @@ class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
                         SizedBox(height: 70.0),
                         btnEnabled && locationValue != "choose your location"
                             ? ContinueButton(
-                                title: "continue",
+                                key: Key("continue_create_button"),
+                                title: LocaleKeys.continue_button_text.tr(),
                                 isValidate: true,
                                 onPressed: () {
                                   _formKey.currentState!.save();
-                                  print("fundraise info$_fundraiseInfo");
+                                 
                                   Navigator.of(context).push(
                                     MaterialPageRoute(
                                       builder: (context) =>
@@ -214,7 +225,7 @@ class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
                                 },
                               )
                             : ContinueButton(
-                                title: "continue",
+                                title: LocaleKeys.continue_button_text.tr(),
                                 isValidate: false,
                                 onPressed: () {},
                               )

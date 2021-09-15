@@ -1,14 +1,19 @@
+import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:crowd_funding_app/Screens/signin_page.dart';
 import 'package:crowd_funding_app/services/provider/auth.dart';
+import 'package:crowd_funding_app/services/provider/fundraise.dart';
 import 'package:crowd_funding_app/services/provider/user.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/authdialog.dart';
 import 'package:crowd_funding_app/widgets/loading_progress.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SignupPage extends StatefulWidget {
   static String routeName = "/signupPage";
@@ -34,30 +39,33 @@ class _SignupPageState extends State<SignupPage> {
       builder: (_, model, child) {
         return Scaffold(
           appBar: AppBar(
-            title: Text("Sign up"),
+            title: Text(LocaleKeys.register_appbar_title_text.tr()),
           ),
           body: Container(
             padding: EdgeInsets.symmetric(horizontal: 20.0),
             child: ListView(
+              key: Key("signup_page_listview"),
               // crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 15.0),
-                  child: Image.asset(
-                    "assets/images/gofundme.png",
-                    height: size.height * 0.07,
-                    width: size.width * 0.01,
+                  child: Image(
+                    image: AssetImage(
+                      "assets/images/logo_image.PNG",
+                    ),
+                    width: size.width * 0.2,
+                    height: size.height * 0.1,
                   ),
                 ),
                 Text(
-                  "Great job!",
+                  LocaleKeys.great_job_text.tr(),
                   style: TextStyle(
                       fontSize: 22.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.black),
                 ),
                 Text(
-                  "Now create an account to preview and launch your fundraiser.",
+                  LocaleKeys.now_create_an_account.tr(),
                   style: TextStyle(
                       fontSize: 22.0,
                       fontWeight: FontWeight.bold,
@@ -84,11 +92,11 @@ class _SignupPageState extends State<SignupPage> {
                         },
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "First name is required!";
+                            return LocaleKeys.first_name_required_text.tr();
                           }
                         },
                         decoration: InputDecoration(
-                          labelText: "First name",
+                          labelText: LocaleKeys.first_name_text.tr(),
                         ),
                       ),
                       SizedBox(
@@ -103,11 +111,11 @@ class _SignupPageState extends State<SignupPage> {
                         },
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Last name is required!";
+                            return LocaleKeys.last_name_required_text.tr();
                           }
                         },
                         decoration: InputDecoration(
-                          labelText: "Last name",
+                          labelText: LocaleKeys.last_name_text.tr(),
                         ),
                       ),
                       SizedBox(
@@ -121,11 +129,11 @@ class _SignupPageState extends State<SignupPage> {
                         },
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Email is required!";
+                            return LocaleKeys.email_required_text.tr();
                           }
                         },
                         decoration: InputDecoration(
-                          labelText: "Email",
+                          labelText: LocaleKeys.email_text.tr(),
                         ),
                       ),
                       SizedBox(
@@ -140,11 +148,11 @@ class _SignupPageState extends State<SignupPage> {
                         },
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Phone number is required!";
+                            return LocaleKeys.phone_number_required.tr();
                           }
                         },
                         decoration: InputDecoration(
-                          labelText: "Phone number",
+                          labelText: LocaleKeys.phone_number_text.tr(),
                         ),
                       ),
                       SizedBox(
@@ -165,9 +173,9 @@ class _SignupPageState extends State<SignupPage> {
                         },
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "Password is required!";
+                            return LocaleKeys.password_required_text.tr();
                           } else if (value.length < 8) {
-                            return "password too short!";
+                            return LocaleKeys.password_too_short_text.tr();
                           }
                         },
                         decoration: InputDecoration(
@@ -182,7 +190,7 @@ class _SignupPageState extends State<SignupPage> {
                               });
                             },
                           ),
-                          labelText: "Password",
+                          labelText: LocaleKeys.Password_text.tr(),
                         ),
                       ),
                       TextFormField(
@@ -195,9 +203,9 @@ class _SignupPageState extends State<SignupPage> {
                         },
                         validator: (value) {
                           if (value!.isEmpty) {
-                            return "password don't match";
+                            return LocaleKeys.password_dont_match_text.tr();
                           } else if (value != _userInfo['password']) {
-                            return "password don't match!";
+                            return LocaleKeys.password_dont_match_text.tr();
                           }
                         },
                         decoration: InputDecoration(
@@ -212,7 +220,7 @@ class _SignupPageState extends State<SignupPage> {
                               });
                             },
                           ),
-                          labelText: "confirm password",
+                          labelText: LocaleKeys.confirm_password_text.tr(),
                         ),
                       ),
                       SizedBox(
@@ -251,9 +259,63 @@ class _SignupPageState extends State<SignupPage> {
                                 Response response =
                                     context.read<UserModel>().response;
                                 if (response.data != null) {
-                                  Navigator.of(context).pushNamedAndRemoveUntil(
-                                      HomePage.routeName,
-                                      (Route<dynamic> route) => false);
+                                  if (widget.url != null) {
+                                    User _user = response.data;
+                                    List<String> datas = widget.url!.split(':');
+                                    if (_user.id == datas[1]) {
+                                      await Provider.of<FundraiseModel>(context,
+                                              listen: false)
+                                          .getSingleFundraise(datas[0]);
+                                      Response _responseSingleFundraise =
+                                          Provider.of<FundraiseModel>(context,
+                                                  listen: false)
+                                              .response;
+                                      if (_responseSingleFundraise.status ==
+                                          ResponseStatus.SUCCESS) {
+                                        Fundraise _fundraise =
+                                            _responseSingleFundraise.data;
+                                        _fundraise.beneficiary =
+                                            User(id: datas[1]);
+                                        await Provider.of<FundraiseModel>(
+                                                context,
+                                                listen: false)
+                                            .updateFundraise(_fundraise,
+                                                model.response.data);
+                                        Response _responseUpdateFundraise =
+                                            Provider.of<FundraiseModel>(context,
+                                                    listen: false)
+                                                .response;
+                                        if (_responseUpdateFundraise.status ==
+                                            ResponseStatus.SUCCESS) {
+                                          Navigator.of(context).pop();
+                                          Navigator.of(context)
+                                              .pushNamedAndRemoveUntil(
+                                                  HomePage.routeName,
+                                                  (route) => false,
+                                                  arguments: 2);
+                                        } else {
+                                          Navigator.of(context).pop();
+                                          Fluttertoast.showToast(
+                                              msg: "Something went wrong",
+                                              toastLength: Toast.LENGTH_LONG);
+                                        }
+                                      }
+                                    } else {
+                                      Fluttertoast.showToast(
+                                        msg:
+                                            "err: err: you are not invited this fundraiser",
+                                        toastLength: Toast.LENGTH_LONG,
+                                      );
+                                      Navigator.of(context)
+                                          .pushNamedAndRemoveUntil(
+                                              HomePage.routeName,
+                                              (Route<dynamic> route) => false);
+                                    }
+                                  } else
+                                    Navigator.of(context)
+                                        .pushNamedAndRemoveUntil(
+                                            HomePage.routeName,
+                                            (Route<dynamic> route) => false);
                                 } else {
                                   Navigator.of(context).pop();
                                   authShowDialog(
@@ -289,7 +351,7 @@ class _SignupPageState extends State<SignupPage> {
                             }
                           },
                           child: Text(
-                            "SIGN UP",
+                            LocaleKeys.register_button_text.tr(),
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1!
@@ -308,29 +370,32 @@ class _SignupPageState extends State<SignupPage> {
                 Container(
                   margin: EdgeInsets.symmetric(vertical: 18.0),
                   child: Center(
-                    child: RichText(
-                        text: TextSpan(children: [
-                      TextSpan(
-                          text: "Already have an account? ",
-                          style: TextStyle(color: Colors.black)),
-                      TextSpan(
-                          text: "Sign in",
+                    child: GestureDetector(
+                      key: Key("login_text_button"),
+                      onTap: () {
+                        widget.url != null
+                            ? Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) => SignupPage(
+                                    url: widget.url,
+                                  ),
+                                ),
+                              )
+                            : Navigator.of(context)
+                                .pushReplacementNamed(SigninPage.routeName);
+                      },
+                      child: RichText(
+                          text: TextSpan(children: [
+                        TextSpan(
+                            text: LocaleKeys.already_have_account_text.tr(),
+                            style: TextStyle(color: Colors.black)),
+                        TextSpan(
+                          text: LocaleKeys.login_appbar_title.tr(),
                           style:
                               TextStyle(color: Theme.of(context).accentColor),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              widget.url != null
-                                  ? Navigator.of(context).pushReplacement(
-                                      MaterialPageRoute(
-                                        builder: (context) => SignupPage(
-                                          url: widget.url,
-                                        ),
-                                      ),
-                                    )
-                                  : Navigator.of(context).pushReplacementNamed(
-                                      SigninPage.routeName);
-                            })
-                    ])),
+                        )
+                      ])),
+                    ),
                   ),
                 ),
               ],

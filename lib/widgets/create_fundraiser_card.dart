@@ -7,12 +7,13 @@ class CreateFundraiserCard extends StatelessWidget {
   final IconData iconData;
   final Function onPressed;
 
-  CreateFundraiserCard({
-    required this.title,
-    required this.subTitle,
-    required this.iconData,
-    required this.onPressed,
-  });
+  CreateFundraiserCard(
+      {required this.title,
+      required this.subTitle,
+      required this.iconData,
+      required this.onPressed,
+      Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

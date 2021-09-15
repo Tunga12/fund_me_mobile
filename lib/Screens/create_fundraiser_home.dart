@@ -1,7 +1,9 @@
 import 'package:crowd_funding_app/Screens/create_fundraiser_page_one.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/create_fundraiser_card.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class CreateFundraiserHome extends StatelessWidget {
   const CreateFundraiserHome({Key? key}) : super(key: key);
@@ -11,7 +13,7 @@ class CreateFundraiserHome extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Create fundraiser",
+          LocaleKeys.create_fundraiser_appbar_title_text.tr(),
           style: appbarTextStyle,
         ),
       ),
@@ -21,7 +23,7 @@ class CreateFundraiserHome extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Who are you fundraising for?",
+              LocaleKeys.who_are_you_funraising_lable_text.tr(),
               style: bodyHeaderTextStyle.copyWith(
                 color: Theme.of(context).secondaryHeaderColor.withAlpha(250),
               ),
@@ -30,6 +32,7 @@ class CreateFundraiserHome extends StatelessWidget {
               height: 10.0,
             ),
             CreateFundraiserCard(
+              key: Key("create_legas_for_yourself"),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
@@ -38,9 +41,9 @@ class CreateFundraiserHome extends StatelessWidget {
                 );
               },
               iconData: Icons.manage_accounts,
-              title: "Yourself or someone else",
+              title: LocaleKeys.your_self_or_someone_label_text.tr(),
               subTitle:
-                  'Donations will be deposited into a person or business bank account.',
+                 LocaleKeys.donations_will_be_deposited_label_text.tr(),
             ),
             SizedBox(
               height: 10.0,
@@ -48,9 +51,9 @@ class CreateFundraiserHome extends StatelessWidget {
             CreateFundraiserCard(
               onPressed: () {},
               iconData: Icons.room_preferences_outlined,
-              title: "A nonprofit or charity",
+              title: LocaleKeys.a_non_profit_or_label_text.tr(),
               subTitle:
-                  'Donations will be automatically deliverd to your chosen nonprofit.',
+                  LocaleKeys.donations_will_be_auto_lable_text.tr(),
             ),
           ],
         ),

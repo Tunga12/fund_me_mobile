@@ -51,4 +51,10 @@ class FundraiseRepository {
   Future<HomeFundraise> searchFundraises(String title, int pageNumber) async {
     return await dataProvider.searchFundraises(title, pageNumber);
   }
+
+  // get beneficiary fundraisers
+  Future<HomeFundraise> beneficiaryFundraisers(
+      String token, int pageNumber) async {
+    return await dataProvider.beneficiaryFundraisers(token, pageNumber);
+  }
 }

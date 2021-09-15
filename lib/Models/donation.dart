@@ -24,6 +24,7 @@ class Donation {
 
   factory Donation.fromJson(Map<String, dynamic> data) {
     
+    
     String id = data['_id'] ?? "";
     User userID =
         data['userId'] == null ? User() : User.fromJson(data['userId']);

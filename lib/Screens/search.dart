@@ -5,10 +5,12 @@ import 'package:crowd_funding_app/Screens/loading_screen.dart';
 import 'package:crowd_funding_app/Screens/popular_fundraise_detail.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/campaign_card.dart';
 import 'package:crowd_funding_app/widgets/response_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -155,7 +157,7 @@ class _SearchPageState extends State<SearchPage> {
             ? searchFundraises.isEmpty
                 ? Center(
                     child: Text(
-                      "No such fundraise!",
+                      LocaleKeys.no_such_fundraisre_text.tr(),
                       style: labelTextStyle.copyWith(
                           color: Theme.of(context).secondaryHeaderColor),
                     ),
@@ -223,7 +225,7 @@ class _SearchPageState extends State<SearchPage> {
                       margin: EdgeInsets.symmetric(
                           horizontal: 20.0, vertical: 20.0),
                       child: Text(
-                        "Browse GoFundMe",
+                       LocaleKeys.browse_label_text.tr(),
                         style: titleTextStyle.copyWith(
                             color: Theme.of(context).secondaryHeaderColor),
                       ),

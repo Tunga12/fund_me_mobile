@@ -70,6 +70,8 @@ class DonationPageState extends State<DonationPage> {
     print("data is $_myData");
     print(_comment);
     _tip = _sliderValue * 0.01;
+    print("tip");
+    print(_tip * _donation);
     final size = MediaQuery.of(context).size;
     return Scaffold(
         appBar: AppBar(
@@ -256,7 +258,7 @@ class DonationPageState extends State<DonationPage> {
                                       Theme.of(context).backgroundColor),
                               child: Slider.adaptive(
                                 label:
-                                    "${_donation == 0 ? "" : _tip.toStringAsFixed(1)}  $_sliderValue%",
+                                    "${_donation == 0 ? "" : (_donation * _tip).toStringAsFixed(1)}  $_sliderValue%",
                                 divisions: 10,
                                 min: 10.0,
                                 max: 25.0,
@@ -281,21 +283,21 @@ class DonationPageState extends State<DonationPage> {
                       SizedBox(
                         height: 20.0,
                       ),
-                      if (_showDoantionInfo)
-                        BankInformation(
-                          fundraise: widget.fundraise,
-                          data: _myData,
-                          validate: (value) {
-                            setState(() {
-                              _bankInfoValidated = value;
-                            });
-                          },
-                          callBack: (data) {
-                            setState(() {
-                              _myData = data;
-                            });
-                          },
-                        ),
+                      // if (_showDoantionInfo)
+                      //   BankInformation(
+                      //     fundraise: widget.fundraise,
+                      //     data: _myData,
+                      //     validate: (value) {
+                      //       setState(() {
+                      //         _bankInfoValidated = value;
+                      //       });
+                      //     },
+                      //     callBack: (data) {
+                      //       setState(() {
+                      //         _myData = data;
+                      //       });
+                      //     },
+                      //   ),
                       if (_showDoantionInfo)
                         DonationCommentBox(commentCallback: (value) {
                           setState(() {
@@ -362,7 +364,7 @@ class DonationPageState extends State<DonationPage> {
                                           amount: _donation,
                                           userID: userData.data,
                                           tip: double.parse((_tip * _donation)
-                                              .toStringAsFixed(1)),
+                                              .toStringAsFixed(2)),
                                           comment: _comment,
                                         );
                               await context.read<DonationModel>().payWithPayPal(
@@ -427,7 +429,12 @@ class DonationPageState extends State<DonationPage> {
                               }
                             }
                           },
-                          title: "PayPal",
+                        ),
+
+                        SizedBox(height: 30.0,),
+                      if (_showDoantionInfo)
+                        PaymentButton(
+                          onPressed: () {},
                         ),
                       if (!_showDoantionInfo)
                         ContinueButton(
@@ -435,7 +442,9 @@ class DonationPageState extends State<DonationPage> {
                                 _showDoantionInfo ? _bankInfoValidated : true,
                             onPressed: () {
                               setState(() {
-                                _showDoantionInfo = true;
+                               if(_formKey.currentState!.validate()){
+                                  _showDoantionInfo = true;
+                               }
                               });
                             },
                             title: "Continue")
