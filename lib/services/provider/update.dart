@@ -45,17 +45,20 @@ class UpdateModel extends ChangeNotifier {
         );
       }
       print(_response.status);
-    } on SocketException {
+    } on SocketException catch(e){
+       print("update exceptioin${e.toString()}");
       response = Response(
           status: ResponseStatus.CONNECTIONERROR,
           data: null,
           message: "No internet connection");
     } on FormatException catch (e) {
+      print("update exceptioin${e.toString()}");
       response = Response(
           status: ResponseStatus.FORMATERROR,
           data: null,
           message: "Invalid response from the server");
     } catch (e) {
+       print("update exceptioin${e.toString()}");
       response = Response(
         status: ResponseStatus.MISMATCHERROR,
         data: null,

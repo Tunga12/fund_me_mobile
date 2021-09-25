@@ -38,17 +38,16 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future getUser() async {
     UserPreference userPreference = UserPreference();
-    final loggedUser = await userPreference.getUserInfromation();
-    // final loggedUser = User();
+    final _loggedUser = await userPreference.getUserInfromation();
+    // final _loggedUser = PreferenceData(data: User(), status: false);
     if (mounted)
       setState(() {
-        user = loggedUser;
+        user = _loggedUser;
       });
   }
 
   @override
   Widget build(BuildContext context) {
-    print("splash screen");
     final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,

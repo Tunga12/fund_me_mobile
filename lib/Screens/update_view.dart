@@ -1,8 +1,8 @@
+import 'package:crowd_funding_app/Models/custom_time.dart';
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Models/update.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/home_page.dart';
-import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/services/provider/update.dart';
 import 'package:crowd_funding_app/widgets/authdialog.dart';
 import 'package:crowd_funding_app/widgets/cached_network_image.dart';
@@ -10,7 +10,6 @@ import 'package:crowd_funding_app/widgets/loading_progress.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 
 class UpdatesView extends StatelessWidget {
@@ -34,8 +33,9 @@ class UpdatesView extends StatelessWidget {
         child: ListView.builder(
             itemCount: updates.length,
             itemBuilder: (context, idx) {
-              String date =
-                  Jiffy(updates[0].dateCreated, "yyyy-MM-dd").fromNow();
+              String date = CustomTime.displayTimeAgoFromTimestamp(
+                  updates[0].dateCreated!,
+                  numericDates: true);
               return Column(
                 children: [
                   ListTile(
@@ -68,7 +68,8 @@ class UpdatesView extends StatelessWidget {
                                 Fluttertoast.showToast(
                                     msg: "Successfully deleted");
                                 Navigator.of(context).pushNamedAndRemoveUntil(
-                                    HomePage.routeName, (route) => false, arguments: 2);
+                                    HomePage.routeName, (route) => false,
+                                    arguments: 2);
                               } else {
                                 Navigator.of(context).pop();
                                 authShowDialog(

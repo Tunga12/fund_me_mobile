@@ -19,7 +19,7 @@ class UserNotificationDataProvider {
       ),
       headers: <String, String>{'x-auth-token': token},
     );
- 
+
     if (response.statusCode == 200) {
       final notifications = jsonDecode(response.body) as List;
 
@@ -44,6 +44,8 @@ class UserNotificationDataProvider {
     if (response.statusCode == 200) {
       return "updated";
     } else {
+      print('The exception is ');
+      print(response.body);
       throw Exception(response.body);
     }
   }

@@ -82,12 +82,12 @@ class FundraiseDataProvider {
       Uri.parse(EndPoints.fundraises + id),
     );
 
-    print("response status");
-    print(response.statusCode);
-    print(response.body);
+    // print("response status");
+    // print(response.statusCode);
+    // print(response.body);
     if (response.statusCode == 200) {
-      print('jsonDecoded');
-      print(jsonDecode(response.body));
+      // print('jsonDecoded');
+      // print(jsonDecode(response.body));
       final singleFundraise = jsonDecode(response.body);
       return Fundraise.fromJson(singleFundraise);
     } else {
@@ -241,7 +241,7 @@ class FundraiseDataProvider {
         headers: <String, String>{
           'x-auth-token': token,
         });
-
+        
     if (response.statusCode == 200) {
       return HomeFundraise.fromJson(jsonDecode(response.body));
     } else {

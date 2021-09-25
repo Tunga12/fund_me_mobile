@@ -19,9 +19,9 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> {
   final _images = [
-    'assets/images/welcome_one.jpg',
-    'assets/images/welcome_two.jpg',
-    'assets/images/welcome_three.jpg'
+    'assets/images/habesha_image_one.jpg',
+    'assets/images/habesha_image_two.jpeg',
+    'assets/images/habesha_image_three.jpg'
   ];
 
   int _currentIndex = 0;

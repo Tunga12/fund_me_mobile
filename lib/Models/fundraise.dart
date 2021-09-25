@@ -1,6 +1,8 @@
 import 'package:crowd_funding_app/Models/category.dart';
 import 'package:crowd_funding_app/Models/donation.dart';
 import 'package:crowd_funding_app/Models/team_member.dart';
+import 'package:crowd_funding_app/Models/total_raised.dart';
+import 'package:crowd_funding_app/Models/total_withdraw.dart';
 import 'package:crowd_funding_app/Models/update.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Models/withdrawal.dart';
@@ -13,7 +15,7 @@ class Fundraise {
   String? story;
   Category? category;
   Location? location;
-  DateTime? dateCreated;
+  String? dateCreated;
   User? organizer;
   User? beneficiary;
   List<Donation>? donations;
@@ -22,9 +24,9 @@ class Fundraise {
   bool? isPublished;
   int? totalSharedCount;
   int? likeCount;
-  List<int>? totalWithdrawal;
+  List<TotalWithdraw>? totalWithdrawal;
   // bool? isDelete;
-  int? totalRaised;
+  TotalRaised? totalRaised;
   List<String>? likedBy;
   Withdrwal? withdrwal;
 
@@ -58,7 +60,7 @@ class Fundraise {
     String? story,
     Category? category,
     Location? location,
-    DateTime? dateCreated,
+    String? dateCreated,
     User? organizer,
     User? beneficiary,
     List<Donation>? donations,
@@ -67,10 +69,10 @@ class Fundraise {
     bool? isPublished,
     int? totalSharedCount,
     int? likeCount,
-    int? totalRaised,
+    TotalRaised? totalRaised,
     List<String>? likedBy,
     Withdrwal? withdrwal,
-    List<int>? totalWithdrawal,
+    List<TotalWithdraw>? totalWithdrawal,
   }) {
     return Fundraise(
         id: id ?? this.id,
@@ -97,13 +99,14 @@ class Fundraise {
 
   // parsing json object to Fundraise object
   factory Fundraise.fromJson(Map<String, dynamic> data) {
-    
+    print(data);
+
     String dateString = data['dateCreated'] ?? '';
     String id = data['_id'] ?? '';
     String title = data['title'] ?? '';
     String image = data['image'] ?? '';
     int goalAmount = data['goalAmount'] ?? 0;
-    int totalRaised = data['totalRaised'] ?? 0;
+    TotalRaised totalRaised = TotalRaised.fromJson(data['totalRaised'] ?? {});
     String story = data['story'] ?? '';
     Category category = data['category'] == null
         ? Category()
@@ -111,7 +114,7 @@ class Fundraise {
     Location location = data["location"] == null
         ? Location(latitude: "0", longitude: "0")
         : Location.fromJson(data["location"]);
-    DateTime dateCreated = DateTime.now();
+    String dateCreated = data['dateCreated'];
     User organizer =
         data['organizer'] == null ? User() : User.fromJson(data['organizer']);
     User beneficiary = data['beneficiary'] == null
@@ -126,35 +129,34 @@ class Fundraise {
     List likedBy = data['likedBy'] ?? [];
     // bool isDeleted = data['isDeleted'];
     Map<String, dynamic> withdraw = data['withdraw'] ?? {};
-    List<dynamic> totalWithdrawal = data['totalWithdraw'] ?? [];
+    List totalWithdrawal = data['totalWithdraw'] ?? [];
+    totalWithdrawal.map((e) => TotalWithdraw.fromJson(e)).toList();
 
-   
-
-    return Fundraise(
-        id: id,
-        title: title,
-        image: image,
-        goalAmount: goalAmount,
-        story: story,
-        category: category,
-        location: location,
-        dateCreated: dateCreated,
-        organizer: organizer,
-        beneficiary: beneficiary,
-        donations: donationDynamic.map((e) => Donation.fromJson(e)).toList(),
-        updates: updatesDynamic.map((e) => Update.fromJson(e)).toList(),
-        teams: teamsDynamic.map((team) => TeamMember.fromJson(team)).toList(),
-        isPublished: isPublished,
-        totalSharedCount: totalShareCount,
-        likeCount: likeCount,
-
-        // isDelete: isDeleted,
-        totalRaised: totalRaised,
-        likedBy: likedBy.map((e) => e.toString()).toList(),
-        withdrwal: Withdrwal.fromJson(withdraw),
-        totalWithdrawal: totalWithdrawal
-            .map((amount) => int.parse(amount.toString()))
-            .toList());
+    Fundraise fundraise = Fundraise(
+      id: id,
+      title: title,
+      image: image,
+      goalAmount: goalAmount,
+      story: story,
+      category: category,
+      location: location,
+      dateCreated: dateCreated,
+      organizer: organizer,
+      beneficiary: beneficiary,
+      donations: donationDynamic.map((e) => Donation.fromJson(e)).toList(),
+      updates: updatesDynamic.map((e) => Update.fromJson(e)).toList(),
+      teams: teamsDynamic.map((team) => TeamMember.fromJson(team)).toList(),
+      isPublished: isPublished,
+      totalSharedCount: totalShareCount,
+      likeCount: likeCount,
+      // isDelete: isDeleted,
+      totalRaised: totalRaised,
+      likedBy: likedBy.map((e) => e.toString()).toList(),
+      withdrwal: Withdrwal.fromJson(withdraw),
+      totalWithdrawal:
+          totalWithdrawal.map((e) => TotalWithdraw.fromJson(e)).toList(),
+    );
+    return fundraise;
   }
 
   Map<String, dynamic> toJson() {

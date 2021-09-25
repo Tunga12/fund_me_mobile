@@ -5,7 +5,7 @@ class Update {
   User? userID;
   String? image;
   String content;
-  DateTime? dateCreated;
+  String? dateCreated;
   bool? isDeleted;
 
   Update({
@@ -26,14 +26,13 @@ class Update {
     String image = data['image'];
     String content = data['content'];
     String dateString = data['dateCreated'];
-    DateTime dateCreated = DateTime.parse(dateString);
-
+   
     return Update(
       id: id,
       userID: userID,
       image: image,
       content: content,
-      dateCreated: dateCreated,
+      dateCreated: dateString,
     );
   }
 
@@ -50,6 +49,6 @@ class Update {
   // covert the update object to string representation
   @override
   String toString() {
-    return 'Update (  userID: $userID,image: $image,content: $Update,dateCreated: $dateCreated,)';
+    return 'Update (  userID: $userID,image: $image,content: $content,dateCreated: $dateCreated,)';
   }
 }

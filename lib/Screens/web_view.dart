@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:crowd_funding_app/config/utils/endpoints.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:http/http.dart' as http;
 
@@ -70,11 +70,10 @@ class _WebBrowserState extends State<WebBrowser> {
               print('blocking navigation to $request}');
               return NavigationDecision.prevent;
             } else if (request.url.startsWith(
-                'https://shrouded-bastion-52038.herokuapp.com/donation/success')) {
+                EndPoints.paymentReturnURL)) {
               final response = await http.Client().get(
                 Uri.parse(request.url),
               );
-
               if (response.statusCode == 200) {
                 print("Success response body is ");
                 bool data = jsonDecode(response.body);
@@ -104,13 +103,14 @@ class _WebBrowserState extends State<WebBrowser> {
 
   JavascriptChannel _toasterJavascriptChannel(BuildContext context) {
     return JavascriptChannel(
-        name: 'Toaster',
-        onMessageReceived: (JavascriptMessage message) {
-          // ignore: deprecated_member_use
-          Scaffold.of(context).showSnackBar(
-            SnackBar(content: Text(message.message)),
-          );
-        });
+      name: 'Toaster',
+      onMessageReceived: (JavascriptMessage message) {
+        // ignore: deprecated_member_use
+        Scaffold.of(context).showSnackBar(
+          SnackBar(content: Text(message.message)),
+        );
+      },
+    );
   }
 }
 

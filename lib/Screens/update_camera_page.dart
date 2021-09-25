@@ -43,8 +43,9 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
                 // _getImage(ImageSource.camera);
                 File? file =
                     await pickImageFormFile(ImageSource.camera, _imagePicker);
+                File? croppedFile = await cropImage(file!);
                 setState(() {
-                  _image = file!;
+                  _image = croppedFile!;
                 });
 
                 Navigator.of(context).pop();
@@ -56,8 +57,9 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
               onTap: () async {
                 File? file =
                     await pickImageFormFile(ImageSource.gallery, _imagePicker);
+                File? croppedFile = await cropImage(file!);
                 setState(() {
-                  _image = file!;
+                  _image = croppedFile!;
                 });
                 Navigator.of(context).pop();
               },
@@ -73,6 +75,12 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    if (_image != null) {
+      print("the image size is");
+      final size = _image!.lengthSync();
+      final sizeInMb = size / (1024 * 1024);
+      print("${sizeInMb}MB");
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(LocaleKeys.story_label_text.tr()),
@@ -84,180 +92,207 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
         ),
         actions: [
           if (_post && _image != null)
-            TextButton(
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  loadingProgress(context);
-
-                  UserPreference userPreference = UserPreference();
-                  PreferenceData preferenceData =
-                      await userPreference.getUserToken();
-
-                  Update update = Update(content: _updateData);
-
-                  await context.read<UpdateModel>().createUpdate(
-                      update, preferenceData.data, widget.fundraiseId,
-                      image: _image);
-
-                  Response response = context.read<UpdateModel>().response;
-                  if (response.status == ResponseStatus.SUCCESS) {
-                    Fluttertoast.showToast(
-                        msg: "Successfully Updated!",
-                        toastLength: Toast.LENGTH_LONG);
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        HomePage.routeName, (route) => false,
-                        arguments: 2);
-                  } else {
-                    Navigator.pop(context);
-                    authShowDialog(context, Text("failed to update"),
-                        close: true, error: true);
+            if (!isBigger(_image!))
+              TextButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                    loadingProgress(context);
+                    UserPreference userPreference = UserPreference();
+                    PreferenceData preferenceData =
+                        await userPreference.getUserToken();
+                    Update update = Update(content: _updateData);
+                    await context.read<UpdateModel>().createUpdate(
+                        update, preferenceData.data, widget.fundraiseId,
+                        image: _image);
+                    Response response = context.read<UpdateModel>().response;
+                    if (response.status == ResponseStatus.SUCCESS) {
+                      Fluttertoast.showToast(
+                          msg: "Successfully Updated!",
+                          toastLength: Toast.LENGTH_LONG);
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          HomePage.routeName, (route) => false,
+                          arguments: 2);
+                    } else {
+                      Navigator.pop(context);
+                      authShowDialog(context, Text("failed to update"),
+                          close: true, error: true);
+                    }
                   }
-                }
-              },
-              child: Text(
-                LocaleKeys.post_label_label_text.tr(),
-              ),
-            ),
-        ],
-      ),
-      body: _image == null
-          ? Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Center(
-                child: DottedBorder(
-                  radius: Radius.circular(12.0),
-                  strokeWidth: 1.5,
-                  dashPattern: [8, 4],
-                  color:
-                      Theme.of(context).secondaryHeaderColor.withOpacity(0.4),
-                  child: SizedBox(
-                    width: size.width,
-                    height: size.height * 0.36,
-                    child: TextButton(
-                      style: TextButton.styleFrom(),
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (context) => _chooseSource());
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.add_photo_alternate_outlined),
-                          SizedBox(height: 10.0),
-                          Text(
-                            LocaleKeys.add_photoo_button_text.tr(),
-                            style: bodyTextStyle,
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
+                },
+                child: Text(
+                  LocaleKeys.post_label_label_text.tr(),
                 ),
               ),
-            )
-          : SingleChildScrollView(
-              child: Container(
-                width: size.width,
-                height: size.height,
-                padding: EdgeInsets.all(20.0),
-                child: Column(
-                  children: [
-                    Container(
-                      height: size.width * 0.6,
-                      child: Stack(children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0),
-                            image: DecorationImage(
-                                image: FileImage(_image!), fit: BoxFit.fill),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 10.0,
-                          right: 10.0,
-                          child: CircleAvatar(
-                            backgroundColor:
-                                Theme.of(context).secondaryHeaderColor,
-                            child: Icon(
-                              Icons.crop,
-                              color: Theme.of(context).backgroundColor,
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          padding: EdgeInsets.all(20.0),
+          width: size.width,
+          child: Column(
+            children: [
+              _image == null
+                  ? Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Center(
+                        child: DottedBorder(
+                          radius: Radius.circular(12.0),
+                          strokeWidth: 1.5,
+                          dashPattern: [8, 4],
+                          color: Theme.of(context)
+                              .secondaryHeaderColor
+                              .withOpacity(0.4),
+                          child: SizedBox(
+                            width: size.width,
+                            height: size.height * 0.36,
+                            child: TextButton(
+                              style: TextButton.styleFrom(),
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => _chooseSource());
+                              },
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.add_photo_alternate_outlined),
+                                  SizedBox(height: 10.0),
+                                  Text(
+                                    LocaleKeys.add_photoo_button_text.tr(),
+                                    style: bodyTextStyle,
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                        )
-                      ]),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            setState(() {
-                              _image = null;
-                            });
-                            showDialog(
-                              context: context,
-                              builder: (context) => _chooseSource(),
-                            );
-                          },
-                          child: Row(
+                        ),
+                      ),
+                    )
+                  : Container(
+                      height: size.height * 0.5,
+                      child: Column(
+                        children: [
+                          if (isBigger(_image!))
+                            Container(
+                              width: size.width,
+                              color: Colors.red,
+                              padding: EdgeInsets.symmetric(vertical: 5.0),
+                              child: Center(
+                                child: Text(
+                                  "Image size is bigger than optimum",
+                                  style: TextStyle(
+                                      color: Theme.of(context).backgroundColor),
+                                ),
+                              ),
+                            ),
+                          Container(
+                            height: size.width * 0.6,
+                            child: Stack(children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  image: DecorationImage(
+                                      image: FileImage(_image!),
+                                      fit: BoxFit.fill),
+                                ),
+                              ),
+                              Positioned(
+                                bottom: 10.0,
+                                right: 10.0,
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    File? croppedFile =
+                                        await cropImage(_image!);
+                                    setState(() {
+                                      _image = croppedFile!;
+                                    });
+                                  },
+                                  child: CircleAvatar(
+                                    backgroundColor:
+                                        Theme.of(context).secondaryHeaderColor,
+                                    child: Icon(
+                                      Icons.crop,
+                                      color: Theme.of(context).backgroundColor,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ]),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Icon(Icons.edit),
-                              Text(
-                                LocaleKeys.change_photo_label_text.tr(),
-                                style: bodyTextStyle,
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _image = null;
+                                  });
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => _chooseSource(),
+                                  );
+                                },
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.edit),
+                                    Text(
+                                      LocaleKeys.change_photo_label_text.tr(),
+                                      style: bodyTextStyle,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  print("Remove");
+                                  setState(() {
+                                    _image = null;
+                                    _post = false;
+                                  });
+                                },
+                                child: Text(LocaleKeys.remove_button_text.tr()),
                               )
                             ],
                           ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            print("Remove");
-                            setState(() {
-                              _image = null;
-                            });
-                          },
-                          child: Text(LocaleKeys.remove_button_text.tr()),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 30.0,
-                    ),
-                    Form(
-                      key: _formKey,
-                      onChanged: () {
-                        setState(() {
-                          _post = _formKey.currentState!.validate();
-                        });
-                      },
-                      child: TextFormField(
-                        onSaved: (value) {
-                          setState(() {
-                            _updateData = value!;
-                          });
-                        },
-                        validator: (value) {
-                          if (value!.isEmpty) {
-                            return LocaleKeys.story_required_label_text.tr();
-                          }
-                        },
-                        maxLines: 5,
-                        decoration: InputDecoration(
-                            labelText: LocaleKeys.add_story_label_text.tr(),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                                borderSide: BorderSide(
-                                    width: 1.2,
-                                    color: Theme.of(context)
-                                        .secondaryHeaderColor))),
+                          SizedBox(
+                            height: 30.0,
+                          ),
+                        ],
                       ),
                     ),
-                  ],
+              Form(
+                key: _formKey,
+                onChanged: () {
+                  setState(() {
+                    _post = _formKey.currentState!.validate();
+                  });
+                },
+                child: TextFormField(
+                  onSaved: (value) {
+                    setState(() {
+                      _updateData = value!;
+                    });
+                  },
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return LocaleKeys.story_required_label_text.tr();
+                    }
+                  },
+                  maxLines: 8,
+                  decoration: InputDecoration(
+                      labelText: LocaleKeys.add_story_label_text.tr(),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                          borderSide: BorderSide(
+                              width: 1.2,
+                              color: Theme.of(context).secondaryHeaderColor))),
                 ),
               ),
-            ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

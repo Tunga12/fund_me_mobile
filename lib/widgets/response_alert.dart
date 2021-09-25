@@ -1,5 +1,4 @@
 import 'package:crowd_funding_app/Models/status.dart';
-import 'package:crowd_funding_app/Screens/popular_fundraise_detail.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 
@@ -47,11 +46,12 @@ class ResponseAlert extends StatelessWidget {
                   width: size.width,
                   child: TextButton(
                     style: TextButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                            side: BorderSide(
-                                color: Theme.of(context).accentColor,
-                                width: 1.5))),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                        side: BorderSide(
+                            color: Theme.of(context).accentColor, width: 1.5),
+                      ),
+                    ),
                     onPressed: () {
                       if (retry == null) {
                         return;

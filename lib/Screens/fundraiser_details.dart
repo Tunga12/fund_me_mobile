@@ -3,6 +3,7 @@ import 'package:crowd_funding_app/Models/donation.dart';
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Models/team_member.dart';
+import 'package:crowd_funding_app/Models/total_raised.dart';
 import 'package:crowd_funding_app/Models/update.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/donation_page.dart';
@@ -11,6 +12,7 @@ import 'package:crowd_funding_app/Screens/loading_screen.dart';
 import 'package:crowd_funding_app/Screens/team.dart';
 import 'package:crowd_funding_app/Screens/update_view.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
+import 'package:crowd_funding_app/services/provider/currency.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
 import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/custom_cached_network_image.dart';
@@ -41,6 +43,7 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
   int index = 0;
   User? user;
   String? token;
+  double _currencyRate = 0.0;
 
   getSingleFundraise() async {
     UserPreference userPreference = UserPreference();
@@ -55,6 +58,15 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
       () =>
           context.read<FundraiseModel>().getSingleFundraise(widget.fundraiseId),
     );
+    await Future.delayed(
+      Duration(milliseconds: 1),
+      () => context.read<CurrencyRateModel>().getCurrencyRate(),
+    );
+
+    final _currencyRateResponse = context.read<CurrencyRateModel>().response;
+    setState(() {
+      _currencyRate = _currencyRateResponse.data;
+    });
   }
 
   ScrollController _scrollController = ScrollController();
@@ -95,9 +107,10 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
 
   @override
   Widget build(BuildContext context) {
+    print("fundraiser id is ${widget.fundraiseId}");
     final size = MediaQuery.of(context).size;
     final model = context.watch<FundraiseModel>();
-   
+
     if (model.response.status == ResponseStatus.LOADING) {
       return LoadingScreen();
     } else if (model.response.status == ResponseStatus.CONNECTIONERROR) {
@@ -126,7 +139,11 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
     String image = _fundraise.image!;
     User? organizer = _fundraise.organizer;
     // User? beneficiary = _fundraise.beneficiary;
-    int totalRaised = _fundraise.totalRaised!;
+    TotalRaised _totalRaised = _fundraise.totalRaised!;
+    double _dollarValue = _currencyRate is double
+        ? _currencyRate * _totalRaised.dollar!.toDouble()
+        : _totalRaised.dollar!.toDouble();
+    double totalRaised = _dollarValue + _totalRaised.birr!.toDouble();
     int goalAmount = _fundraise.goalAmount!;
     String story = _fundraise.story!;
     // String lastUpdate = updates.isNotEmpty
@@ -135,7 +152,7 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
     // String lastDonation = donations.isNotEmpty
     //     ? Jiffy(_fundraise.donations![0].date, "yyyy-MM-dd").fromNow()
     //     : "Just Now";
-    
+
     return Scaffold(
         body: CustomScrollView(
           controller: _scrollController,
@@ -320,7 +337,8 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                               token: token!,
                             )));
                   },
-                  title: " ${LocaleKeys.updates_title_text.tr()} (${updates.length})",
+                  title:
+                      " ${LocaleKeys.updates_title_text.tr()} (${updates.length})",
                   body: updates.isEmpty
                       ? Text(
                           LocaleKeys.keep_your_donaors_label_text.tr(),
@@ -403,7 +421,8 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                               width: 10.0,
                             ),
                             Text(
-                              LocaleKeys.you_are_fundraising_as_ateam_label_text.tr(),
+                              LocaleKeys.you_are_fundraising_as_ateam_label_text
+                                  .tr(),
                               overflow: TextOverflow.ellipsis,
                               style: Theme.of(context).textTheme.bodyText1,
                             )
@@ -418,18 +437,18 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                 ),
                 FundraiserDetailElements(
                   onPressed: () {
-                    
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => FundraiseDonationPage(
                         donations: donations,
                       ),
                     ));
                   },
-                  title: "${LocaleKeys.donations_title_text.tr()} (${donations.length})",
+                  title:
+                      "${LocaleKeys.donations_title_text.tr()} (${donations.length})",
                   body: donations.isEmpty
                       ? Text(
-                        LocaleKeys.share_your_campaign_with_your_friends.tr(),
-                            style: Theme.of(context)
+                          LocaleKeys.share_your_campaign_with_your_friends.tr(),
+                          style: Theme.of(context)
                               .textTheme
                               .bodyText1!
                               .copyWith(height: 1.8),

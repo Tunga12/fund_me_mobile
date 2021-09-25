@@ -1,6 +1,7 @@
 import 'package:crowd_funding_app/config/utils/routes.dart';
 import 'package:crowd_funding_app/constants/colors.dart';
 import 'package:crowd_funding_app/services/data_provider/category.dart';
+import 'package:crowd_funding_app/services/data_provider/currency.dart';
 import 'package:crowd_funding_app/services/data_provider/donation.dart';
 import 'package:crowd_funding_app/services/data_provider/fundraiser.dart';
 import 'package:crowd_funding_app/services/data_provider/auth.dart';
@@ -13,11 +14,11 @@ import 'package:crowd_funding_app/services/data_provider/user.dart';
 import 'package:crowd_funding_app/services/data_provider/withdraw.dart';
 import 'package:crowd_funding_app/services/provider/auth.dart';
 import 'package:crowd_funding_app/services/provider/category.dart';
+import 'package:crowd_funding_app/services/provider/currency.dart';
 import 'package:crowd_funding_app/services/provider/donation.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
 import 'package:crowd_funding_app/services/provider/help.dart';
 import 'package:crowd_funding_app/services/provider/notification.dart';
-import 'package:crowd_funding_app/services/provider/notification_real_time.dart';
 import 'package:crowd_funding_app/services/provider/report.dart';
 import 'package:crowd_funding_app/services/provider/team_add_deep_link.dart';
 import 'package:crowd_funding_app/services/provider/team_member.dart';
@@ -25,6 +26,7 @@ import 'package:crowd_funding_app/services/provider/update.dart';
 import 'package:crowd_funding_app/services/provider/user.dart';
 import 'package:crowd_funding_app/services/provider/withdrawal.dart';
 import 'package:crowd_funding_app/services/repository/category.dart';
+import 'package:crowd_funding_app/services/repository/currency.dart';
 import 'package:crowd_funding_app/services/repository/donation.dart';
 import 'package:crowd_funding_app/services/repository/fundraise.dart';
 import 'package:crowd_funding_app/services/repository/auth.dart';
@@ -42,6 +44,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:easy_localization/easy_localization.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -100,6 +103,12 @@ Future<void> main() async {
   final ReportRepository reportRepository = ReportRepository(
       reportDataProvider: ReportDataProvider(httpClient: http.Client()));
 
+  final CurrencyRepository currencyRateModel = CurrencyRepository(
+    dataProvider: CurrencyDataProvider(
+      httpClient: http.Client(),
+    ),
+  );
+
   runApp(
     EasyLocalization(
       supportedLocales: [
@@ -112,6 +121,7 @@ Future<void> main() async {
       fallbackLocale: Locale('en'),
       path: 'assets/translations',
       child: CrowdFundingApp(
+        currencyRepository: currencyRateModel,
         fundraiseRepository: fundraiseRepository,
         authRepository: authRepository,
         userRepository: userRepository,
@@ -141,7 +151,8 @@ class CrowdFundingApp extends StatelessWidget {
       required this.teamMemberRepository,
       required this.withdrawalRepository,
       required this.helpRepository,
-      required this.reportRepository})
+      required this.reportRepository,
+      required this.currencyRepository})
       : super(key: key);
 
   final FundraiseRepository fundraiseRepository;
@@ -155,10 +166,10 @@ class CrowdFundingApp extends StatelessWidget {
   final WithdrawalRepository withdrawalRepository;
   final HelpRepository helpRepository;
   final ReportRepository reportRepository;
+  final CurrencyRepository currencyRepository;
 
   @override
   Widget build(BuildContext context) {
-   
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(statusBarColor: Colors.white));
@@ -205,8 +216,9 @@ class CrowdFundingApp extends StatelessWidget {
             create: (context) => HelpModel(
                   helpRepository: helpRepository,
                 )),
-        ChangeNotifierProvider(
-            create: (context) => NotificationRealTimeModel()),
+        ChangeNotifierProvider<CurrencyRateModel>(
+            create: (context) =>
+                CurrencyRateModel(repository: currencyRepository)),
         ChangeNotifierProvider<ReportModel>(
             create: (context) =>
                 ReportModel(reportRepository: reportRepository))

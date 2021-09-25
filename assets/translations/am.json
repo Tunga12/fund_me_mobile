@@ -241,7 +241,27 @@
     "team_app_bar_title_text": "ቡድን",
     "edit_team_setting_label_text": "የቡድኑን መችት አስተካክል",
     "add_member_title_text": "አባል አክል",
-    "organizer_label_text": "እርስዎ የሚጋብዙዋቸው የቡድን አባላት አንዴ ግብዣዎን ከተቀበሉ በኋላ እዚህ ይታያሉ።"
+    "organizer_label_text": "እርስዎ የሚጋብዙዋቸው የቡድን አባላት አንዴ ግብዣዎን ከተቀበሉ በኋላ እዚህ ይታያሉ።",
+    "organizer_label_title_text": "አደራጅ",
+    "team_member_label_text": "የቡድን አባል",
+
+
+    "//comment//25": "donation_page",
+    
+    "lagas_appbar_title_name": "ለጋስ",
+    "you_are_supporting_text": "አንተ የምትደግፈው",
+    "your_donation_will_benefit_text": "ልገሳው የሚጠቅመው",
+    "enter_your_donation_label_text": "ልገሳ አስገባ",
+    "Tips_legas_service_label_text": "የለጋስ አገልግሎት ቀረጥ",
+    "legas_has_a_zero_label_text": "ለጋስ ለአዘጋጆች 0% የመድረክ ክፍያ አለው. ለጋስ አማራጩን ለሚተዉ ለጋሾች ምስጋናውን በመስጠት አገልግሎቱን ይቀጥላል",
+    "comment_optional_label_text": "አስተያየት (አማራጭ)",
+    "donation_detail_label_text": "የልገሳ ዝርዝር (አማራጭ)",
+    "dont_display_my_name_label_text": "በዘመቻው ላይ ስሜን በይፋ አታሳይ",
+    "get_occational_marketing_label_text": "ከገገሶች አልፎ አልፎ የገቢያ ዝመናዎችን ያግኙ. በማንኛውም ጊዜ ከደንበኝነት ምዝገባ መውጣት ይችላሉ",
+    "Your_donation_label_text": "የአንተ ልገሳ",
+    "Legas_tip_label_text": "ለጋስ ቀረጥ",
+    "total_due_today_label_text": "የዛሬ ድምር",
+    "paywith_label_text": "ክፍያ"
     
     
 

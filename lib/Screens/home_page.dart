@@ -11,6 +11,7 @@ import 'package:crowd_funding_app/Screens/signin_page.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/constants/actions.dart';
 import 'package:crowd_funding_app/services/provider/notification.dart';
+import 'package:crowd_funding_app/services/provider/notification_real_time.dart';
 import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/home_body.dart';
 import 'package:flutter/material.dart';
@@ -30,13 +31,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   User? _user;
   String? _token;
-  Timer? _timer;
   List<Widget> _bodyChild = [];
   List<Widget> _appBarChild = [];
 
   bool textFieldIsFocused = true;
   bool tapped = false;
-  int _unviewedNotifications = 0;
+  NotificationRealTimeModel? _notificationRealTimeModel;
 
   void toggleWidget() {}
 
@@ -78,26 +78,14 @@ class _HomePageState extends State<HomePage> {
   }
 
   getUser() async {
+    _notificationRealTimeModel = NotificationRealTimeModel();
     UserPreference _userPreference = UserPreference();
     PreferenceData preferenceData = await _userPreference.getUserInfromation();
     PreferenceData _tokenPreferenceData = await _userPreference.getUserToken();
+    _notificationRealTimeModel!.createConnection(_tokenPreferenceData.data);
     setState(() {
       _user = preferenceData.data;
       _token = _tokenPreferenceData.data;
-    });
-  }
-
-  getNotificaions() async {
-    await Future.delayed(
-      Duration(milliseconds: 1),
-      () => Provider.of<UserNotificationModel>(context, listen: false)
-          .getAllUserNotifications(_token!),
-    );
-    Response _response = context.read<UserNotificationModel>().response;
-    setState(() {
-      if (_response.status == ResponseStatus.SUCCESS)
-        _unviewedNotifications =
-            unviewedNotifications(_response.data, _user!.id!);
     });
   }
 
@@ -105,13 +93,13 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     _setIndex();
     getUser();
-    _timer = Timer.periodic(Duration(seconds: 2), (_) => getNotificaions());
     super.initState();
   }
 
   @override
   void dispose() {
-    _timer!.cancel();
+    // _notificationRealTimeModel!.closeCountConnection();
+    // _notificationRealTimeModel!.dispose();
     super.dispose();
   }
 
@@ -119,17 +107,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     _bodyChild = [
       HomeBody(),
-      _user != null
-          ? Notifications(() {
-              Response _response =
-                  context.read<UserNotificationModel>().response;
-              setState(() {
-                if (_response.status == ResponseStatus.SUCCESS)
-                  _unviewedNotifications =
-                      unviewedNotifications(_response.data, _user!.id!);
-              });
-            })
-          : SigninPage(),
+      _user != null ? Notifications() : SigninPage(),
       _user != null ? Manage() : SigninPage(),
       Container(),
     ];
@@ -196,7 +174,6 @@ class _HomePageState extends State<HomePage> {
       body: _bodyChild[_selectedIndex],
       floatingActionButton: _selectedIndex == 2
           ? FloatingActionButton(
-            
               child: Icon(
                 Icons.add,
                 color: Theme.of(context).backgroundColor,
@@ -230,23 +207,32 @@ class _HomePageState extends State<HomePage> {
               ),
               label: LocaleKeys.discover_label_text.tr()),
           BottomNavigationBarItem(
-              icon: Container(
-                key: Key("home_page_notification_button"),
-                child: _unviewedNotifications == 0
-                    ? Icon(
-                        Icons.notifications_outlined,
-                      )
-                    : Badge(
-                        badgeContent: Text(
-                          "$_unviewedNotifications",
-                          style: TextStyle(
-                              color: Theme.of(context).backgroundColor),
-                        ),
-                        padding: EdgeInsets.symmetric(horizontal: 10),
+              icon: StreamBuilder(
+                  key: Key("home_page_notification_button"),
+                  stream:
+                      _notificationRealTimeModel!.getUnreadNotificationsCount,
+                  builder: (context, snapshots) {
+                    print("snapshots data is ");
+                    print(snapshots.data);
+                    if (!snapshots.hasData) {
+                      return Container(
                         child: Icon(
                           Icons.notifications_outlined,
-                        )),
-              ),
+                        ),
+                      );
+                    }
+                    return Badge(
+                      badgeContent: Text(
+                        "${snapshots.data}",
+                        style:
+                            TextStyle(color: Theme.of(context).backgroundColor),
+                      ),
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Icon(
+                        Icons.notifications_outlined,
+                      ),
+                    );
+                  }),
               label: LocaleKeys.notifications_label_text.tr()),
           BottomNavigationBarItem(
             icon: Icon(

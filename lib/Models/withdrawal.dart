@@ -5,7 +5,7 @@ class Withdrwal {
   final bool isOrganizer;
   String? status;
   bool? isDeleted;
-  DateTime? dateTime;
+  String? dateTime;
 
   Withdrwal({
     this.id,
@@ -33,8 +33,6 @@ class Withdrwal {
         bankName: bankName,
         isOrganizer: isOrganizer,
         isDeleted: isDeleted,
-        dateTime: DateTime.parse(dateTime));
+        dateTime: dateTime);
   }
 }
-
-

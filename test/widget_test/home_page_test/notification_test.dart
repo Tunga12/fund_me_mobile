@@ -48,7 +48,6 @@ void main() {
           },
           child: buildTestableWidget(
             Notifications(
-              (){},
               key: _childKey,
             ),
           ),
@@ -72,7 +71,6 @@ void main() {
       final _providerKey = GlobalKey();
       final _childKey = GlobalKey();
       BuildContext? buildContext;
-
       UserNotificationRepository _userNotificationRepository =
           UserNotificationRepository(dataProvider: notificationDataProvider!);
       when(
@@ -90,7 +88,6 @@ void main() {
           },
           child: buildTestableWidget(
             Notifications(
-              (){},
               key: _childKey,
             ),
           ),

@@ -4,6 +4,7 @@ import 'package:crowd_funding_app/Models/team_member.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/services/provider/team_member.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/authdialog.dart';
 import 'package:crowd_funding_app/widgets/custom_card.dart';
 import 'package:crowd_funding_app/widgets/loading_progress.dart';
@@ -11,6 +12,7 @@ import 'package:crowd_funding_app/widgets/team_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class Team extends StatefulWidget {
   Team(
@@ -128,7 +130,7 @@ class _TeamState extends State<Team> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: Text("Team"),
+        title: Text(LocaleKeys.team_app_bar_title_text.tr()),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -154,7 +156,7 @@ class _TeamState extends State<Team> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Fundraising team",
+                              LocaleKeys.fundraising_team_text.tr(),
                               style: TextStyle(
                                   color: Colors.black,
                                   fontWeight: FontWeight.bold,
@@ -163,11 +165,6 @@ class _TeamState extends State<Team> {
                             SizedBox(
                               height: 10.0,
                             ),
-                            Text(
-                              'Edit Team Settings ',
-                              style: TextStyle(
-                                  color: Theme.of(context).accentColor),
-                            ),
                           ],
                         ),
                       ],
@@ -175,42 +172,34 @@ class _TeamState extends State<Team> {
                     SizedBox(
                       height: 20.0,
                     ),
-                    SizedBox(
-                      width: size.width,
-                      child: TextButton(
-                        style: TextButton.styleFrom(
-                            padding: EdgeInsets.symmetric(vertical: 15.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                              side: BorderSide(
-                                  color: Theme.of(context).accentColor),
-                            )),
-                        child: Text(
-                          widget.fundraise.organizer!.id == widget.user.id
-                              ? 'Add member'
-                              : "Message member",
-                          style: TextStyle(
-                              fontSize: 20.0, fontWeight: FontWeight.bold),
+                    if (widget.fundraise.organizer!.id == widget.user.id)
+                      SizedBox(
+                        width: size.width,
+                        child: TextButton(
+                          style: TextButton.styleFrom(
+                              padding: EdgeInsets.symmetric(vertical: 15.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                side: BorderSide(
+                                    color: Theme.of(context).accentColor),
+                              )),
+                          child: Text(
+                            LocaleKeys.add_member_title_text.tr(),
+                            style: TextStyle(
+                                fontSize: 20.0, fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: () async {
+                            if (widget.fundraise.organizer!.id ==
+                                widget.user.id) {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => _chooseSource());
+                            }
+                          },
                         ),
-                        onPressed: () async {
-                          if (widget.fundraise.organizer!.id ==
-                              widget.user.id) {
-                            showDialog(
-                                context: context,
-                                builder: (context) => _chooseSource());
-                          }
-                        },
                       ),
-                    ),
                     SizedBox(
                       height: 20.0,
-                    ),
-                    Text(
-                      "Message team",
-                      style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -224,7 +213,7 @@ class _TeamState extends State<Team> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Team member (${_teams.length + 1})",
+                      "${LocaleKeys.team_member_label_text.tr()}(${_teams.length + 1})",
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                     SizedBox(
@@ -233,16 +222,17 @@ class _TeamState extends State<Team> {
                     TeamTile(
                       firstName: widget.fundraise.organizer!.firstName!,
                       lastName: widget.fundraise.organizer!.lastName!,
-                      subTitle: "Organizer",
+                      subTitle: LocaleKeys.organizer_label_title_text.tr(),
                     ),
                     _teams.isEmpty
                         ? Text(
-                            "Team members you invite will show up here once they  accept your invite",
+                            LocaleKeys.organizer_label_text.tr(),
                             style: Theme.of(context).textTheme.bodyText1,
                           )
                         : Column(
                             children: _teams
-                                .map((team) => TeamTile(
+                                .map(
+                                  (team) => TeamTile(
                                     deleteCalback: () async {
                                       setState(() {
                                         _teamMember = team;
@@ -280,7 +270,9 @@ class _TeamState extends State<Team> {
                                         widget.fundraise.organizer!.id,
                                     firstName: team.member!.userID!.firstName!,
                                     lastName: team.member!.userID!.lastName!,
-                                    subTitle: "Team member"))
+                                    subTitle: LocaleKeys.team_member_label_text.tr(),
+                                  ),
+                                )
                                 .toList(),
                           )
                   ],

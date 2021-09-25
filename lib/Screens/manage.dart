@@ -1,5 +1,6 @@
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
+import 'package:crowd_funding_app/Models/total_raised.dart';
 import 'package:crowd_funding_app/Screens/create_fundraiser_home.dart';
 import 'package:crowd_funding_app/Screens/loading_screen.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
@@ -24,6 +25,7 @@ class _ManageState extends State<Manage> {
   ScrollController _campaignScrollController = ScrollController();
   int _page = 0;
   List<Fundraise> _fundraises = [];
+  double _currencyRate = 0.0;
   @override
   void initState() {
     super.initState();
@@ -107,17 +109,25 @@ class _ManageState extends State<Manage> {
                 controller: _campaignScrollController,
                 isAlwaysShown: true,
                 child: ListView.builder(
-                    controller: _campaignScrollController,
-                    itemCount: fundraises.length,
-                    itemBuilder: (context, index) {
-                      return ManageCard(
-                        fundraiseId: fundraises[index].id!,
-                        image: fundraises[index].image!,
-                        raisedAmount: fundraises[index].totalRaised!,
-                        goalAmount: fundraises[index].goalAmount!,
-                        title: fundraises[index].title!,
-                      );
-                    }),
+                  controller: _campaignScrollController,
+                  itemCount: fundraises.length,
+                  itemBuilder: (context, index) {
+                    TotalRaised _totalRaised = fundraises[index].totalRaised!;
+                    double _dollarValue = _currencyRate is double
+                        ? _currencyRate * _totalRaised.dollar!.toDouble()
+                        : _totalRaised.dollar!.toDouble();
+                    double totalRaised =
+                        _dollarValue + _totalRaised.birr!.toDouble();
+                    return ManageCard(
+                      key: Key("${fundraises[index].id!}"),
+                      fundraiseId: fundraises[index].id!,
+                      image: fundraises[index].image!,
+                      raisedAmount:totalRaised,
+                      goalAmount: fundraises[index].goalAmount!,
+                      title: fundraises[index].title!,
+                    );
+                  },
+                ),
               ),
             );
     }

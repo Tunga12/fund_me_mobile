@@ -1,3 +1,4 @@
+import 'package:crowd_funding_app/Models/custom_time.dart';
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/notification.dart';
 import 'package:crowd_funding_app/Models/status.dart';
@@ -10,7 +11,6 @@ import 'package:crowd_funding_app/widgets/authdialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 
 class NotficationItem extends StatelessWidget {
@@ -26,59 +26,75 @@ class NotficationItem extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    String date = Jiffy(notification.date).fromNow();
+    // String date = Jiffy(notification.date).fromNow();
+    String date = CustomTime.displayTimeAgoFromTimestamp(notification.date!,
+        numericDates: true);
     final size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () async {
-        print("notification fundraiser id is");
-        print(notification.fundraiser);
-        List<String> _views = notification.viewed!;
-        print("Viewds $_views");
-        _views.removeWhere((userId) => userId == user.id);
-        UserNotification _userNotification = UserNotification(
-          id: notification.id,
-        );
-        if (notification.type == 'Team Member') {
-          await context
-              .read<UserNotificationModel>()
-              .updateNotification(_userNotification, token);
-          await context
-              .read<UserNotificationModel>()
-              .updateNotification(_userNotification, token);
-              
-          Response response = context.read<UserNotificationModel>().response;
-          if (response.status == ResponseStatus.SUCCESS) {
-            notifyCallback();
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => AcceptTeamInvitation(
-                  data: notification.fundraiser!,
+        if (notification.viewed!.contains(user.id)) {
+          Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => CampaignDetail(
+                    id: notification.fundraiser!,
+                  ),
                 ),
-              ),
-            );
-          } else {
-            Fluttertoast.showToast(
-                msg: "unable to see notification",
-                toastLength: Toast.LENGTH_LONG);
-          }
+              );
+
         } else {
-          await context
-              .read<UserNotificationModel>()
-              .updateNotification(_userNotification, token);
-          Response response = context.read<UserNotificationModel>().response;
-          if (response.status == ResponseStatus.SUCCESS) {
-            notifyCallback();
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => CampaignDetail(
-                  id: notification.fundraiser!,
+          print("notification fundraiser id is");
+          print('date is $date');
+          print(notification.date);
+          print(notification.fundraiser);
+          List<String> _views = notification.viewed!;
+          print("Viewds $_views");
+          _views.removeWhere((userId) => userId == user.id);
+          UserNotification _userNotification = UserNotification(
+            id: notification.id,
+          );
+
+          if (notification.type == 'Team Member') {
+            print("team invitation");
+            print(_userNotification.content);
+            await context
+                .read<UserNotificationModel>()
+                .updateNotification(_userNotification, token);
+            Response response = context.read<UserNotificationModel>().response;
+            if (response.status == ResponseStatus.SUCCESS) {
+              notifyCallback();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => AcceptTeamInvitation(
+                    data: notification.fundraiser!,
+                  ),
                 ),
-              ),
-            );
+              );
+            } else {
+              print("The error message is ");
+              print(response.message);
+              Fluttertoast.showToast(
+                  msg: "unable to see notification",
+                  toastLength: Toast.LENGTH_LONG);
+            }
           } else {
-            Fluttertoast.showToast(
-                msg: "unable to see notification",
-                toastLength: Toast.LENGTH_LONG);
+            await context
+                .read<UserNotificationModel>()
+                .updateNotification(_userNotification, token);
+            Response response = context.read<UserNotificationModel>().response;
+            if (response.status == ResponseStatus.SUCCESS) {
+              notifyCallback();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => CampaignDetail(
+                    id: notification.fundraiser!,
+                  ),
+                ),
+              );
+            } else {
+              Fluttertoast.showToast(
+                  msg: "unable to see notification",
+                  toastLength: Toast.LENGTH_LONG);
+            }
           }
         }
       },
@@ -117,7 +133,16 @@ class NotficationItem extends StatelessWidget {
                   Html(style: {
                     "body": Style(
                         fontSize: FontSize.larger,
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context)
+                            .secondaryHeaderColor
+                            .withOpacity(0.6))
+                  }, data: notification.title),
+                  Html(style: {
+                    "body": Style(
+                        fontSize: FontSize.large,
                         fontWeight: FontWeight.w400,
+                        // textOverflow: TextOverflow.ellipsis,
                         color: Theme.of(context)
                             .secondaryHeaderColor
                             .withOpacity(0.6))

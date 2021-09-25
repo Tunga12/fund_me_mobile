@@ -38,10 +38,9 @@ class FundraiseModel extends ChangeNotifier {
   }
 
   Future getPopularFundraises(int page) async {
-   
     try {
-       response =
-        Response(status: ResponseStatus.LOADING, data: null, message: '');
+      response =
+          Response(status: ResponseStatus.LOADING, data: null, message: '');
       HomeFundraise _homeFundraise =
           await fundraiseRepository.getPopularFundraises(page);
       response = Response(
@@ -91,10 +90,13 @@ class FundraiseModel extends ChangeNotifier {
       response = Response(
           status: ResponseStatus.FORMATERROR, data: null, message: e.message);
     } catch (e) {
+      String message = e.toString().contains('ID was not found')
+          ? "Fundraiser not found"
+          : "Faild to fetch fundraiser";
       response = Response(
           status: ResponseStatus.MISMATCHERROR,
           data: null,
-          message: e.toString());
+          message: message);
     }
   }
 
@@ -163,6 +165,7 @@ class FundraiseModel extends ChangeNotifier {
           data: null,
           message: "Invalid response from the server");
     } catch (e) {
+      print("fundraiser exception ${e.toString()}");
       response = Response(
           status: ResponseStatus.MISMATCHERROR,
           data: null,
@@ -197,6 +200,7 @@ class FundraiseModel extends ChangeNotifier {
           data: null,
           message: "Invalid response from the server");
     } catch (e) {
+      print("fundraiser exception ${e.toString()}");
       response = Response(
           status: ResponseStatus.MISMATCHERROR,
           data: null,
@@ -310,6 +314,7 @@ class FundraiseModel extends ChangeNotifier {
           data: null,
           message: "Invalid response from the server");
     } catch (e) {
+      print("fundraiser exception ${e.toString()}");
       response = Response(
           data: null,
           status: ResponseStatus.MISMATCHERROR,

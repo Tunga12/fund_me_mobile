@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:crowd_funding_app/Models/reason.dart';
 import 'package:crowd_funding_app/Models/report.dart';
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/services/repository/report.dart';
@@ -25,10 +26,44 @@ class ReportModel extends ChangeNotifier {
       response =
           Response(status: ResponseStatus.LOADING, data: null, message: '');
       final reportResponse = await reportRepository.createReport(report, token);
-      if(reportResponse is Report)
-      response = Response(status: ResponseStatus.SUCCESS, data: reportResponse, message: 'success');
+      if (reportResponse is Report)
+        response = Response(
+            status: ResponseStatus.SUCCESS,
+            data: reportResponse,
+            message: 'success');
     } on SocketException catch (e) {
-     
+      response = Response(
+          status: ResponseStatus.CONNECTIONERROR,
+          data: null,
+          message: "No internet connection");
+    } on FormatException catch (e) {
+      print('Fundraise Error ${e.message}');
+      response = Response(
+          status: ResponseStatus.FORMATERROR,
+          data: null,
+          message: "Invalid response from the server");
+    } catch (e) {
+      response = Response(
+          status: ResponseStatus.MISMATCHERROR,
+          data: null,
+          message: e.toString());
+    }
+  }
+
+  //  fetch report reasons;
+  Future getReportReasons() async {
+    try {
+      response =
+          Response(status: ResponseStatus.LOADING, data: null, message: '');
+      final reportResponse = await reportRepository.getReportReasons();
+      print("parsed report is as follows");
+      print(reportResponse);
+      if (reportResponse is List<ReportReason>)
+        response = Response(
+            status: ResponseStatus.SUCCESS,
+            data: reportResponse,
+            message: 'success');
+    } on SocketException catch (e) {
       response = Response(
           status: ResponseStatus.CONNECTIONERROR,
           data: null,

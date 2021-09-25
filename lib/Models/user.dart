@@ -9,6 +9,7 @@ class User {
   bool? emailNotification;
   bool? isDeactivated;
   bool? isAdmin;
+  bool? isVerified;
 
   User({
     this.id,
@@ -21,20 +22,21 @@ class User {
     this.emailNotification,
     this.isDeactivated,
     this.isAdmin,
+    this.isVerified,
   });
 
-  User copyWith({
-    String? id,
-    String? firstName,
-    String? lastName,
-    String? email,
-    String? password,
-    String? paymentMethods,
-    String? phoneNumber,
-    bool? emailNotification,
-    bool? isDeactivated,
-    bool? isAdmin,
-  }) {
+  User copyWith(
+      {String? id,
+      String? firstName,
+      String? lastName,
+      String? email,
+      String? password,
+      String? paymentMethods,
+      String? phoneNumber,
+      bool? emailNotification,
+      bool? isDeactivated,
+      bool? isAdmin,
+      bool? isVerified}) {
     return User(
       id: id ?? this.id,
       firstName: firstName ?? this.firstName,
@@ -46,6 +48,7 @@ class User {
       isDeactivated: isDeactivated ?? this.isDeactivated,
       isAdmin: isAdmin ?? this.isAdmin,
       phoneNumber: phoneNumber ?? this.phoneNumber,
+      isVerified: isVerified ?? this.isVerified,
     );
   }
 
@@ -60,6 +63,7 @@ class User {
     bool isDeactivated = data['isDeactivated'] ?? false;
     bool isAdmin = data['isAdmin'] ?? false;
     String phoneNumber = data['phoneNumber'] ?? '';
+    bool isVerified = data['isVerified'];
 
     return User(
       id: id,
@@ -71,6 +75,7 @@ class User {
       isDeactivated: isDeactivated,
       isAdmin: isAdmin,
       phoneNumber: phoneNumber,
+      isVerified: isVerified,
     );
   }
 
@@ -89,7 +94,7 @@ class User {
 
   @override
   String toString() {
-    return '''
+    return '''User{
       firstName: $firstName,
       lastName: $lastName,
       email: $email,
@@ -98,6 +103,8 @@ class User {
       emailNotification: $emailNotification,
       isDeactivated': $isDeactivated,
       isAdmin: $isAdmin,
+      isVerified: $isVerified
+      ,}
      ''';
   }
 }

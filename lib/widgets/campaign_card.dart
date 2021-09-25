@@ -1,9 +1,9 @@
+import 'package:crowd_funding_app/Models/custom_time.dart';
 import 'package:crowd_funding_app/Models/donation.dart';
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Screens/share_page.dart';
 import 'package:crowd_funding_app/widgets/custom_cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:jiffy/jiffy.dart';
 
 // ignore: must_be_immutable
 class CampaignCard extends StatelessWidget {
@@ -30,13 +30,17 @@ class CampaignCard extends StatelessWidget {
 
   getData() {
     progress = totalRaised / goalAmount;
-    date = Jiffy(donation.date).fromNow();
+    date = donation.date == null ? "NON": CustomTime.displayTimeAgoFromTimestamp(donation.date!,
+        numericDates: true);
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     getData();
+    print("donation date is ");
+    print(donation.date);
+    print('date is');
     return Container(
       color: Theme.of(context).backgroundColor,
       height: MediaQuery.of(context).size.height * 0.6,
@@ -119,7 +123,7 @@ class CampaignCard extends StatelessWidget {
           Container(
               margin: EdgeInsets.only(top: 10.0),
               child: Text(
-                "Last donation $date",
+               date == "NON" ? "No donations yet":  "Last donation $date",
                 style: TextStyle(
                     fontSize: 16.0,
                     color: Theme.of(context)

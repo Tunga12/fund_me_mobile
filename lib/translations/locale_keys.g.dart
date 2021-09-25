@@ -179,5 +179,25 @@ abstract class  LocaleKeys {
   static const submit_button_text = 'submit_button_text';
   static const report_sent_message_text = 'report_sent_message_text';
   static const loading_label_text = 'loading_label_text';
+  static const team_app_bar_title_text = 'team_app_bar_title_text';
+  static const edit_team_setting_label_text = 'edit_team_setting_label_text';
+  static const add_member_title_text = 'add_member_title_text';
+  static const organizer_label_text = 'organizer_label_text';
+  static const organizer_label_title_text = 'organizer_label_title_text';
+  static const team_member_label_text = 'team_member_label_text';
+  static const lagas_appbar_title_name = 'lagas_appbar_title_name';
+  static const you_are_supporting_text = 'you_are_supporting_text';
+  static const your_donation_will_benefit_text = 'your_donation_will_benefit_text';
+  static const enter_your_donation_label_text = 'enter_your_donation_label_text';
+  static const Tips_legas_service_label_text = 'Tips_legas_service_label_text';
+  static const legas_has_a_zero_label_text = 'legas_has_a_zero_label_text';
+  static const comment_optional_label_text = 'comment_optional_label_text';
+  static const donation_detail_label_text = 'donation_detail_label_text';
+  static const dont_display_my_name_label_text = 'dont_display_my_name_label_text';
+  static const get_occational_marketing_label_text = 'get_occational_marketing_label_text';
+  static const Your_donation_label_text = 'Your_donation_label_text';
+  static const Legas_tip_label_text = 'Legas_tip_label_text';
+  static const total_due_today_label_text = 'total_due_today_label_text';
+  static const paywith_label_text = 'paywith_label_text';
 
 }

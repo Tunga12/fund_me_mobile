@@ -6,7 +6,7 @@ class Donation {
   String? memberID;
   int? amount;
   String? comment;
-  DateTime? date;
+  String? date;
   bool? isDeleted;
   double? tip;
   bool? isAnonymous;
@@ -35,7 +35,7 @@ class Donation {
     bool isDeleted = data['isDeleted'] ?? false;
     bool isAnonymous = data['isAnonymous'] ?? false;
 
-    DateTime date = DateTime.parse(dateString);
+    
 
     return Donation(
         id: id,
@@ -43,7 +43,7 @@ class Donation {
         memberID: memberID,
         amount: amount,
         comment: comment,
-        date: date,
+        date: dateString,
         isDeleted: isDeleted,
         isAnonymous: isAnonymous);
   }

@@ -1,6 +1,8 @@
 import 'package:crowd_funding_app/Screens/fundraiser_details.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class YourDonationDetail extends StatelessWidget {
   const YourDonationDetail({
@@ -20,7 +22,7 @@ class YourDonationDetail extends StatelessWidget {
           SizedBox(
             height: 20.0,
           ),
-          Text("Your donation",
+          Text(LocaleKeys.paywith_label_text.tr(),
               style: titleTextStyle.copyWith(
                   fontSize: 18.0,
                   color: Theme.of(context).secondaryHeaderColor)),
@@ -31,7 +33,7 @@ class YourDonationDetail extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Your donation $donation ",
+                "${LocaleKeys.Your_donation_label_text.tr()} $donation ",
                 style: labelTextStyle.copyWith(
                     color: Theme.of(context)
                         .secondaryHeaderColor
@@ -53,7 +55,7 @@ class YourDonationDetail extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "GoFundMe tip",
+                LocaleKeys.Legas_tip_label_text.tr(),
                 style: labelTextStyle.copyWith(
                     color: Theme.of(context)
                         .secondaryHeaderColor
@@ -82,7 +84,7 @@ class YourDonationDetail extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Total due today",
+                LocaleKeys.total_due_today_label_text.tr(),
                 style: labelTextStyle.copyWith(
                     color: Theme.of(context).secondaryHeaderColor),
               ),

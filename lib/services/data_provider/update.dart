@@ -14,7 +14,7 @@ class UpdateDataProvider {
 
   Future<bool> createUpdate(Update update, token, String fundraiseId,
       {File? image}) async {
-    print('update $update');
+    print('update ${update.content}');
     print('Update body ');
     print('fundraise id $fundraiseId');
     http.Response? response;
@@ -25,9 +25,11 @@ class UpdateDataProvider {
               'Content-Type': 'application/json; charset=UTF-8',
               'x-auth-token': token,
             },
-            body: jsonEncode(<String, dynamic>{
-              "content": update.content,
-            }),
+            body: jsonEncode(
+              <String, dynamic>{
+                "content": update.content,
+              },
+            ),
           )
         : await getImage(token, image).then((imageResponse) async {
             response = await httpClient.post(
@@ -38,8 +40,7 @@ class UpdateDataProvider {
               },
               body: jsonEncode(<String, dynamic>{
                 "content": update.content,
-                "image":imageResponse
-               
+                "image": imageResponse
               }),
             );
           });
@@ -52,6 +53,7 @@ class UpdateDataProvider {
       );
     }
   }
+
   Future<String> deleteUpdate(String updateId, String token) async {
     final response = await httpClient.delete(
       Uri.parse(EndPoints.createUpdate + updateId),

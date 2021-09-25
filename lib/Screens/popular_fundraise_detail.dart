@@ -1,8 +1,12 @@
+import 'package:crowd_funding_app/Models/custom_time.dart';
 import 'package:crowd_funding_app/Models/methods.dart';
 import 'package:crowd_funding_app/Models/donation.dart';
 import 'package:crowd_funding_app/Models/fundraise.dart';
+import 'package:crowd_funding_app/Models/reason.dart';
+import 'package:crowd_funding_app/Models/report.dart';
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Models/team_member.dart';
+import 'package:crowd_funding_app/Models/total_raised.dart';
 import 'package:crowd_funding_app/Models/update.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/donation_page.dart';
@@ -12,7 +16,9 @@ import 'package:crowd_funding_app/Screens/loading_screen.dart';
 import 'package:crowd_funding_app/Screens/share_page.dart';
 import 'package:crowd_funding_app/Screens/signin_page.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
+import 'package:crowd_funding_app/services/provider/currency.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
+import 'package:crowd_funding_app/services/provider/report.dart';
 import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/campaign_bottom_navbar.dart';
 import 'package:crowd_funding_app/widgets/custom_cached_network_image.dart';
@@ -22,9 +28,9 @@ import 'package:crowd_funding_app/widgets/expandable_content.dart';
 import 'package:crowd_funding_app/widgets/report_dialog.dart';
 import 'package:crowd_funding_app/widgets/response_alert.dart';
 import 'package:crowd_funding_app/widgets/title_row.dart';
+import 'package:crowd_funding_app/widgets/verified.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -47,6 +53,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
   User? _user;
   String _token = '';
   int _likeCount = 0;
+  double _currencyRate = 0;
 
   @override
   void initState() {
@@ -83,15 +90,13 @@ class _CampaignDetailState extends State<CampaignDetail> {
   Fundraise? _fundraise;
   Response _response =
       Response(data: '', status: ResponseStatus.LOADING, message: "");
+  List<ReportReason> _reportReasons = [];
 
   getUserInformaion() async {
     UserPreference userPreference = UserPreference();
     PreferenceData userData = await userPreference.getUserInfromation();
     PreferenceData tokeData = await userPreference.getUserToken();
     final model = context.read<FundraiseModel>().fundraise;
-    print(model.likeCount);
-    print(model.likedBy);
-    print(model.id);
     setState(() {
       _user = userData.data;
       _token = tokeData.data;
@@ -103,17 +108,33 @@ class _CampaignDetailState extends State<CampaignDetail> {
   }
 
   Future getSingleFundraise() async {
-
     await Future.delayed(
       Duration(milliseconds: 1),
       () => context.read<FundraiseModel>().getSingleFundraise(widget.id),
     );
 
+    await Future.delayed(
+      Duration(milliseconds: 1),
+      () => context.read<ReportModel>().getReportReasons(),
+    );
+    
+    await Future.delayed(
+      Duration(milliseconds: 1),
+      () => context.read<CurrencyRateModel>().getCurrencyRate(),
+    );
+
+    final _currencyRateResponse = context.read<CurrencyRateModel>().response;
+
     final model = context.read<FundraiseModel>();
+    Response _responseModel = context.read<ReportModel>().response;
+    print("The fundraiser reasons are status are as follows ");
+    print(_responseModel.status);
 
     setState(() {
       _fundraise = model.fundraise;
       _response = model.response;
+      _reportReasons = _responseModel.data;
+      _currencyRate = _currencyRateResponse.data;
     });
   }
 
@@ -150,7 +171,6 @@ class _CampaignDetailState extends State<CampaignDetail> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
     if (_response.status == ResponseStatus.LOADING) {
       return LoadingScreen();
     } else if (_response.status == ResponseStatus.CONNECTIONERROR) {
@@ -168,8 +188,9 @@ class _CampaignDetailState extends State<CampaignDetail> {
         status: ResponseStatus.MISMATCHERROR,
       );
     } else if (_response.status == ResponseStatus.SUCCESS) {
+      print("Report reasons");
+      print(_reportReasons);
       if (_fundraise == null) return Container();
-      
       // var days = Jiffy(_fundraise!.dateCreated, "yyyy-MM-dd").fromNow();
       String totalShareCount =
           Counter.getCounter(_fundraise!.totalSharedCount!);
@@ -182,19 +203,19 @@ class _CampaignDetailState extends State<CampaignDetail> {
       String image = _fundraise!.image!;
       User? organizer = _fundraise!.organizer;
       // User? beneficiary = _fundraise!.beneficiary;
-      int totalRaised = _fundraise!.goalAmount!;
+      TotalRaised _totalRaised = _fundraise!.totalRaised!;
+
+      double _dollarValue = _currencyRate is double
+          ? _currencyRate * _totalRaised.dollar!.toDouble()
+          : _totalRaised.dollar!.toDouble();
+      double totalRaised = _dollarValue + _totalRaised.birr!.toDouble();
+
       int goalAmount = _fundraise!.goalAmount!;
       String story = _fundraise!.story!;
 
-      print('Updates time');
-      // print(_fundraise!.updates![0].dateCreated);
-      // String lastUpdate = updates.isNotEmpty
-      //     ? Jiffy(_fundraise!.updates![0].dateCreated, "yyyy-MM-dd").fromNow()
-      //     : "Just Now";
-      print("donation time");
-      // print(_fundraise!.donations![0].date);
       String lastDonation = donations.isNotEmpty
-          ? Jiffy(_fundraise!.donations![0].date, "yyyy-MM-dd").fromNow()
+          ? CustomTime.displayTimeAgoFromTimestamp(
+              _fundraise!.donations![0].date!)
           : "Just Now";
       List<Donation> avatarDonations =
           donations.length >= 3 ? donations.sublist(0, 3) : donations;
@@ -307,7 +328,8 @@ class _CampaignDetailState extends State<CampaignDetail> {
                         height: 5.0,
                       ),
                       LinearProgressIndicator(
-                        value: _fundraise!.totalRaised!.toInt() /
+                        value: _fundraise!.totalRaised!.dollar! *
+                            _currencyRate /
                             _fundraise!.goalAmount!.toInt(),
                         backgroundColor: Colors.green[100],
                       ),
@@ -327,10 +349,18 @@ class _CampaignDetailState extends State<CampaignDetail> {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                "${organizer.firstName} ${organizer.lastName}",
-                                style: TextStyle(
-                                    color: Colors.black, fontSize: 20.0),
+                              Row(
+                                children: [
+                                  Text(
+                                    "${organizer.firstName} ${organizer.lastName}",
+                                    style: TextStyle(
+                                        color: Colors.black, fontSize: 20.0),
+                                  ),
+                                  SizedBox(
+                                    width: 5.0,
+                                  ),
+                                  if (organizer.isVerified!) Verfied(),
+                                ],
                               ),
                               Text(
                                 "${location!.latitude}",
@@ -538,9 +568,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
           reportAction: () {
             showDialog(
               context: context,
-              builder: (context) => ReportDialog(
-                _fundraise!,
-              ),
+              builder: (context) => ReportDialog(_fundraise!, _reportReasons),
             );
           },
           donateAction: () {
@@ -556,9 +584,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
       );
     } else {
       return ResponseAlert(
-        'failed to fetch fundraiser',
-        retry: () => getSingleFundraise(),
-        status: ResponseStatus.MISMATCHERROR,
+        _response.message,
       );
     }
   }

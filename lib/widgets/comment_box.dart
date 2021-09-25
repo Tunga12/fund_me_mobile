@@ -1,4 +1,6 @@
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class DonationCommentBox extends StatefulWidget {
   DonationCommentBox({Key? key, required this.commentCallback})
@@ -23,7 +25,7 @@ class _DonationCommentBoxState extends State<DonationCommentBox> {
           },
           maxLines: 5,
           decoration: InputDecoration(
-            labelText: "Comment(Optional)",
+            labelText: LocaleKeys.comment_optional_label_text.tr(),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(7.0),
             ),

@@ -31,7 +31,7 @@ class Report {
   }
 
   Map<String, dynamic> toJson() {
-    return {"reason": reason, "fundraiserId": fundraiserId};
+    return {"reason": id, "fundraiserId": fundraiserId};
   }
 
   @override

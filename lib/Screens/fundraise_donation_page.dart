@@ -1,8 +1,8 @@
+import 'package:crowd_funding_app/Models/custom_time.dart';
 import 'package:crowd_funding_app/Models/donation.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/widgets/expandable_text.dart';
 import 'package:flutter/material.dart';
-import 'package:jiffy/jiffy.dart';
 
 class FundraiseDonationPage extends StatelessWidget {
   List<Donation> donations;
@@ -57,7 +57,9 @@ class FundraiseDonation extends StatelessWidget {
         donation.userID!.lastName![0].toUpperCase();
     fullName = donation.userID!.firstName! + " " + donation.userID!.lastName!;
     donateAmount = donation.amount!;
-    dateTime = Jiffy(donation.date, "yyyy-MM-dd").fromNow();
+    // dateTime = Jiffy(donation.date, "yyyy-MM-dd").fromNow();
+    dateTime = CustomTime.displayTimeAgoFromTimestamp(donation.date!,
+        numericDates: true);
   }
 
   @override

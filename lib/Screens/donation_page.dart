@@ -8,17 +8,19 @@ import 'package:crowd_funding_app/Screens/web_view.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/services/provider/donation.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/authdialog.dart';
-import 'package:crowd_funding_app/widgets/bank_info.dart';
 import 'package:crowd_funding_app/widgets/comment_box.dart';
 import 'package:crowd_funding_app/widgets/continue_button.dart';
 import 'package:crowd_funding_app/widgets/custom_cached_network_image.dart';
 import 'package:crowd_funding_app/widgets/loading_progress.dart';
 import 'package:crowd_funding_app/widgets/refered_by.dart';
+import 'package:crowd_funding_app/widgets/telebirr_button.dart';
 import 'package:crowd_funding_app/widgets/your_donation_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class DonationPage extends StatefulWidget {
   DonationPage({Key? key, required this.fundraise}) : super(key: key);
@@ -76,7 +78,7 @@ class DonationPageState extends State<DonationPage> {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            "GoFundMe",
+            LocaleKeys.lagas_appbar_title_name.tr(),
           ),
         ),
         body: SingleChildScrollView(
@@ -100,7 +102,7 @@ class DonationPageState extends State<DonationPage> {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: "You're supporiting",
+                              text: LocaleKeys.you_are_supporting_text.tr(),
                               style: TextStyle(
                                 color: Colors.grey[600],
                               ),
@@ -119,7 +121,8 @@ class DonationPageState extends State<DonationPage> {
                         text: TextSpan(
                           children: [
                             TextSpan(
-                              text: "Your donation will benefit",
+                              text: LocaleKeys.your_donation_will_benefit_text
+                                  .tr(),
                               style: TextStyle(
                                 color: Colors.grey[600],
                               ),
@@ -144,7 +147,7 @@ class DonationPageState extends State<DonationPage> {
                         height: 10.0,
                       ),
                       Text(
-                        "Enter your donation",
+                        LocaleKeys.enter_your_donation_label_text.tr(),
                         style: TextStyle(
                             fontSize: 18.0,
                             color: Colors.grey[600],
@@ -192,7 +195,7 @@ class DonationPageState extends State<DonationPage> {
                                       fontWeight: FontWeight.bold),
                                 ),
                                 Text(
-                                  "USD",
+                                  LocaleKeys.usd_label_text.tr(),
                                   style: TextStyle(color: Colors.black),
                                 ),
                               ],
@@ -215,7 +218,7 @@ class DonationPageState extends State<DonationPage> {
                         height: 20.0,
                       ),
                       Text(
-                        "Tip GoFundMe Services",
+                        LocaleKeys.Tips_legas_service_label_text.tr(),
                         style: TextStyle(
                             fontSize: 18.0,
                             color: Colors.grey[600],
@@ -226,7 +229,7 @@ class DonationPageState extends State<DonationPage> {
                       ),
                       Container(
                         child: Text(
-                          'GoFundMe has a 0% platform fee for organizers. GoFundMe will continue offering its services thanks to donors who will leave an option.',
+                          LocaleKeys.legas_has_a_zero_label_text.tr(),
                           style: TextStyle(color: Colors.grey, height: 1.5),
                         ),
                       ),
@@ -328,7 +331,7 @@ class DonationPageState extends State<DonationPage> {
                       ),
                       if (_showDoantionInfo)
                         Text(
-                          'Paywith',
+                          LocaleKeys.paywith_label_text.tr(),
                           style: labelTextStyle.copyWith(
                             fontSize: 18.0,
                             fontWeight: FontWeight.bold,
@@ -431,23 +434,26 @@ class DonationPageState extends State<DonationPage> {
                           },
                         ),
 
-                        SizedBox(height: 30.0,),
+                      SizedBox(
+                        height: 30.0,
+                      ),
                       if (_showDoantionInfo)
-                        PaymentButton(
-                          onPressed: () {},
-                        ),
+                        TelebirrButton(onPressed: () {
+                          Fluttertoast.showToast(msg: "Soon!");
+                        }),
+
                       if (!_showDoantionInfo)
                         ContinueButton(
                             isValidate:
                                 _showDoantionInfo ? _bankInfoValidated : true,
                             onPressed: () {
                               setState(() {
-                               if(_formKey.currentState!.validate()){
+                                if (_formKey.currentState!.validate()) {
                                   _showDoantionInfo = true;
-                               }
+                                }
                               });
                             },
-                            title: "Continue")
+                            title: LocaleKeys.continue_button_text.tr())
                     ],
                   ),
                 )

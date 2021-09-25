@@ -74,7 +74,7 @@ class EndPoints {
   static const String resetPasswordURL = baseURL + '/api/users/reset/';
 
   // paypal url
-  static const String paypalUrl = baseURL + "/donation/pay/";
+  static const String paypalUrl = baseURL + "/api/donation/pay/";
 
   //withdrawal invitation
   static const String inviteUrl =
@@ -89,4 +89,14 @@ class EndPoints {
 
   // report fundraisers
   static const String reportFundraiserURL = baseURL + "/api/report";
+
+  // currency Strong
+  static const String currencyURL =
+      "https://free.currconv.com/api/v7/convert?q=USD_ETB&compact=ultra&apiKey=320b48a5bd4a198cd402";
+
+  // report reason
+  static const String reportReasonURL = baseURL + "/api/reasons";
+
+  // payment return back url 
+  static const String paymentReturnURL = "http://legas.highlight-group.com/api/donation/success";
 }

@@ -1,15 +1,19 @@
 import 'package:crowd_funding_app/Models/fundraise.dart';
+import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Models/user.dart';
-import 'package:crowd_funding_app/Screens/setup_withdrawal.dart';
 import 'package:crowd_funding_app/Screens/withdraw_user_info.dart';
 import 'package:crowd_funding_app/Screens/withdrawal_beneficairy_selection.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
+import 'package:crowd_funding_app/services/provider/currency.dart';
 import 'package:crowd_funding_app/widgets/custom_card.dart';
 import 'package:crowd_funding_app/widgets/withdraw_note.dart';
 import 'package:crowd_funding_app/widgets/withdrawal_beneficiary_invited_body.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:provider/provider.dart';
 
+// ignore: must_be_immutable
 class WithdrawPage extends StatefulWidget {
   WithdrawPage(
       {Key? key,
@@ -32,12 +36,19 @@ class WithdrawPage extends StatefulWidget {
 
 class _WithdrawPageState extends State<WithdrawPage> {
   User? _user;
+  Response _currencyRate =
+      Response(status: ResponseStatus.LOADING, data: '', message: '');
   _getUserInformation() async {
     UserPreference userPreference = UserPreference();
     PreferenceData userData = await userPreference.getUserInfromation();
     PreferenceData tokeData = await userPreference.getUserToken();
+    await Provider.of<CurrencyRateModel>(context, listen: false)
+        .getCurrencyRate();
+    Response _response =
+        Provider.of<CurrencyRateModel>(context, listen: false).response;
 
     setState(() {
+      _currencyRate = _response;
       _user = userData.data;
     });
   }
@@ -77,9 +88,9 @@ class _WithdrawPageState extends State<WithdrawPage> {
 
   @override
   Widget build(BuildContext context) {
+    print("currency rate");
+    print(_currencyRate.data);
     final size = MediaQuery.of(context).size;
-    print("is setuped");
-    print(widget.isSetUped);
     if (widget.isSetUped!) {
       if (widget.beneficiary!.id == _user!.id) {
         return WithdrawalUserInfo(widget.fundraise, true);
@@ -119,7 +130,9 @@ class _WithdrawPageState extends State<WithdrawPage> {
                     ),
                   ),
                   Text(
-                    "\$${widget.fundraise.totalRaised}.00",
+                    _currencyRate.data is double
+                        ? "${(widget.fundraise.totalRaised! * _currencyRate.data).toStringAsFixed(2)} birr"
+                        : "${widget.fundraise.totalRaised!.toStringAsFixed(2)} birr",
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,

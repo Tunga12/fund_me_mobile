@@ -104,3 +104,63 @@ final mockFundraiseJson = '''{
 
 final mockCategoriesJson =
     '[{"_id": "As13DcbFg234", "name": "mock1"}, {"_id": "Dfra341o09d", "name": "mock2"}]';
+
+final mockFundraiserDetailJson = """
+{
+  "location": {
+    "latitude": "0",
+    "longitude": "0"
+  },
+  "updates": [
+    
+  ],
+  "totalRaised": 0,
+  "isPublished": true,
+  "totalShareCount": 0,
+  "likeCount": 0,
+  "likedBy": [
+    
+  ],
+  "isBlocked": false,
+  "_id": "6139b43808e2b100166d1c1f",
+  "donations": [
+    
+  ],
+  "goalAmount": 111,
+  "category": {
+    "_id": "60f355be9628ca0015b3c994",
+    "name": "Business"
+  },
+  "title": "wewew we",
+  "story": "<p>wewewewdfdf dfkd fkdf fkd</p>",
+  "image": "https://image.com/",
+  "organizer": {
+    "_id": "611e1c984f8679001694271e",
+    "firstName": "Getachew",
+    "lastName": "Tebikew",
+    "email": "getachewtbkw@gmail.com"
+  },
+  "teams": [
+    {
+      "status": "accepted",
+      "_id": "6139b43808e2b100166d1c20",
+      "id": {
+        "hasRaised": 0,
+        "shareCount": 0,
+        "_id": "6139b43808e2b100166d1c1e",
+        "userId": {
+          "_id": "611e1c984f8679001694271e",
+          "firstName": "Getachew",
+          "lastName": "Tebikew",
+          "email": "getachewtbkw@gmail.com"
+        }
+      },
+      "userId": "611e1c984f8679001694271e"
+    }
+  ],
+  "dateCreated": "2021-09-09T07:14:00.939Z",
+  "totalWithdraw": [
+    
+  ]
+}
+""";

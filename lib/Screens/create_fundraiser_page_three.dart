@@ -6,6 +6,7 @@ import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/fundraiser_preview.dart';
 import 'package:crowd_funding_app/Screens/home_page.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
+import 'package:crowd_funding_app/constants/actions.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
 import 'package:crowd_funding_app/translations/locale_keys.g.dart';
@@ -35,11 +36,12 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
 
   // image picker
   _getImage(ImageSource imageSource) async {
-    XFile? imageFile = await _imagePicker.pickImage(source: imageSource);
-
-    if (imageFile == null) return;
-    setState(() {
-      _image = File(imageFile.path);
+    await pickImageFormFile(imageSource, _imagePicker).then((value) async {
+      File? croppedImage = await cropImage(value!);
+      if (croppedImage == null) return;
+      setState(() {
+        _image = croppedImage;
+      });
     });
   }
 
@@ -76,6 +78,7 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     Response response = Provider.of<FundraiseModel>(context).response;
+
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
@@ -106,6 +109,20 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (_image != null)
+                      if (isBigger(_image!))
+                        Container(
+                          width: size.width,
+                          color: Colors.red,
+                          padding: EdgeInsets.symmetric(vertical: 5.0),
+                          child: Center(
+                            child: Text(
+                              "Image size is bigger than optimum",
+                              style: TextStyle(
+                                  color: Theme.of(context).backgroundColor),
+                            ),
+                          ),
+                        ),
                     Text(
                       LocaleKeys.step_3_of_3_label_text.tr(),
                       style: stepTextStyle.copyWith(
@@ -189,13 +206,22 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                                     Positioned(
                                       bottom: 10.0,
                                       right: 10.0,
-                                      child: CircleAvatar(
-                                        backgroundColor: Theme.of(context)
-                                            .secondaryHeaderColor,
-                                        child: Icon(
-                                          Icons.crop,
-                                          color:
-                                              Theme.of(context).backgroundColor,
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          File? croppedFile =
+                                              await cropImage(_image!);
+                                          setState(() {
+                                            _image = croppedFile!;
+                                          });
+                                        },
+                                        child: CircleAvatar(
+                                          backgroundColor: Theme.of(context)
+                                              .secondaryHeaderColor,
+                                          child: Icon(
+                                            Icons.crop,
+                                            color: Theme.of(context)
+                                                .backgroundColor,
+                                          ),
                                         ),
                                       ),
                                     )
@@ -251,34 +277,43 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                               print("hello");
                             },
                           )
-                        : PreviewButton(
-                            isActive: true,
-                            onPressed: () async {
-                              print("done");
-                              print(_image);
-                              PreferenceData userInfo =
-                                  await UserPreference().getUserInfromation();
-                              User user = userInfo.data;
-                              final info = {
-                                'title': widget.fundraiseInfo['title'],
-                                'story': widget.fundraiseInfo['story'],
-                                'location': widget.fundraiseInfo['location'],
-                                'goalAmount':
-                                    widget.fundraiseInfo['goalAmount'],
-                                'category': widget
-                                    .fundraiseInfo['category'].categoryName,
-                                'image': _image,
-                                'user': user,
-                              };
+                        : isBigger(_image!)
+                            ? PreviewButton(
+                                isActive: false,
+                                onPressed: () {
+                                  print("hello");
+                                },
+                              )
+                            : PreviewButton(
+                                isActive: true,
+                                onPressed: () async {
+                                  print("done");
+                                  print(_image);
+                                  PreferenceData userInfo =
+                                      await UserPreference()
+                                          .getUserInfromation();
+                                  User user = userInfo.data;
+                                  final info = {
+                                    'title': widget.fundraiseInfo['title'],
+                                    'story': widget.fundraiseInfo['story'],
+                                    'location':
+                                        widget.fundraiseInfo['location'],
+                                    'goalAmount':
+                                        widget.fundraiseInfo['goalAmount'],
+                                    'category': widget
+                                        .fundraiseInfo['category'].categoryName,
+                                    'image': _image,
+                                    'user': user,
+                                  };
 
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      FundraiserPreview(info: info),
-                                ),
-                              );
-                            },
-                          ),
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          FundraiserPreview(info: info),
+                                    ),
+                                  );
+                                },
+                              ),
                     SizedBox(
                       height: 10.0,
                     ),
@@ -300,7 +335,23 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                               print("done");
                             },
                           )
-                        : CompleteButton(
+                        : isBigger(_image!) ? CompleteButton(
+                            child: Text(
+                                LocaleKeys.Complete_fundraiser_button_text.tr(),
+                                style: labelTextStyle.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 17.0,
+                                  color: Theme.of(context)
+                                      .secondaryHeaderColor
+                                      .withOpacity(
+                                        0.6,
+                                      ),
+                                )),
+                            isValidate: false,
+                            onPressed: () {
+                              print("done");
+                            },
+                          ) : CompleteButton(
                             child: Text(
                               LocaleKeys.Complete_fundraiser_button_text.tr(),
                               style: labelTextStyle.copyWith(

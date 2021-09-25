@@ -13,8 +13,6 @@ class UserNotificationModel extends ChangeNotifier {
 
   bool _deleteUpdate = false;
 
-  
-
   // get Response
   Response get response => _response;
 
@@ -78,6 +76,7 @@ class UserNotificationModel extends ChangeNotifier {
           data: null,
           message: "Invalid response from the server");
     } catch (e) {
+      print(e.toString());
       response = Response(
         status: ResponseStatus.MISMATCHERROR,
         data: null,

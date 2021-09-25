@@ -1,7 +1,9 @@
 import 'package:crowd_funding_app/Models/team_member.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class RefferedBy extends StatefulWidget {
   const RefferedBy({
@@ -51,7 +53,7 @@ class _RefferedByState extends State<RefferedBy> {
             height: 20.0,
           ),
           Text(
-            "Donation Detail(Optional)",
+            LocaleKeys.donation_detail_label_text.tr(),
             style: labelTextStyle.copyWith(
               fontSize: 18.0,
               fontWeight: FontWeight.bold,
@@ -121,7 +123,7 @@ class _RefferedByState extends State<RefferedBy> {
                   Container(
                     width: size.width * 0.6,
                     child: Text(
-                      "Don't display my name publicly on the campaign",
+                      LocaleKeys.dont_display_my_name_label_text.tr(),
                       style: labelTextStyle.copyWith(
                         fontWeight: FontWeight.w500,
                         color: Theme.of(context).secondaryHeaderColor,
@@ -144,7 +146,7 @@ class _RefferedByState extends State<RefferedBy> {
                   Container(
                     width: size.width * 0.6,
                     child: Text(
-                      "Get occasional marketing updates from GoFundMe. You may unsunscribe at any time.",
+                     LocaleKeys.get_occational_marketing_label_text.tr(),
                       style: labelTextStyle.copyWith(
                         fontWeight: FontWeight.w500,
                         color: Theme.of(context).secondaryHeaderColor,

@@ -8,11 +8,12 @@ class PaymentButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Card(
+    return Card( 
       elevation: 4.0,
       color: Colors.amber,
       child: SizedBox(
         width: size.width,
+        height: size.height * 0.09,
         child: TextButton(
             onPressed: () {
               onPressed();

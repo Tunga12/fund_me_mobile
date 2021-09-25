@@ -52,10 +52,10 @@ class DonationDataProvider {
           "amount": donation.amount,
           'tip': donation.tip,
           "comment": donation.comment,
+          "paymentMethod": "PayPal"
         },
       ),
     );
-
     if (response.statusCode == 302) {
       String url = response.headers['location'] ?? "";
       return url;

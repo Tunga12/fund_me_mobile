@@ -20,6 +20,8 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+   double _currencyRate = 0.0;
+   
   bool textFieldIsFocused = true;
   TextEditingController searchController = TextEditingController();
   ScrollController _campaignScrollController = ScrollController();
@@ -177,6 +179,12 @@ class _SearchPageState extends State<SearchPage> {
                             physics: ClampingScrollPhysics(),
                             itemCount: searchFundraises.length,
                             itemBuilder: (_, index) {
+                               TotalRaised _totalRaised = fundraises[index].totalRaised!;
+                    double _dollarValue = _currencyRate is double
+                        ? _currencyRate * _totalRaised.dollar!.toDouble()
+                        : _totalRaised.dollar!.toDouble();
+                    double totalRaised =
+                        _dollarValue + _totalRaised.birr!.toDouble();
                               return GestureDetector(
                                 onTap: () {
                                   String id = searchFundraises[index].id!;

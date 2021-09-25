@@ -9,14 +9,16 @@ class ManageCard extends StatelessWidget {
   String image;
   String title;
   int goalAmount;
-  int raisedAmount;
+  double raisedAmount;
   String fundraiseId;
-  ManageCard(
-      {required this.fundraiseId,
+  ManageCard({
+      required this.fundraiseId,
       required this.image,
       required this.title,
       required this.goalAmount,
-      required this.raisedAmount});
+      required this.raisedAmount,
+      Key? key
+      }): super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -139,3 +141,5 @@ class ManageCard extends StatelessWidget {
     );
   }
 }
+
+
