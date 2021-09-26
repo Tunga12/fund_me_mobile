@@ -1,5 +1,6 @@
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
+import 'package:crowd_funding_app/Models/total_raised.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/withdraw_page.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
@@ -86,7 +87,8 @@ class WithdrawVerifyBeneficiary extends StatelessWidget {
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => WithdrawPage(
-                          fundraise: Fundraise(totalRaised: 0),
+                          fundraise: Fundraise(
+                              totalRaised: TotalRaised(birr: 0, dollar: 0)),
                           isSetUped: true,
                           beneficiary: _beneficiary,
                           isAccepted: false,

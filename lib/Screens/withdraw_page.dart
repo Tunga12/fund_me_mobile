@@ -1,5 +1,6 @@
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
+import 'package:crowd_funding_app/Models/total_raised.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/withdraw_user_info.dart';
 import 'package:crowd_funding_app/Screens/withdrawal_beneficairy_selection.dart';
@@ -10,7 +11,6 @@ import 'package:crowd_funding_app/widgets/withdraw_note.dart';
 import 'package:crowd_funding_app/widgets/withdrawal_beneficiary_invited_body.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:provider/provider.dart';
 
 // ignore: must_be_immutable
@@ -36,19 +36,14 @@ class WithdrawPage extends StatefulWidget {
 
 class _WithdrawPageState extends State<WithdrawPage> {
   User? _user;
-  Response _currencyRate =
-      Response(status: ResponseStatus.LOADING, data: '', message: '');
+  double totalRaised = 1.0;
+
   _getUserInformation() async {
     UserPreference userPreference = UserPreference();
     PreferenceData userData = await userPreference.getUserInfromation();
     PreferenceData tokeData = await userPreference.getUserToken();
-    await Provider.of<CurrencyRateModel>(context, listen: false)
-        .getCurrencyRate();
-    Response _response =
-        Provider.of<CurrencyRateModel>(context, listen: false).response;
 
     setState(() {
-      _currencyRate = _response;
       _user = userData.data;
     });
   }
@@ -71,6 +66,17 @@ class _WithdrawPageState extends State<WithdrawPage> {
     }
   }
 
+  _getCurrencyExcange() {
+    Response _response = context.read<CurrencyRateModel>().response;
+    double _currencyRate = _response.data is double ? _response.data : 1.0;
+    TotalRaised _totalRaised = widget.fundraise.totalRaised!;
+    double _dollarValue = _currencyRate * _totalRaised.dollar!.toDouble();
+    double _totalRaisedResponse = _dollarValue + _totalRaised.birr!;
+    setState(() {
+      totalRaised = _totalRaisedResponse;
+    });
+  }
+
   _showPreviousWithdrawals() {
     return AlertDialog(
       title: Text('Total withdrawal'),
@@ -89,7 +95,7 @@ class _WithdrawPageState extends State<WithdrawPage> {
   @override
   Widget build(BuildContext context) {
     print("currency rate");
-    print(_currencyRate.data);
+   
     final size = MediaQuery.of(context).size;
     if (widget.isSetUped!) {
       if (widget.beneficiary!.id == _user!.id) {
@@ -130,9 +136,7 @@ class _WithdrawPageState extends State<WithdrawPage> {
                     ),
                   ),
                   Text(
-                    _currencyRate.data is double
-                        ? "${(widget.fundraise.totalRaised! * _currencyRate.data).toStringAsFixed(2)} birr"
-                        : "${widget.fundraise.totalRaised!.toStringAsFixed(2)} birr",
+                    "${totalRaised.toStringAsFixed(2)} ETB",
                     style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,

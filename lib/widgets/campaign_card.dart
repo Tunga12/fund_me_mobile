@@ -10,7 +10,7 @@ class CampaignCard extends StatelessWidget {
   String image;
   String locaion;
   String title;
-  int totalRaised;
+  double totalRaised;
   int goalAmount;
   Donation donation;
   String fundraiseId;

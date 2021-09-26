@@ -1,6 +1,7 @@
 import 'package:crowd_funding_app/main.dart';
 import 'package:crowd_funding_app/services/data_provider/auth.dart';
 import 'package:crowd_funding_app/services/data_provider/category.dart';
+import 'package:crowd_funding_app/services/data_provider/currency.dart';
 import 'package:crowd_funding_app/services/data_provider/donation.dart';
 import 'package:crowd_funding_app/services/data_provider/fundraiser.dart';
 import 'package:crowd_funding_app/services/data_provider/help.dart';
@@ -12,6 +13,7 @@ import 'package:crowd_funding_app/services/data_provider/user.dart';
 import 'package:crowd_funding_app/services/data_provider/withdraw.dart';
 import 'package:crowd_funding_app/services/repository/auth.dart';
 import 'package:crowd_funding_app/services/repository/category.dart';
+import 'package:crowd_funding_app/services/repository/currency.dart';
 import 'package:crowd_funding_app/services/repository/donation.dart';
 import 'package:crowd_funding_app/services/repository/fundraise.dart';
 import 'package:crowd_funding_app/services/repository/help.dart';
@@ -74,13 +76,15 @@ Widget testApp(MockClient client) {
       UserRepository(dataProvider: UserDataProvider(httpClient: client));
   ReportRepository reportRepository = ReportRepository(
       reportDataProvider: ReportDataProvider(httpClient: client));
-
+  CurrencyRepository currencyRepository = CurrencyRepository(
+      dataProvider: CurrencyDataProvider(httpClient: client));
   return EasyLocalization(
     supportedLocales: [Locale('en'), Locale('am'), Locale('or'), Locale('tr')],
     assetLoader: CodegenLoader(),
     fallbackLocale: Locale('en'),
     path: 'assets/translations',
     child: CrowdFundingApp(
+      currencyRepository: currencyRepository,
       reportRepository: reportRepository,
       fundraiseRepository: fundraiseRepository,
       authRepository: authRepository,

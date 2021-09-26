@@ -9,7 +9,7 @@ final mockDonation = Donation(
   id: "1234567",
   amount: 30,
   comment: "mock comment",
-  date: DateTime.now(),
+  date: "",
   isAnonymous: false,
   isDeleted: false,
   memberID: "123456789",

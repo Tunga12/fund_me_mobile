@@ -40,7 +40,6 @@ class NotficationItem extends StatelessWidget {
                   ),
                 ),
               );
-
         } else {
           print("notification fundraiser id is");
           print('date is $date');

@@ -16,7 +16,7 @@ main() {
     test('[Update] check individual values', () async {
       _update = Update(
         content: "Mock Content",
-        dateCreated: DateTime.now(),
+        dateCreated: "",
         id: "1234567890l",
         image: "https://shroud",
         isDeleted: false,

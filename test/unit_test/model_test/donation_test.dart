@@ -18,7 +18,7 @@ main() {
       _donationModel = Donation(
         amount: 30,
         comment: "Mock comment",
-        date: DateTime.now(),
+        date: "",
         id: '123456789v',
         isAnonymous: false,
         isDeleted: false,

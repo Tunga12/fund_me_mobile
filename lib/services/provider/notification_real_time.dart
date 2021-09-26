@@ -38,7 +38,7 @@ class NotificationRealTimeModel extends NotificationProvider {
   IO.Socket? socket;
 
   createConnection(String token) {
-    final url = EndPoints.baseURL + '?token=$token';
+    final url = EndPoints.baseURL + ':5000?token=$token';
     print("url is $url");
     socket = IO.io(
       url,

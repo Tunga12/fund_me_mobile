@@ -1,6 +1,7 @@
 import 'package:crowd_funding_app/Models/donation.dart';
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
+import 'package:crowd_funding_app/Models/total_raised.dart';
 import 'package:crowd_funding_app/Screens/loading_screen.dart';
 import 'package:crowd_funding_app/Screens/popular_fundraise_detail.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
@@ -179,7 +180,7 @@ class _SearchPageState extends State<SearchPage> {
                             physics: ClampingScrollPhysics(),
                             itemCount: searchFundraises.length,
                             itemBuilder: (_, index) {
-                               TotalRaised _totalRaised = fundraises[index].totalRaised!;
+                               TotalRaised _totalRaised = searchFundraises[index].totalRaised!;
                     double _dollarValue = _currencyRate is double
                         ? _currencyRate * _totalRaised.dollar!.toDouble()
                         : _totalRaised.dollar!.toDouble();
@@ -208,7 +209,7 @@ class _SearchPageState extends State<SearchPage> {
                                   locaion: 'location',
                                   title: searchFundraises[index].title as String,
                                   totalRaised:
-                                      searchFundraises[index].totalRaised!,
+                                      totalRaised,
                                 ),
                               );
                             },

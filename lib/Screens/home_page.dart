@@ -221,9 +221,10 @@ class _HomePageState extends State<HomePage> {
                         ),
                       );
                     }
-                    return Badge(
+                    int number = snapshots.data as int;
+                    return  Badge(
                       badgeContent: Text(
-                        "${snapshots.data}",
+                        "${2}",
                         style:
                             TextStyle(color: Theme.of(context).backgroundColor),
                       ),

@@ -2,6 +2,7 @@ import 'package:crowd_funding_app/Models/category.dart';
 import 'package:crowd_funding_app/Models/donation.dart';
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/team_member.dart';
+import 'package:crowd_funding_app/Models/total_raised.dart';
 import 'package:crowd_funding_app/Models/update.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -25,7 +26,7 @@ main() {
           organizer: User(firstName: "MockFirstName", lastName: "MockLastName"),
           category: Category(
               categoryID: "123456789p", categoryName: "Mock Fundraiser"),
-          dateCreated: DateTime.now(),
+          dateCreated:"",
           donations: [Donation(amount: 30, tip: 1.3, comment: "Mock Comment")],
           goalAmount: 1235,
           id: "123456789l",
@@ -36,7 +37,7 @@ main() {
           location: Location(latitude: '8.56', longitude: '38.7'),
           story: "Mock Story",
           teams: [TeamMember(member: Member(id: "12345"))],
-          totalRaised: 23,
+          totalRaised: TotalRaised(birr: 0, dollar: 0),
           totalSharedCount: 12,
           updates: [Update(content: "Mock content")]);
 

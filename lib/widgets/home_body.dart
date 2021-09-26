@@ -1,12 +1,14 @@
 import 'package:crowd_funding_app/Models/donation.dart';
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
+import 'package:crowd_funding_app/Models/total_raised.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/loading_screen.dart';
 import 'package:crowd_funding_app/Screens/popular_fundraise_detail.dart';
 import 'package:crowd_funding_app/Screens/create_fundraiser_home.dart';
 import 'package:crowd_funding_app/Screens/signin_page.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
+import 'package:crowd_funding_app/services/provider/currency.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
 import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/campaign_card.dart';
@@ -134,7 +136,7 @@ class _HomeBodyState extends State<HomeBody> {
                       height: 15.0,
                     ),
                     TextButton(
-                      key: Key("start_a_legas_button"),
+                        key: Key("start_a_legas_button"),
                         style: TextButton.styleFrom(
                             elevation: 2.0,
                             padding: EdgeInsets.symmetric(
@@ -199,6 +201,16 @@ class _HomeBodyState extends State<HomeBody> {
                       physics: ClampingScrollPhysics(),
                       itemCount: _fundraises.length,
                       itemBuilder: (context, index) {
+                        Response _response =
+                            context.read<CurrencyRateModel>().response;
+                        double _currencyRate =
+                            _response.data is double ? _response.data : 1.0;
+                        TotalRaised _totalRaised =
+                            _fundraises[index].totalRaised!;
+                        double _dollarValue =
+                            _currencyRate * _totalRaised.dollar!.toDouble();
+                        double totalRaised = _dollarValue + _totalRaised.birr!;
+
                         return GestureDetector(
                           onTap: () {
                             String id = _fundraises[index].id!;
@@ -219,7 +231,7 @@ class _HomeBodyState extends State<HomeBody> {
                             goalAmount: _fundraises[index].goalAmount!,
                             locaion: 'location',
                             title: _fundraises[index].title as String,
-                            totalRaised: _fundraises[index].totalRaised!,
+                            totalRaised: totalRaised,
                           ),
                         );
                       })),
