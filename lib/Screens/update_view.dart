@@ -34,7 +34,7 @@ class UpdatesView extends StatelessWidget {
             itemCount: updates.length,
             itemBuilder: (context, idx) {
               String date = CustomTime.displayTimeAgoFromTimestamp(
-                  updates[0].dateCreated!,
+                  updates[0].dateCreated!,context,
                   numericDates: true);
               return Column(
                 children: [

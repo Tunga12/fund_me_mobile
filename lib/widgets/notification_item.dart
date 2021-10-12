@@ -27,7 +27,7 @@ class NotficationItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // String date = Jiffy(notification.date).fromNow();
-    String date = CustomTime.displayTimeAgoFromTimestamp(notification.date!,
+    String date = CustomTime.displayTimeAgoFromTimestamp(notification.date!,context,
         numericDates: true);
     final size = MediaQuery.of(context).size;
     return GestureDetector(

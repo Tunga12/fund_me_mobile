@@ -106,31 +106,47 @@ class Fundraise {
     String title = data['title'] ?? '';
     String image = data['image'] ?? '';
     int goalAmount = data['goalAmount'] ?? 0;
-    TotalRaised totalRaised = TotalRaised.fromJson(data['totalRaised'] ?? {});
+    print("Is integer");
+    print(data['totalRaised'] is int);
+    print(data['totalRaised']);
+    TotalRaised totalRaised = data['totalRaised'] is int
+        ? TotalRaised(dollar: 0, birr: data['totalRaised'])
+        : TotalRaised.fromJson(data['totalRaised'] ?? {});
+    print(totalRaised);
     String story = data['story'] ?? '';
+    print("trace 1");
     Category category = data['category'] == null
         ? Category()
         : Category.fromJson(data['category']);
+    print("trace 2");
     Location location = data["location"] == null
         ? Location(latitude: "0", longitude: "0")
         : Location.fromJson(data["location"]);
+    print("trace 3");
     String dateCreated = data['dateCreated'];
+    print("trace 4");
     User organizer =
         data['organizer'] == null ? User() : User.fromJson(data['organizer']);
+    print("trace 5");
     User beneficiary = data['beneficiary'] == null
         ? User()
         : User.fromJson(data['beneficiary']);
+    print('trace 6');
     List donationDynamic = data['donations'] ?? [];
     List updatesDynamic = data['updates'] ?? [];
     List teamsDynamic = data['teams'] ?? [];
     bool isPublished = data['isPublished'] ?? false;
     int totalShareCount = data['totalShareCount'] ?? 0;
+    print("trace 7");
     int likeCount = data['likeCount'] ?? 0;
+    print("trace 8");
     List likedBy = data['likedBy'] ?? [];
     // bool isDeleted = data['isDeleted'];
     Map<String, dynamic> withdraw = data['withdraw'] ?? {};
+    print("trace 9");
     List totalWithdrawal = data['totalWithdraw'] ?? [];
     totalWithdrawal.map((e) => TotalWithdraw.fromJson(e)).toList();
+    print("trace 10");
 
     Fundraise fundraise = Fundraise(
       id: id,
@@ -156,6 +172,8 @@ class Fundraise {
       totalWithdrawal:
           totalWithdrawal.map((e) => TotalWithdraw.fromJson(e)).toList(),
     );
+    print("fundraise fundraise is ");
+    print(fundraise);
     return fundraise;
   }
 

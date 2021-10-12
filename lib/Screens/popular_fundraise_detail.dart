@@ -118,10 +118,8 @@ class _CampaignDetailState extends State<CampaignDetail> {
       () => context.read<ReportModel>().getReportReasons(),
     );
     
-    await Future.delayed(
-      Duration(milliseconds: 1),
-      () => context.read<CurrencyRateModel>().getCurrencyRate(),
-    );
+   
+ 
 
     final _currencyRateResponse = context.read<CurrencyRateModel>().response;
 
@@ -215,7 +213,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
 
       String lastDonation = donations.isNotEmpty
           ? CustomTime.displayTimeAgoFromTimestamp(
-              _fundraise!.donations![0].date!)
+              _fundraise!.donations![0].date!, context,numericDates: true)
           : "Just Now";
       List<Donation> avatarDonations =
           donations.length >= 3 ? donations.sublist(0, 3) : donations;
@@ -310,7 +308,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
                       Row(
                         children: [
                           Text(
-                            "$totalRaised\$ ${LocaleKeys.raised_lable_text.tr()}",
+                            "${totalRaised.toStringAsFixed(0)} ETB ${LocaleKeys.raised_lable_text.tr()}",
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1!
@@ -319,7 +317,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
                                     color: Colors.black),
                           ),
                           Text(
-                            " ${LocaleKeys.of_label_text.tr()} \$$goalAmount ${LocaleKeys.goal_label_text.tr()}",
+                            " ${LocaleKeys.of_label_text.tr()} ${goalAmount.toStringAsFixed(0)} ETB ${LocaleKeys.goal_label_text.tr()}",
                             style: Theme.of(context).textTheme.bodyText1,
                           ),
                         ],

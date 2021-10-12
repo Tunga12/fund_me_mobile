@@ -12,6 +12,7 @@ import 'package:crowd_funding_app/widgets/withdrawal_beneficiary_invited_body.da
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:jiffy/jiffy.dart';
 
 // ignore: must_be_immutable
 class WithdrawPage extends StatefulWidget {
@@ -36,7 +37,7 @@ class WithdrawPage extends StatefulWidget {
 
 class _WithdrawPageState extends State<WithdrawPage> {
   User? _user;
-  double totalRaised = 1.0;
+  double totalRaised = 0.0;
 
   _getUserInformation() async {
     UserPreference userPreference = UserPreference();
@@ -52,6 +53,7 @@ class _WithdrawPageState extends State<WithdrawPage> {
   void initState() {
     super.initState();
     _getUserInformation();
+    _getCurrencyExcange();
   }
 
   String _getTitle() {
@@ -68,7 +70,7 @@ class _WithdrawPageState extends State<WithdrawPage> {
 
   _getCurrencyExcange() {
     Response _response = context.read<CurrencyRateModel>().response;
-    double _currencyRate = _response.data is double ? _response.data : 1.0;
+    double _currencyRate = _response.data is double ? _response.data : 0.0;
     TotalRaised _totalRaised = widget.fundraise.totalRaised!;
     double _dollarValue = _currencyRate * _totalRaised.dollar!.toDouble();
     double _totalRaisedResponse = _dollarValue + _totalRaised.birr!;
@@ -82,11 +84,14 @@ class _WithdrawPageState extends State<WithdrawPage> {
       title: Text('Total withdrawal'),
       content: SingleChildScrollView(
         child: Column(
-          children: widget.fundraise.totalWithdrawal!
-              .map((prev) => ListTile(
-                    title: Text("$prev"),
-                  ))
-              .toList(),
+          children: widget.fundraise.totalWithdrawal!.map((prev) {
+            final date = Jiffy(prev.dateCreated).yMMMMd;
+            print(widget.fundraise.totalWithdrawal);
+            return ListTile(
+              title: Text("${prev.amount}"),
+              trailing: Text("$date"),
+            );
+          }).toList(),
         ),
       ),
     );
@@ -95,7 +100,7 @@ class _WithdrawPageState extends State<WithdrawPage> {
   @override
   Widget build(BuildContext context) {
     print("currency rate");
-   
+    print(widget.fundraise.totalWithdrawal);
     final size = MediaQuery.of(context).size;
     if (widget.isSetUped!) {
       if (widget.beneficiary!.id == _user!.id) {

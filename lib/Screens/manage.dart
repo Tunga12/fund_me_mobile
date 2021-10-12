@@ -4,6 +4,7 @@ import 'package:crowd_funding_app/Models/total_raised.dart';
 import 'package:crowd_funding_app/Screens/create_fundraiser_home.dart';
 import 'package:crowd_funding_app/Screens/loading_screen.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
+import 'package:crowd_funding_app/services/provider/currency.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
 import 'package:crowd_funding_app/widgets/empty_body.dart';
 import 'package:crowd_funding_app/widgets/manage_card.dart';
@@ -59,7 +60,10 @@ class _ManageState extends State<Manage> {
         Provider.of<FundraiseModel>(context, listen: false)
             .homeFundraise
             .fundraises!;
+    Response _currencyResponse = context.read<CurrencyRateModel>().response;
+
     setState(() {
+      _currencyRate = _currencyResponse.data;
       _response = context.read<FundraiseModel>().response;
       userFundraisesResponse.addAll(memberFundraisesResponse);
       userFundraisesResponse.addAll(beneficiaryFundraisesResponse);
@@ -92,8 +96,8 @@ class _ManageState extends State<Manage> {
           ? EmptyBody(
               text1: "Ready to fundraise?",
               text2:
-                  'You can always start a GoFundMe for yourself, a charity, or others in need.',
-              btnText1: "Start a GoFundMe",
+                  'You can always start a Legas for yourself, a charity, or others in need.',
+              btnText1: "Start a Legas",
               isFilled: true,
               onPressed: () {
                 Navigator.push(
@@ -122,7 +126,7 @@ class _ManageState extends State<Manage> {
                       key: Key("${fundraises[index].id!}"),
                       fundraiseId: fundraises[index].id!,
                       image: fundraises[index].image!,
-                      raisedAmount:totalRaised,
+                      raisedAmount: totalRaised,
                       goalAmount: fundraises[index].goalAmount!,
                       title: fundraises[index].title!,
                     );

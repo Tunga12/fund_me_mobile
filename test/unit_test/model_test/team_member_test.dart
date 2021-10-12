@@ -1,4 +1,5 @@
 import 'package:crowd_funding_app/Models/team_member.dart';
+import 'package:crowd_funding_app/Models/total_raised.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -17,12 +18,13 @@ main() {
       _teamMember = TeamMember(
         status: "Pending",
         member: Member(
-          hasRaised: 10,
+          hasRaised: TotalRaised(birr: 0, dollar: 0),
           id: "123456789p",
           shareCount: 25,
           userID: User(),
         ),
       );
+      
       // BEGIN Test...
       expect(_teamMember!.status, "Pending");
       expect(_teamMember!.member.runtimeType, equals(Member));

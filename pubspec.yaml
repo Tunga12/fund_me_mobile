@@ -46,10 +46,10 @@ dependencies:
   mime: ^1.0.0
   camera: 
   image_cropper: ^1.4.1
+  jiffy: ^4.1.0
   image_picker: 
   path_provider: 
-  
-  
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

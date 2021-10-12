@@ -1,9 +1,10 @@
+import 'package:crowd_funding_app/Models/total_raised.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 
 class Member {
   String? id;
   User? userID;
-  int? hasRaised;
+  TotalRaised? hasRaised;
   int? shareCount;
 
   Member({
@@ -15,7 +16,9 @@ class Member {
   // parsing the json object ot TeamMember object
   factory Member.fromJson(Map<String, dynamic> data) {
     String id = data['_id'];
-    int hasRaised = data['hasRaised'];
+    TotalRaised hasRaised = data['hasRaised'] is int
+        ? TotalRaised(dollar: 0, birr: data['hasRaised'])
+        : TotalRaised.fromJson(data['hasRaised']);
     int shareCount = data['shareCount'];
     User userId = User.fromJson(data['userId']);
 

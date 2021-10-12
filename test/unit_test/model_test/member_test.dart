@@ -1,4 +1,5 @@
 import 'package:crowd_funding_app/Models/team_member.dart';
+import 'package:crowd_funding_app/Models/total_raised.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -14,7 +15,7 @@ main() {
 
     test('[Model] check individual values', () async {
       _member = Member(
-        hasRaised: 30,
+        hasRaised: TotalRaised(birr: 0, dollar: 0),
         id: "1234567890m",
         shareCount: 52,
         userID: User(),

@@ -58,10 +58,6 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
       () =>
           context.read<FundraiseModel>().getSingleFundraise(widget.fundraiseId),
     );
-    await Future.delayed(
-      Duration(milliseconds: 1),
-      () => context.read<CurrencyRateModel>().getCurrencyRate(),
-    );
 
     final _currencyRateResponse = context.read<CurrencyRateModel>().response;
     setState(() {
@@ -124,9 +120,6 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
     Fundraise _fundraise = model.fundraise;
     print(_fundraise.withdrwal);
 
-    // String totalShareCount = Counter.getCounter(_fundraise.totalSharedCount!);
-    // String totalLikeCount = Counter.getCounter(_fundraise.likeCount!);
-
     Location? location = _fundraise.location;
     List<Update> updates = _fundraise.updates!;
     List<TeamMember> teams = _fundraise.teams!
@@ -139,6 +132,7 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
     String image = _fundraise.image!;
     User? organizer = _fundraise.organizer;
     // User? beneficiary = _fundraise.beneficiary;
+
     TotalRaised _totalRaised = _fundraise.totalRaised!;
     double _dollarValue = _currencyRate is double
         ? _currencyRate * _totalRaised.dollar!.toDouble()
@@ -146,6 +140,7 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
     double totalRaised = _dollarValue + _totalRaised.birr!.toDouble();
     int goalAmount = _fundraise.goalAmount!;
     String story = _fundraise.story!;
+
     // String lastUpdate = updates.isNotEmpty
     //     ? Jiffy(_fundraise.updates![0].dateCreated, "yyyy-MM-dd").fromNow()
     //     : "Just Now";
@@ -246,14 +241,14 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                       Row(
                         children: [
                           Text(
-                            "$totalRaised\$ ${LocaleKeys.raised_lable_text.tr()}",
+                            "${totalRaised.toStringAsFixed(0)} ${LocaleKeys.usd_label_text.tr()} ${LocaleKeys.raised_lable_text.tr()}",
                             style:
                                 Theme.of(context).textTheme.bodyText1!.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                           ),
                           Text(
-                            " ${LocaleKeys.of_label_text.tr()} \$$goalAmount",
+                            " ${LocaleKeys.of_label_text.tr()} $goalAmount ${LocaleKeys.usd_label_text.tr()} ",
                             style: Theme.of(context).textTheme.bodyText1,
                           ),
                         ],

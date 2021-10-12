@@ -3,6 +3,7 @@ import 'package:crowd_funding_app/Models/donation.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/widgets/expandable_text.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 
 class FundraiseDonationPage extends StatelessWidget {
   List<Donation> donations;
@@ -52,19 +53,19 @@ class FundraiseDonation extends StatelessWidget {
   int donateAmount = 0;
   var dateTime;
 
-  getData() {
+  getData(BuildContext context) {
     avatarText = donation.userID!.firstName![0].toUpperCase() +
         donation.userID!.lastName![0].toUpperCase();
     fullName = donation.userID!.firstName! + " " + donation.userID!.lastName!;
     donateAmount = donation.amount!;
     // dateTime = Jiffy(donation.date, "yyyy-MM-dd").fromNow();
-    dateTime = CustomTime.displayTimeAgoFromTimestamp(donation.date!,
+    dateTime = CustomTime.displayTimeAgoFromTimestamp(donation.date!, context,
         numericDates: true);
   }
 
   @override
   Widget build(BuildContext context) {
-    getData();
+    getData(context);
     print("Donatins ${donation.userID}");
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10.0),

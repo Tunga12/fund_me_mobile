@@ -1,8 +1,10 @@
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Screens/fundraiser_details.dart';
 import 'package:crowd_funding_app/Screens/share_page.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/custom_cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 // ignore: must_be_immutable
 class ManageCard extends StatelessWidget {
@@ -11,14 +13,14 @@ class ManageCard extends StatelessWidget {
   int goalAmount;
   double raisedAmount;
   String fundraiseId;
-  ManageCard({
-      required this.fundraiseId,
+  ManageCard(
+      {required this.fundraiseId,
       required this.image,
       required this.title,
       required this.goalAmount,
       required this.raisedAmount,
-      Key? key
-      }): super(key: key);
+      Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +71,8 @@ class ManageCard extends StatelessWidget {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (context) => SharePage(
-                                    fundraise: Fundraise(title: title, id: fundraiseId),
+                                    fundraise: Fundraise(
+                                        title: title, id: fundraiseId),
                                   ),
                                 ),
                               );
@@ -111,7 +114,7 @@ class ManageCard extends StatelessWidget {
                 Container(
                     margin: EdgeInsets.only(top: 10.0),
                     child: Text(
-                      "\$$raisedAmount raised of \$$goalAmount",
+                      "${raisedAmount.toStringAsFixed(0)} ${LocaleKeys.usd_label_text.tr()} ${LocaleKeys.raised_lable_text.tr()} ${LocaleKeys.of_label_text.tr()} $goalAmount ${LocaleKeys.usd_label_text.tr()}",
                       style: TextStyle(
                           color: Theme.of(context)
                               .secondaryHeaderColor
@@ -141,5 +144,3 @@ class ManageCard extends StatelessWidget {
     );
   }
 }
-
-

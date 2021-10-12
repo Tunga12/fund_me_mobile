@@ -2,8 +2,11 @@ import 'package:crowd_funding_app/Models/custom_time.dart';
 import 'package:crowd_funding_app/Models/donation.dart';
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Screens/share_page.dart';
+import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/custom_cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:path/path.dart';
 
 // ignore: must_be_immutable
 class CampaignCard extends StatelessWidget {
@@ -28,19 +31,19 @@ class CampaignCard extends StatelessWidget {
   double progress = 0.0;
   var date = "";
 
-  getData() {
+  getData(BuildContext context) {
     progress = totalRaised / goalAmount;
-    date = donation.date == null ? "NON": CustomTime.displayTimeAgoFromTimestamp(donation.date!,
-        numericDates: true);
+    date = donation.date == null
+        ? "NON"
+        : CustomTime.displayTimeAgoFromTimestamp(donation.date!, context,
+            numericDates: true);
   }
 
   @override
   Widget build(BuildContext context) {
+    print(context.locale == Locale("am"));
     final size = MediaQuery.of(context).size;
-    getData();
-    print("donation date is ");
-    print(donation.date);
-    print('date is');
+    getData(context);
     return Container(
       color: Theme.of(context).backgroundColor,
       height: MediaQuery.of(context).size.height * 0.6,
@@ -114,7 +117,7 @@ class CampaignCard extends StatelessWidget {
           Container(
               margin: EdgeInsets.only(top: 10.0),
               child: Text(
-                "$totalRaised raised of $goalAmount",
+                "${totalRaised.toStringAsFixed(0)} ${LocaleKeys.usd_label_text.tr()} ${LocaleKeys.raised_lable_text.tr()} ${LocaleKeys.of_label_text.tr()} $goalAmount ${LocaleKeys.usd_label_text.tr()}",
                 style: TextStyle(
                     color:
                         Theme.of(context).secondaryHeaderColor.withOpacity(0.6),
@@ -123,7 +126,9 @@ class CampaignCard extends StatelessWidget {
           Container(
               margin: EdgeInsets.only(top: 10.0),
               child: Text(
-               date == "NON" ? "No donations yet":  "Last donation $date",
+                date == "NON"
+                    ? "${LocaleKeys.no_donation_label_text.tr()}"
+                    : "${LocaleKeys.last_donation_label_text.tr()} $date",
                 style: TextStyle(
                     fontSize: 16.0,
                     color: Theme.of(context)

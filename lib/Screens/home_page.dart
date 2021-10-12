@@ -222,17 +222,23 @@ class _HomePageState extends State<HomePage> {
                       );
                     }
                     int number = snapshots.data as int;
-                    return  Badge(
-                      badgeContent: Text(
-                        "${2}",
-                        style:
-                            TextStyle(color: Theme.of(context).backgroundColor),
-                      ),
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Icon(
-                        Icons.notifications_outlined,
-                      ),
-                    );
+                    return number == 0
+                        ? Container(
+                            child: Icon(
+                              Icons.notifications_outlined,
+                            ),
+                          )
+                        : Badge(
+                            badgeContent: Text(
+                              "$number",
+                              style: TextStyle(
+                                  color: Theme.of(context).backgroundColor),
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 10),
+                            child: Icon(
+                              Icons.notifications_outlined,
+                            ),
+                          );
                   }),
               label: LocaleKeys.notifications_label_text.tr()),
           BottomNavigationBarItem(

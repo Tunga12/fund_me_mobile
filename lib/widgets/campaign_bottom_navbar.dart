@@ -65,7 +65,7 @@ class CampainBottomNavBar extends StatelessWidget {
           TextButton(
             style: TextButton.styleFrom(
                 padding: EdgeInsets.symmetric(horizontal: 15.0),
-                backgroundColor: Theme.of(context).accentColor),
+                backgroundColor: Theme.of(context).secondaryHeaderColor.withOpacity(0.5)),
             onPressed: () {
               reportAction();
             },

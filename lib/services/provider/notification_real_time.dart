@@ -48,20 +48,10 @@ class NotificationRealTimeModel extends NotificationProvider {
           .enableForceNewConnection()
           .build(),
     );
-
     print("connecting");
     socket!.onConnect((_) {
       print('connect');
       print("It connected");
-    });
-
-    // viewed notifications
-    socket!.on('viewed notification', (data) {
-      print("viewd notification is listend");
-      print(data);
-
-      UserNotification _notification = UserNotification.fromJson(data);
-      // if (!_newNotifications.isClosed) addNewNotification(_notification);
     });
 
     // new notifications
@@ -80,6 +70,18 @@ class NotificationRealTimeModel extends NotificationProvider {
       print(data);
       if (!_unreadNotificationCount.isClosed) addUnreadNotificationCount(data);
     });
+
+    // all notification
+    // socket!.on('all notification', (data) {
+    //   print("all notification");
+    //   List<UserNotification> _notificatioins = data
+    //       .map((notification) => UserNotification.fromJson(notification))
+    //       .toList();
+    //   print(data);
+    //   if (!_unreadNotificationCount.isClosed) addUnreadNotificationCount(data);
+    // });
+
+    //all notification
     socket!.onError((data) => print("Error happend error"));
   }
 

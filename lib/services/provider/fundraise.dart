@@ -90,13 +90,14 @@ class FundraiseModel extends ChangeNotifier {
       response = Response(
           status: ResponseStatus.FORMATERROR, data: null, message: e.message);
     } catch (e) {
+      print("fundriser error");
+      print(e.toString());
+      
       String message = e.toString().contains('ID was not found')
           ? "Fundraiser not found"
           : "Faild to fetch fundraiser";
       response = Response(
-          status: ResponseStatus.MISMATCHERROR,
-          data: null,
-          message: message);
+          status: ResponseStatus.MISMATCHERROR, data: null, message: message);
     }
   }
 

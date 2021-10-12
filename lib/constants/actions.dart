@@ -1,9 +1,7 @@
 import 'dart:io';
 import 'package:crowd_funding_app/Models/notification.dart';
 import 'package:crowd_funding_app/config/utils/endpoints.dart';
-import 'package:crowd_funding_app/constants/colors.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -12,7 +10,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 
 Future<String> getImage(String token, File image) async {
-  print('image is');
   final mimeType = lookupMimeType(image.path, headerBytes: [0xFF, 0xD8])?.split('/');
   int length = await image.length();
   Response? response;
@@ -30,8 +27,7 @@ Future<String> getImage(String token, File image) async {
     EndPoints.imageURL,
     data: formData,
   );
- 
-
+  
   if (response.statusCode! > 200 && response.statusCode! < 250) {
     return response.data;
   } else {

@@ -145,7 +145,7 @@
     "choose_your_label_text": "choose your location",
     "continue_button_text": "countinue",
     "amount_required_label_text": "amount required!",
-    "usd_label_text": "USD",
+    "usd_label_text": "ETB",
   
 
     "//comment//15": "create_fundraiser_page_two",
@@ -271,6 +271,7 @@
     "Legas_tip_label_text": "Legas tip",
     "total_due_today_label_text": "Total due today",
     "paywith_label_text": "Paywith"
+    
     
 
     
