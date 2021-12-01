@@ -116,7 +116,10 @@ class FundraiseDataProvider {
                 "latitude": fundraise.location!.latitude,
                 "longitude": fundraise.location!.longitude,
               },
-              "totalRaised": fundraise.totalRaised,
+              "totalRaised": {
+                "dollar": fundraise.totalRaised!.dollar,
+                "birr": fundraise.totalRaised!.birr
+              },
               "isPublished": fundraise.isPublished,
               "totalShareCount": fundraise.totalSharedCount,
               "likeCount": fundraise.likeCount,
@@ -145,7 +148,10 @@ class FundraiseDataProvider {
                   "latitude": fundraise.location!.latitude,
                   "longitude": fundraise.location!.longitude,
                 },
-                "totalRaised": fundraise.totalRaised,
+                 "totalRaised": {
+                "dollar": fundraise.totalRaised!.dollar,
+                "birr": fundraise.totalRaised!.birr
+              },
                 "isPublished": fundraise.isPublished,
                 "totalShareCount": fundraise.totalSharedCount,
                 "likeCount": fundraise.likeCount,
