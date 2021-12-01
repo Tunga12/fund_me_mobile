@@ -413,18 +413,20 @@ class DonationPageState extends State<DonationPage> {
                                       HomePage.routeName,
                                       (route) => false,
                                     );
+                                    return;
                                   } else {
                                     Navigator.of(context).pop();
                                     print(_createResponse.message);
-                                    authShowDialog(
-                                      context,
-                                      Text(response.message),
-                                      close: true,
-                                      error: true,
-                                    );
+                                    // authShowDialog(
+                                    //   context,
+                                    //   Text("Unable to donate"),
+                                    //   close: true,
+                                    //   error: true,
+                                    // );
                                     Fluttertoast.showToast(
                                         msg:
-                                            "Unable to donate please try again");
+                                            "Unable to donate please try again", toastLength: Toast.LENGTH_LONG);
+                                    return;
                                   }
                                 }
                               } else {
