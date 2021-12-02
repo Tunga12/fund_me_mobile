@@ -98,5 +98,5 @@ class EndPoints {
   static const String reportReasonURL = baseURL + "/api/reasons";
 
   // payment return back url 
-  static const String paymentReturnURL = "http://178.62.55.81/api/api/donation/success";
+  static const String paymentReturnURL = "http://178.62.55.81/api/donation/success";
 }
