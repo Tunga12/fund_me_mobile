@@ -122,6 +122,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                       Text(
                         LocaleKeys.forgot_password_or_text.tr(),
                         style: labelTextStyle.copyWith(
+                            fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: Theme.of(context).secondaryHeaderColor),
                       ),

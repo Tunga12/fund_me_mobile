@@ -85,7 +85,6 @@ class User {
       'lastName': lastName,
       'email': email,
       'password': password,
-      'paymentMethods': paymentMethods ?? '',
       'emailNotification': emailNotification ?? false,
       'isDeactivated': isDeactivated ?? false,
       'isAdmin': isAdmin ?? false,
