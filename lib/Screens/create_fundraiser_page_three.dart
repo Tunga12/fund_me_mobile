@@ -37,10 +37,10 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
   // image picker
   _getImage(ImageSource imageSource) async {
     await pickImageFormFile(imageSource, _imagePicker).then((value) async {
-      File? croppedImage = await cropImage(value!);
-      if (croppedImage == null) return;
+      // File? croppedImage = await cropImage(value!);
+      if (value == null) return;
       setState(() {
-        _image = croppedImage;
+        _image = value;
       });
     });
   }
@@ -110,26 +110,26 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (_image != null)
-                      if (isBigger(_image!))
-                        Container(
-                          width: size.width,
-                          color: Colors.red,
-                          padding: EdgeInsets.symmetric(vertical: 5.0),
-                          child: Center(
-                            child: Text(
-                              "Image size is bigger than optimum",
-                              style: TextStyle(
-                                  color: Theme.of(context).backgroundColor),
-                            ),
-                          ),
-                        ),
-                    Text(
-                      LocaleKeys.step_3_of_3_label_text.tr(),
-                      style: stepTextStyle.copyWith(
-                          color: Theme.of(context)
-                              .secondaryHeaderColor
-                              .withAlpha(180)),
-                    ),
+                      // if (isBigger(_image!))
+                      // Container(
+                      //   width: size.width,
+                      //   color: Colors.red,
+                      //   padding: EdgeInsets.symmetric(vertical: 5.0),
+                      //   child: Center(
+                      //     child: Text(
+                      //       "Image size is bigger than optimum",
+                      //       style: TextStyle(
+                      //           color: Theme.of(context).backgroundColor),
+                      //     ),
+                      //   ),
+                      // ),
+                      Text(
+                        LocaleKeys.step_3_of_3_label_text.tr(),
+                        style: stepTextStyle.copyWith(
+                            color: Theme.of(context)
+                                .secondaryHeaderColor
+                                .withAlpha(180)),
+                      ),
                     SizedBox(
                       height: 10.0,
                     ),
@@ -277,43 +277,34 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                               print("hello");
                             },
                           )
-                        : isBigger(_image!)
-                            ? PreviewButton(
-                                isActive: false,
-                                onPressed: () {
-                                  print("hello");
-                                },
-                              )
-                            : PreviewButton(
-                                isActive: true,
-                                onPressed: () async {
-                                  print("done");
-                                  print(_image);
-                                  PreferenceData userInfo =
-                                      await UserPreference()
-                                          .getUserInfromation();
-                                  User user = userInfo.data;
-                                  final info = {
-                                    'title': widget.fundraiseInfo['title'],
-                                    'story': widget.fundraiseInfo['story'],
-                                    'location':
-                                        widget.fundraiseInfo['location'],
-                                    'goalAmount':
-                                        widget.fundraiseInfo['goalAmount'],
-                                    'category': widget
-                                        .fundraiseInfo['category'].categoryName,
-                                    'image': _image,
-                                    'user': user,
-                                  };
+                        : PreviewButton(
+                            isActive: true,
+                            onPressed: () async {
+                              print("done");
+                              print(_image);
+                              PreferenceData userInfo =
+                                  await UserPreference().getUserInfromation();
+                              User user = userInfo.data;
+                              final info = {
+                                'title': widget.fundraiseInfo['title'],
+                                'story': widget.fundraiseInfo['story'],
+                                'location': widget.fundraiseInfo['location'],
+                                'goalAmount':
+                                    widget.fundraiseInfo['goalAmount'],
+                                'category': widget
+                                    .fundraiseInfo['category'].categoryName,
+                                'image': _image,
+                                'user': user,
+                              };
 
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          FundraiserPreview(info: info),
-                                    ),
-                                  );
-                                },
-                              ),
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      FundraiserPreview(info: info),
+                                ),
+                              );
+                            },
+                          ),
                     SizedBox(
                       height: 10.0,
                     ),
@@ -335,23 +326,7 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                               print("done");
                             },
                           )
-                        : isBigger(_image!) ? CompleteButton(
-                            child: Text(
-                                LocaleKeys.Complete_fundraiser_button_text.tr(),
-                                style: labelTextStyle.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 17.0,
-                                  color: Theme.of(context)
-                                      .secondaryHeaderColor
-                                      .withOpacity(
-                                        0.6,
-                                      ),
-                                )),
-                            isValidate: false,
-                            onPressed: () {
-                              print("done");
-                            },
-                          ) : CompleteButton(
+                        : CompleteButton(
                             child: Text(
                               LocaleKeys.Complete_fundraiser_button_text.tr(),
                               style: labelTextStyle.copyWith(

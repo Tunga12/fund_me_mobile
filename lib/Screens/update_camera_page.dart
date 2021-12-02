@@ -43,9 +43,9 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
                 // _getImage(ImageSource.camera);
                 File? file =
                     await pickImageFormFile(ImageSource.camera, _imagePicker);
-                File? croppedFile = await cropImage(file!);
+                // File? croppedFile = await cropImage(file!);
                 setState(() {
-                  _image = croppedFile!;
+                  _image = file!;
                 });
 
                 Navigator.of(context).pop();
@@ -57,9 +57,9 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
               onTap: () async {
                 File? file =
                     await pickImageFormFile(ImageSource.gallery, _imagePicker);
-                File? croppedFile = await cropImage(file!);
+                // File? croppedFile = await cropImage(file!);
                 setState(() {
-                  _image = croppedFile!;
+                  _image = file!;
                 });
                 Navigator.of(context).pop();
               },
@@ -92,7 +92,7 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
         ),
         actions: [
           if (_post && _image != null)
-            if (!isBigger(_image!))
+            // if (!isBigger(_image!))
               TextButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
@@ -173,19 +173,7 @@ class _UpdateCameraPageState extends State<UpdateCameraPage> {
                       height: size.height * 0.5,
                       child: Column(
                         children: [
-                          if (isBigger(_image!))
-                            Container(
-                              width: size.width,
-                              color: Colors.red,
-                              padding: EdgeInsets.symmetric(vertical: 5.0),
-                              child: Center(
-                                child: Text(
-                                  "Image size is bigger than optimum",
-                                  style: TextStyle(
-                                      color: Theme.of(context).backgroundColor),
-                                ),
-                              ),
-                            ),
+                          
                           Container(
                             height: size.width * 0.6,
                             child: Stack(children: [

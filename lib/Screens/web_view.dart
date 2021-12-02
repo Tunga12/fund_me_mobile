@@ -66,11 +66,13 @@ class _WebBrowserState extends State<WebBrowser> {
             _toasterJavascriptChannel(context),
           },
           navigationDelegate: (NavigationRequest request) async {
+            print(
+                "The Url is #############################################################${request.url}");
             if (request.url.startsWith('https://www.youtube.com/')) {
               print('blocking navigation to $request}');
               return NavigationDecision.prevent;
-            } else if (request.url.startsWith(
-                EndPoints.paymentReturnURL)) {
+            } else if (request.url.startsWith("http://178.62.55.81/api/donation/success")) {
+              print("++++++++++++++++++true");
               final response = await http.Client().get(
                 Uri.parse(request.url),
               );

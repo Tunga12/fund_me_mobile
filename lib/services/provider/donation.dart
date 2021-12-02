@@ -23,8 +23,9 @@ class DonationModel extends ChangeNotifier {
     try {
       response =
           Response(status: ResponseStatus.LOADING, data: null, message: '');
-      Donation donationResponse = await donationRepository.createDonation(
+      final donationResponse = await donationRepository.createDonation(
           donation, token, fundraiserId);
+      if(donation is Donation)
       response = Response(
           status: ResponseStatus.SUCCESS,
           data: donationResponse,

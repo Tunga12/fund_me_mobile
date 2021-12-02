@@ -11,6 +11,7 @@ class DonationDataProvider {
 
   Future<Donation> createDonation(
       Donation donation, String token, String fundraiserId) async {
+    print("++++++member Id is++++++++++++++${donation.memberID}");
     final response = await httpClient.post(
       Uri.parse(EndPoints.createDonation + fundraiserId),
       headers: <String, String>{
@@ -28,6 +29,9 @@ class DonationDataProvider {
       ),
     );
 
+    print(
+        "==================================================>Create donation status code${response.statusCode}");
+
     if (response.statusCode == 201) {
       return donation;
     } else {
@@ -38,7 +42,6 @@ class DonationDataProvider {
   // donation with paypal
   Future<String> payWithPayPal(
       Donation donation, String token, String fundraiserId) async {
-   
     final response = await httpClient.post(
       Uri.parse(EndPoints.paypalUrl + fundraiserId),
       headers: <String, String>{
@@ -52,7 +55,7 @@ class DonationDataProvider {
           "amount": donation.amount,
           'tip': donation.tip,
           "comment": donation.comment,
-          "paymentMethod": "PayPal"
+          "paymentMethod": "paypal"
         },
       ),
     );
