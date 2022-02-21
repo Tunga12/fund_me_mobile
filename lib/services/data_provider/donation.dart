@@ -25,6 +25,7 @@ class DonationDataProvider {
           "amount": donation.amount,
           'tip': donation.tip,
           "comment": donation.comment,
+          "paymentMethod": donation.paymentMethod
         },
       ),
     );

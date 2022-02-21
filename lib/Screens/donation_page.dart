@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:crowd_funding_app/Models/donation.dart';
 import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
@@ -17,10 +20,14 @@ import 'package:crowd_funding_app/widgets/loading_progress.dart';
 import 'package:crowd_funding_app/widgets/refered_by.dart';
 import 'package:crowd_funding_app/widgets/telebirr_button.dart';
 import 'package:crowd_funding_app/widgets/your_donation_detail.dart';
+import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:android_intent_plus/android_intent.dart';
+import 'package:platform/platform.dart';
 
 class DonationPage extends StatefulWidget {
   DonationPage({Key? key, required this.fundraise}) : super(key: key);
@@ -46,6 +53,8 @@ class DonationPageState extends State<DonationPage> {
       _myData['lastName'] = _user.lastName;
     });
   }
+
+  static const telebirrChannel = MethodChannel('legas/telebirr_channel');
 
   @override
   void initState() {
@@ -168,7 +177,7 @@ class DonationPageState extends State<DonationPage> {
                           },
                           onChanged: (value) {
                             setState(() {
-                              _donation = int.parse(value);
+                              _donation = int.tryParse(value) ?? 0;
                             });
                           },
                           textAlign: TextAlign.end,
@@ -361,7 +370,7 @@ class DonationPageState extends State<DonationPage> {
                                           tip: double.parse((_tip * _donation)
                                               .toStringAsFixed(1)),
                                           comment: _comment,
-                                        )
+                                          paymentMethod: 'paypal')
                                       : Donation(
                                           isAnonymous: _isAnonymous,
                                           amount: _donation,
@@ -369,7 +378,7 @@ class DonationPageState extends State<DonationPage> {
                                           tip: double.parse((_tip * _donation)
                                               .toStringAsFixed(2)),
                                           comment: _comment,
-                                        );
+                                          paymentMethod: 'paypal');
                               await context.read<DonationModel>().payWithPayPal(
                                     donation,
                                     tokenData.data,
@@ -425,7 +434,8 @@ class DonationPageState extends State<DonationPage> {
                                     // );
                                     Fluttertoast.showToast(
                                         msg:
-                                            "Unable to donate please try again", toastLength: Toast.LENGTH_LONG);
+                                            "Unable to donate please try again",
+                                        toastLength: Toast.LENGTH_LONG);
                                     return;
                                   }
                                 }
@@ -440,9 +450,7 @@ class DonationPageState extends State<DonationPage> {
                         height: 30.0,
                       ),
                       if (_showDoantionInfo)
-                        TelebirrButton(onPressed: () {
-                          Fluttertoast.showToast(msg: "Soon!");
-                        }),
+                        TelebirrButton(onPressed: callTelebirrSdk),
 
                       if (!_showDoantionInfo)
                         ContinueButton(
@@ -464,4 +472,149 @@ class DonationPageState extends State<DonationPage> {
           ),
         ));
   }
+
+  Future callTelebirrSdk() async {
+    if (_formKey.currentState!.validate()) {
+      loadingProgress(context);
+      UserPreference userPreference = UserPreference();
+      PreferenceData tokenData = await userPreference.getUserToken();
+      PreferenceData userData = await userPreference.getUserInfromation();
+
+      Donation donation = _memberId != '' && _memberId != "0"
+          ? Donation(
+              isAnonymous: _isAnonymous,
+              amount: _donation,
+              userID: userData.data,
+              memberID: _memberId,
+              tip: double.parse((_tip * _donation).toStringAsFixed(1)),
+              comment: _comment,
+              paymentMethod: 'telebirr')
+          : Donation(
+              isAnonymous: _isAnonymous,
+              amount: _donation,
+              userID: userData.data,
+              memberID: userData.data,
+              tip: double.parse((_tip * _donation).toStringAsFixed(2)),
+              comment: _comment,
+              paymentMethod: 'telebirr');
+      await context.read<DonationModel>().payWithTelebirr(
+            donation,
+            tokenData.data,
+            widget.fundraise,
+          );
+      Response response = context.read<DonationModel>().response;
+      if (response.status == ResponseStatus.SUCCESS) {
+        // pass arguments which are: outTradeNo, price, subject
+        var price = donation.amount! + donation.tip!;
+        var arguments = {
+          "outTradeNo": response.data.toString(),
+          "price": price.toString(),
+          "subject": "Donating for ${widget.fundraise.title}"
+        };
+
+        await telebirrChannel
+            .invokeMethod('showNativeView', arguments)
+            .catchError((onError) {
+          print("TELEBIRRRRRRRRRRR EROOR: ");
+
+          var result = {"CODE": 0, "MSG": "there is an error"};
+          Navigator.of(context).pop();
+          Fluttertoast.showToast(
+              msg: "${result['MSG']}", toastLength: Toast.LENGTH_LONG);
+        }).then((onValue) {
+          var result = jsonDecode(onValue);
+          //var data = jsonDecode(result['DATA']);
+
+          print(
+              "TELEBIRRRRRRRRRRR: ${result['CODE']} ${result['MSG']} ${result['TRADE_STATUS']}"); 
+          if (result['CODE'] == "0" && result['TRADE_STATUS'] == "2") {
+            Fluttertoast.showToast(
+                msg: "Sucessfully donated \$$_donation",
+                toastLength: Toast.LENGTH_LONG);
+            Navigator.of(context).pushNamedAndRemoveUntil(
+              HomePage.routeName,
+              (route) => false,
+            );
+          } else if (result['CODE'] == "0" && result['TRADE_STATUS'] == "4") {
+            Navigator.of(context).pop();
+            Fluttertoast.showToast(
+                msg: "Payment cancelled", toastLength: Toast.LENGTH_LONG);
+          } else {
+            Navigator.of(context).pop();
+            Fluttertoast.showToast(
+                msg: "${result['MSG']}", toastLength: Toast.LENGTH_LONG);
+          }
+        });
+      }
+    }
+  }
 }
+
+// trying telebirr using packages
+/*() async {
+                          Fluttertoast.showToast(msg: "Soon!");
+                          if (_formKey.currentState!.validate()) {
+                            loadingProgress(context);
+                            UserPreference userPreference = UserPreference();
+                            PreferenceData tokenData =
+                                await userPreference.getUserToken();
+                            PreferenceData userData =
+                                await userPreference.getUserInfromation();
+
+                            Donation donation = _memberId != '' &&
+                                    _memberId != "0"
+                                ? Donation(
+                                    isAnonymous: _isAnonymous,
+                                    amount: _donation,
+                                    userID: userData.data,
+                                    memberID: _memberId,
+                                    tip: double.parse(
+                                        (_tip * _donation).toStringAsFixed(1)),
+                                    comment: _comment,
+                                    paymentMethod: 'telebirr')
+                                : Donation(
+                                    isAnonymous: _isAnonymous,
+                                    amount: _donation,
+                                    userID: userData.data,
+                                    memberID: userData.data,
+                                    tip: double.parse(
+                                        (_tip * _donation).toStringAsFixed(2)),
+                                    comment: _comment,
+                                    paymentMethod: 'telebirr');
+                            await context.read<DonationModel>().payWithTelebirr(
+                                  donation,
+                                  tokenData.data,
+                                  widget.fundraise,
+                                );
+                            Response response =
+                                context.read<DonationModel>().response;
+                            if (response.status == ResponseStatus.SUCCESS) {
+                              // launch telebirr app
+                              // await LaunchApp.openApp(
+                              //   androidPackageName:
+                              //       'cn.tydic.ethiopay',
+                              //   iosUrlScheme: 'pulsesecure://',
+                              //   appStoreLink:
+                              //       'itms-apps://itunes.apple.com/us/app/pulse-secure/id945832041',
+                              //   // openStore: false
+                              // );
+
+                              print(response.data.runtimeType);
+                              var data = jsonDecode(response.data);
+
+                              if (LocalPlatform().isAndroid) {
+                                final intent = AndroidIntent(
+                                    action: 'action_attach_data',
+                                    //data: data['extras'].toString(),
+                                    //package: data['launchIntentForPackage'],
+                                    componentName:
+                                        'cc.xxx.ethiopay.PayForOtherAppActivity"');
+                                intent.launch();
+                              }
+
+                              // use webview
+
+                            }
+                          }
+                        }
+                        */

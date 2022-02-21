@@ -123,7 +123,7 @@ class Fundraise {
         ? Location(latitude: "0", longitude: "0")
         : Location.fromJson(data["location"]);
     print("trace 3");
-    String dateCreated = data['dateCreated'];
+    String dateCreated = data['dateCreated'] ?? '';
     print("trace 4");
     User organizer =
         data['organizer'] == null ? User() : User.fromJson(data['organizer']);

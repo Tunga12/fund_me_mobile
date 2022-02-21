@@ -132,7 +132,7 @@ class _CampaignDetailState extends State<CampaignDetail> {
       _fundraise = model.fundraise;
       _response = model.response;
       _reportReasons = _responseModel.data;
-      _currencyRate = _currencyRateResponse.data;
+      _currencyRate = _currencyRateResponse.data ?? 0;
     });
   }
 

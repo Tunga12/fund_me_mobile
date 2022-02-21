@@ -28,3 +28,8 @@ subprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+ext {
+    hostUrl = "https://app.ethiomobilemoney.et:2121/ammapi/payment/service-openup/"
+    bulidName = 'Release'
+}

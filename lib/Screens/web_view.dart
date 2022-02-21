@@ -71,7 +71,8 @@ class _WebBrowserState extends State<WebBrowser> {
             if (request.url.startsWith('https://www.youtube.com/')) {
               print('blocking navigation to $request}');
               return NavigationDecision.prevent;
-            } else if (request.url.startsWith("http://178.62.55.81/api/donation/success")) {
+            } else if (request.url
+                .startsWith("http://178.62.55.81/api/donation/success")) {
               print("++++++++++++++++++true");
               final response = await http.Client().get(
                 Uri.parse(request.url),
@@ -296,7 +297,11 @@ class NavigationControls extends StatelessWidget {
           (BuildContext context, AsyncSnapshot<WebViewController> snapshot) {
         final bool webViewReady =
             snapshot.connectionState == ConnectionState.done;
+        if(!snapshot.hasData){
+          return Container();
+        }
         final WebViewController controller = snapshot.data!;
+
         return Row(
           children: <Widget>[
             IconButton(

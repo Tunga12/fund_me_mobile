@@ -59,7 +59,8 @@ class FundraiseModel extends ChangeNotifier {
           status: ResponseStatus.FORMATERROR,
           data: null,
           message: "Invalid response from the server");
-    } catch (e) {
+    } on Error catch (e) {
+      print("tunga ${e.stackTrace}");
       response = Response(
           status: ResponseStatus.MISMATCHERROR,
           data: null,
@@ -89,9 +90,9 @@ class FundraiseModel extends ChangeNotifier {
       print('Fundraise Error ${e.message}');
       response = Response(
           status: ResponseStatus.FORMATERROR, data: null, message: e.message);
-    } catch (e) {
+    } on Error catch (e) {
       print("fundriser error");
-      print(e.toString());
+      print(e.stackTrace);
       
       String message = e.toString().contains('ID was not found')
           ? "Fundraiser not found"

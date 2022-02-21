@@ -63,7 +63,7 @@ class User {
     bool isDeactivated = data['isDeactivated'] ?? false;
     bool isAdmin = data['isAdmin'] ?? false;
     String phoneNumber = data['phoneNumber'] ?? '';
-    bool isVerified = data['isVerified'];
+    bool isVerified = data['isVerified'] ?? false;
 
     return User(
       id: id,

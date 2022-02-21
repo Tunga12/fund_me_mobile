@@ -10,6 +10,7 @@ class Donation {
   bool? isDeleted;
   double? tip;
   bool? isAnonymous;
+  String? paymentMethod;
 
   Donation(
       {this.id,
@@ -20,7 +21,8 @@ class Donation {
       this.tip,
       this.date,
       this.isAnonymous,
-      this.isDeleted});
+      this.isDeleted,
+      this.paymentMethod});
 
   factory Donation.fromJson(Map<String, dynamic> data) {
     
@@ -34,6 +36,7 @@ class Donation {
     String dateString = data['date'] ?? "";
     bool isDeleted = data['isDeleted'] ?? false;
     bool isAnonymous = data['isAnonymous'] ?? false;
+    String paymentMethod = data['paymentMethod'] ?? "";
 
     
 
@@ -45,7 +48,8 @@ class Donation {
         comment: comment,
         date: dateString,
         isDeleted: isDeleted,
-        isAnonymous: isAnonymous);
+        isAnonymous: isAnonymous,
+        paymentMethod: paymentMethod);
   }
 
   // To convert Donation object to map
@@ -70,6 +74,7 @@ class Donation {
             comment: $comment,
             date: $date,
             'tip': $tip,
+            paymentMethod:$paymentMethod
            }
         ''';
   }
