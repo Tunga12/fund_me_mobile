@@ -15,7 +15,7 @@ class FundraiseDataProvider {
   Future<bool> createFundraise(
       Fundraise fundraise, String token, File image) async {
     http.Response? response;
-     await getImage(token, image).then((imageResp) async {
+    await getImage(token, image).then((imageResp) async {
       print("the response image is $imageResp");
       response = await httpClient.post(
         Uri.parse(EndPoints.fundraises),
@@ -34,9 +34,11 @@ class FundraiseDataProvider {
             'longitude': fundraise.location!.longitude
           },
           'isPublished': true,
+          'paymentInfo': fundraise.paymentInfo!.id
         }),
       );
     });
+    print('create fundraiser response: $response');
     // print("create fundraise status ${response!.statusCode}");
     if (response!.statusCode == 201) {
       return true;
@@ -64,6 +66,7 @@ class FundraiseDataProvider {
       final popularFundraises =
           jsonDecode(response.body) as Map<String, dynamic>;
       print("success popular fundraisers");
+      print(response.body);
       return HomeFundraise.fromJson(popularFundraises);
     } else {
       print("The exception is ");
@@ -123,7 +126,8 @@ class FundraiseDataProvider {
               "isPublished": fundraise.isPublished,
               "totalShareCount": fundraise.totalSharedCount,
               "likeCount": fundraise.likeCount,
-              if (fundraise.beneficiary != null)
+              if (fundraise.beneficiary != null &&
+                  fundraise.beneficiary!.id != null)
                 'beneficiary': fundraise.beneficiary!.id,
               "title": fundraise.title,
               "image": fundraise.image,
@@ -132,6 +136,7 @@ class FundraiseDataProvider {
               "organizer": fundraise.organizer!.id,
               "likedBy": fundraise.likedBy,
               "category": fundraise.category!.categoryID,
+              "paymentInfo": fundraise.paymentInfo!.id
             }),
           )
         : await getImage(token, image).then((imageResponse) async {
@@ -148,10 +153,10 @@ class FundraiseDataProvider {
                   "latitude": fundraise.location!.latitude,
                   "longitude": fundraise.location!.longitude,
                 },
-                 "totalRaised": {
-                "dollar": fundraise.totalRaised!.dollar,
-                "birr": fundraise.totalRaised!.birr
-              },
+                "totalRaised": {
+                  "dollar": fundraise.totalRaised!.dollar,
+                  "birr": fundraise.totalRaised!.birr
+                },
                 "isPublished": fundraise.isPublished,
                 "totalShareCount": fundraise.totalSharedCount,
                 "likeCount": fundraise.likeCount,
@@ -167,6 +172,7 @@ class FundraiseDataProvider {
           });
     print("update status code ${response!.statusCode}");
     print("update body  ${response!.body}");
+    print("beneficiary  ${fundraise.beneficiary}");
     if (response!.statusCode == 200) {
       return true;
     } else {
@@ -247,7 +253,7 @@ class FundraiseDataProvider {
         headers: <String, String>{
           'x-auth-token': token,
         });
-        
+
     if (response.statusCode == 200) {
       return HomeFundraise.fromJson(jsonDecode(response.body));
     } else {

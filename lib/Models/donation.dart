@@ -4,7 +4,7 @@ class Donation {
   String? id;
   User? userID;
   String? memberID;
-  int? amount;
+  double? amount;
   String? comment;
   String? date;
   bool? isDeleted;
@@ -25,20 +25,16 @@ class Donation {
       this.paymentMethod});
 
   factory Donation.fromJson(Map<String, dynamic> data) {
-    
-    
     String id = data['_id'] ?? "";
     User userID =
         data['userId'] == null ? User() : User.fromJson(data['userId']);
     String memberID = data['memberId'] ?? "";
-    int amount = data['amount'] ?? 0;
+    double amount = double.tryParse(data['amount'].toString()) ?? 0;
     String comment = data['comment'] ?? "";
     String dateString = data['date'] ?? "";
     bool isDeleted = data['isDeleted'] ?? false;
     bool isAnonymous = data['isAnonymous'] ?? false;
     String paymentMethod = data['paymentMethod'] ?? "";
-
-    
 
     return Donation(
         id: id,
@@ -73,7 +69,7 @@ class Donation {
             amount: $amount,
             comment: $comment,
             date: $date,
-            'tip': $tip,
+            tip: $tip,
             paymentMethod:$paymentMethod
            }
         ''';

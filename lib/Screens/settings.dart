@@ -31,17 +31,13 @@ class _SettingsState extends State<Settings> {
   };
 
   @override
-  void initState() { 
+  void initState() {
     super.initState();
-    
   }
 
- 
   // String lableLanguage = "en";
   @override
   Widget build(BuildContext context) {
-   
-
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -61,15 +57,15 @@ class _SettingsState extends State<Settings> {
               leading: Icon(Icons.manage_accounts_outlined),
               title: Text(LocaleKeys.account_listitle_text.tr()),
             ),
-            ListTile(
-              onTap: () {
-                print('Payment methods pressed');
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => PaymentMethods()));
-              },
-              leading: Icon(Icons.credit_card),
-              title: Text(LocaleKeys.payment_methods_listitle_text.tr()),
-            ),
+            // ListTile(
+            //   onTap: () {
+            //     print('Payment methods pressed');
+            //     Navigator.push(context,
+            //         MaterialPageRoute(builder: (context) => PaymentMethods()));
+            //   },
+            //   leading: Icon(Icons.credit_card),
+            //   title: Text(LocaleKeys.payment_methods_listitle_text.tr()),
+            // ),
             ListTile(
               onTap: () {
                 print('Email notifications pressed');
@@ -94,11 +90,13 @@ class _SettingsState extends State<Settings> {
               leading: Icon(Icons.language),
               title: Text(LocaleKeys.language_listile_text.tr()),
               trailing: DropdownButton<String>(
-                hint: Text(_languages[context.locale.toString()], style: TextStyle(color: Theme.of(context).secondaryHeaderColor),),
-                
+                hint: Text(
+                  _languages[context.locale.toString()],
+                  style:
+                      TextStyle(color: Theme.of(context).secondaryHeaderColor),
+                ),
                 onChanged: (value) async {
                   await context.setLocale(Locale(value.toString()));
-                 
                 },
                 items: _languages.entries
                     .map<DropdownMenuItem<String>>((language) {

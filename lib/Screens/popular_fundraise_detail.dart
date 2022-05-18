@@ -101,9 +101,9 @@ class _CampaignDetailState extends State<CampaignDetail> {
       _user = userData.data;
       _token = tokeData.data;
 
-      _isLiked =
-          _user != null ? model.likedBy!.contains(userData.data.id) : false;
-      _likeCount = model.likedBy!.length;
+      // _isLiked =
+      //     _user != null ? model.likedBy!.contains(userData.data.id) : false;
+      // _likeCount = model.likedBy!.length;
     });
   }
 
@@ -117,9 +117,6 @@ class _CampaignDetailState extends State<CampaignDetail> {
       Duration(milliseconds: 1),
       () => context.read<ReportModel>().getReportReasons(),
     );
-    
-   
- 
 
     final _currencyRateResponse = context.read<CurrencyRateModel>().response;
 
@@ -213,7 +210,8 @@ class _CampaignDetailState extends State<CampaignDetail> {
 
       String lastDonation = donations.isNotEmpty
           ? CustomTime.displayTimeAgoFromTimestamp(
-              _fundraise!.donations![0].date!, context,numericDates: true)
+              _fundraise!.donations![0].date!, context,
+              numericDates: true)
           : "Just Now";
       List<Donation> avatarDonations =
           donations.length >= 3 ? donations.sublist(0, 3) : donations;
@@ -544,16 +542,16 @@ class _CampaignDetailState extends State<CampaignDetail> {
           ],
         ),
         bottomNavigationBar: CampainBottomNavBar(
-          isLiked: _isLiked,
-          likeText: Counter.getCounter(_likeCount),
+          // isLiked: _isLiked,
+          // likeText: Counter.getCounter(_likeCount),
           shareCount: totalShareCount,
-          likeAction: () {
-            if (_user != null) {
-              _likeAction(_fundraise!);
-            } else {
-              Navigator.of(context).pushNamed(SigninPage.routeName);
-            }
-          },
+          // likeAction: () {
+          //   if (_user != null) {
+          //     _likeAction(_fundraise!);
+          //   } else {
+          //     Navigator.of(context).pushNamed(SigninPage.routeName);
+          //   }
+          // },
           shareAction: () {
             Navigator.of(context).push(
               MaterialPageRoute(

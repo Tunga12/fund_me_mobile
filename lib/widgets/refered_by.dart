@@ -132,29 +132,29 @@ class _RefferedByState extends State<RefferedBy> {
                   )
                 ],
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Checkbox(
-                    value: _getNotification,
-                    onChanged: (value) {
-                      setState(() {
-                        _getNotification = value!;
-                      });
-                    },
-                  ),
-                  Container(
-                    width: size.width * 0.6,
-                    child: Text(
-                     LocaleKeys.get_occational_marketing_label_text.tr(),
-                      style: labelTextStyle.copyWith(
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).secondaryHeaderColor,
-                      ),
-                    ),
-                  )
-                ],
-              )
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.start,
+              //   children: [
+              //     Checkbox(
+              //       value: _getNotification,
+              //       onChanged: (value) {
+              //         setState(() {
+              //           _getNotification = value!;
+              //         });
+              //       },
+              //     ),
+              //     Container(
+              //       width: size.width * 0.6,
+              //       child: Text(
+              //         LocaleKeys.get_occasional_marketing_label_text.tr(),
+              //         style: labelTextStyle.copyWith(
+              //           fontWeight: FontWeight.w500,
+              //           color: Theme.of(context).secondaryHeaderColor,
+              //         ),
+              //       ),
+              //     )
+              //   ],
+              // )
             ],
           ))
         ],

@@ -3,6 +3,8 @@ import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Models/total_raised.dart';
 import 'package:crowd_funding_app/Models/user.dart';
+import 'package:crowd_funding_app/Screens/create_fundraiser_page_one.dart';
+import 'package:crowd_funding_app/Screens/create_fundraiser_page_shortcode.dart';
 import 'package:crowd_funding_app/Screens/loading_screen.dart';
 import 'package:crowd_funding_app/Screens/popular_fundraise_detail.dart';
 import 'package:crowd_funding_app/Screens/create_fundraiser_home.dart';
@@ -146,7 +148,8 @@ class _HomeBodyState extends State<HomeBody> {
                           if (_user != null) {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => CreateFundraiserHome(),
+                                builder: (context) =>
+                                    CreateFundraiserPageShortcode(),
                               ),
                             );
                           } else {

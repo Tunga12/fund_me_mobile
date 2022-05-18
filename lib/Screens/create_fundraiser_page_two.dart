@@ -25,6 +25,12 @@ class _CreateFundraiserPageTwoState extends State<CreateFundraiserPageTwo> {
   String _initialStory = '';
 
   @override
+  void initState() {
+    super.initState();
+    this._fundraiseInfo = widget.fundraiseInfo;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
@@ -37,6 +43,10 @@ class _CreateFundraiserPageTwoState extends State<CreateFundraiserPageTwo> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    FormProgress(
+                      size: size,
+                      color: Theme.of(context).accentColor,
+                    ),
                     FormProgress(
                       size: size,
                       color: Theme.of(context).accentColor,
@@ -60,7 +70,7 @@ class _CreateFundraiserPageTwoState extends State<CreateFundraiserPageTwo> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      LocaleKeys.step_2_of_label_text.tr(),
+                      LocaleKeys.step_3_of_4_label_text.tr(),
                       style: stepTextStyle.copyWith(
                           color: Theme.of(context)
                               .secondaryHeaderColor
@@ -88,11 +98,17 @@ class _CreateFundraiserPageTwoState extends State<CreateFundraiserPageTwo> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          FormLabelText(text: LocaleKeys.give_your_fundraiser_title_label_text.tr()),
+                          FormLabelText(
+                              text: LocaleKeys
+                                  .give_your_fundraiser_title_label_text
+                                  .tr()),
                           TextFormField(
                             validator: (value) {
                               if (value!.isEmpty) {
-                                return LocaleKeys.title_required_label_text.tr();
+                                return LocaleKeys.title_required_label_text
+                                    .tr();
+                              } else if (value.length < 5) {
+                                return 'title should be at least 5 characters';
                               }
                             },
                             onSaved: (value) {
@@ -101,10 +117,13 @@ class _CreateFundraiserPageTwoState extends State<CreateFundraiserPageTwo> {
                               });
                             },
                             decoration: InputDecoration(
-                                hintText: LocaleKeys.help_gabriel_attend_label_text.tr()),
+                                hintText: LocaleKeys
+                                    .help_gabriel_attend_label_text
+                                    .tr()),
                           ),
                           FormLabelText(
-                              text: LocaleKeys.desctibe_your_need_label_text.tr()),
+                              text: LocaleKeys.desctibe_your_need_label_text
+                                  .tr()),
                           TextFormField(
                             initialValue: _initialStory,
                             // onTap: () async {
@@ -125,9 +144,13 @@ class _CreateFundraiserPageTwoState extends State<CreateFundraiserPageTwo> {
                             maxLength: 255,
                             validator: (value) {
                               if (value!.isEmpty) {
-                                return LocaleKeys.description_required_label_text.tr();
+                                return LocaleKeys
+                                    .description_required_label_text
+                                    .tr();
                               } else if (value.length < 30) {
-                                return LocaleKeys.desctipion_must_bea_atleast_30_label_text.tr();
+                                return LocaleKeys
+                                    .desctipion_must_bea_atleast_30_label_text
+                                    .tr();
                               } else {
                                 return null;
                               }
@@ -157,23 +180,22 @@ class _CreateFundraiserPageTwoState extends State<CreateFundraiserPageTwo> {
                                   isValidate: true,
                                   onPressed: () {
                                     _formKey.currentState!.save();
-                                    final info = {
-                                      'title': _fundraiseInfo['title'],
-                                      'story': _fundraiseInfo['story'],
-                                      'location':
-                                          widget.fundraiseInfo['location'],
-                                      'goalAmount':
-                                          widget.fundraiseInfo['goalAmount'],
-                                      'category':
-                                          widget.fundraiseInfo['category']
-                                    };
-                                    print("info $info");
+                                    // final info = {
+                                    //   'title': _fundraiseInfo['title'],
+                                    //   'story': _fundraiseInfo['story'],
+                                    //   'location':
+                                    //       widget.fundraiseInfo['location'],
+                                    //   'goalAmount':
+                                    //       widget.fundraiseInfo['goalAmount'],
+                                    //   'category':
+                                    //       widget.fundraiseInfo['category']
+                                    // };
+                                    print("step two $_fundraiseInfo");
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             CreateFundraiserPageThree(
-                                          fundraiseInfo: info,
-                                        ),
+                                                fundraiseInfo: _fundraiseInfo),
                                       ),
                                     );
                                   })

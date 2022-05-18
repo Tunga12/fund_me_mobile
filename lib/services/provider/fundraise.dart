@@ -93,7 +93,8 @@ class FundraiseModel extends ChangeNotifier {
     } on Error catch (e) {
       print("fundriser error");
       print(e.stackTrace);
-      
+      print(e);
+
       String message = e.toString().contains('ID was not found')
           ? "Fundraiser not found"
           : "Faild to fetch fundraiser";
@@ -132,8 +133,9 @@ class FundraiseModel extends ChangeNotifier {
           status: ResponseStatus.FORMATERROR,
           data: null,
           message: "Invalid response from the server");
-    } catch (e) {
-      print("Create error ${e.toString()}");
+    } catch (e, stack) {
+      print("Create error ${e}");
+      print("Create error ${stack}");
       response = Response(
           status: ResponseStatus.MISMATCHERROR,
           data: null,

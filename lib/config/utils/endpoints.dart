@@ -92,11 +92,14 @@ class EndPoints {
 
   // currency Strong
   static const String currencyURL =
-      "https://free.currconv.com/api/v7/convert?q=USD_ETB&compact=ultra&apiKey=320b48a5bd4a198cd402";
+      "https://combanketh.et/cbeapi/daily-exchange-rates?_limit=1&_sort=Date:DESC";
 
   // report reason
   static const String reportReasonURL = baseURL + "/api/reasons";
 
-  // payment return back url 
-  static const String paymentReturnURL = "http://178.62.55.81/api/donation/success";
+  // payment return back url
+  static const String paymentReturnURL =
+      "http://178.62.55.81/api/donation/success";
+
+  static const paymentInfo = baseURL + "/api/paymentInfo";
 }

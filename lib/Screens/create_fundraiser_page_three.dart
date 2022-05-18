@@ -101,6 +101,10 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                       size: size,
                       color: Theme.of(context).accentColor,
                     ),
+                    FormProgress(
+                      size: size,
+                      color: Theme.of(context).accentColor,
+                    ),
                   ],
                 ),
               ),
@@ -124,7 +128,7 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                       //   ),
                       // ),
                       Text(
-                        LocaleKeys.step_3_of_3_label_text.tr(),
+                        LocaleKeys.step_4_of_4_label_text.tr(),
                         style: stepTextStyle.copyWith(
                             color: Theme.of(context)
                                 .secondaryHeaderColor
@@ -340,14 +344,20 @@ class _CreateFundraiserPageThreeState extends State<CreateFundraiserPageThree> {
                               PreferenceData userInfo =
                                   await UserPreference().getUserInfromation();
                               Fundraise fundraise = Fundraise(
-                                title: widget.fundraiseInfo['title'],
-                                story: widget.fundraiseInfo['story'],
-                                location: widget.fundraiseInfo['location'],
-                                category: widget.fundraiseInfo['category'],
-                                goalAmount: int.parse(
-                                    widget.fundraiseInfo['goalAmount']),
-                                beneficiary: userInfo.data,
-                              );
+                                  title: widget.fundraiseInfo['title'],
+                                  story: widget.fundraiseInfo['story'],
+                                  location: widget.fundraiseInfo['location'],
+                                  category: widget.fundraiseInfo['category'],
+                                  goalAmount: int.parse(
+                                      widget.fundraiseInfo['goalAmount']),
+                                  beneficiary: userInfo.data,
+                                  paymentInfo:
+                                      widget.fundraiseInfo['paymentInfo']);
+                              print(
+                                  'paymentInfo: ${widget.fundraiseInfo['paymentInfo']}');
+                              print(
+                                  'paymentInfo: ${widget.fundraiseInfo['category']}');
+
                               PreferenceData tokenInfo =
                                   await UserPreference().getUserToken();
                               String token = tokenInfo.data;

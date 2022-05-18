@@ -56,19 +56,22 @@ class _ReportDialogState extends State<ReportDialog> {
           child: Column(
             children: widget.reportReasons
                 .map(
-                  (reason) => Row(
-                    children: [
-                      Radio<String>(
-                          value: reason.id!,
-                          groupValue: _reportReason,
-                          onChanged: (value) {
-                            setState(() {
-                              _reportReason = value!;
-                              _reportReasonName = reason.name;
-                            });
-                          }),
-                      Text(reason.name!)
-                    ],
+                  (reason) => Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: Row(
+                      children: [
+                        Radio<String>(
+                            value: reason.id!,
+                            groupValue: _reportReason,
+                            onChanged: (value) {
+                              setState(() {
+                                _reportReason = value!;
+                                _reportReasonName = reason.name;
+                              });
+                            }),
+                        Flexible(child: Text(reason.name!))
+                      ],
+                    ),
                   ),
                 )
                 .toList(),

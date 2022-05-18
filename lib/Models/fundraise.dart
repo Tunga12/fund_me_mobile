@@ -1,5 +1,6 @@
 import 'package:crowd_funding_app/Models/category.dart';
 import 'package:crowd_funding_app/Models/donation.dart';
+import 'package:crowd_funding_app/Models/paymentInfo.dart';
 import 'package:crowd_funding_app/Models/team_member.dart';
 import 'package:crowd_funding_app/Models/total_raised.dart';
 import 'package:crowd_funding_app/Models/total_withdraw.dart';
@@ -30,6 +31,8 @@ class Fundraise {
   List<String>? likedBy;
   Withdrwal? withdrwal;
 
+  PaymentInfo? paymentInfo;
+
   Fundraise(
       {this.id,
       this.title,
@@ -50,30 +53,31 @@ class Fundraise {
       this.totalRaised,
       this.likedBy,
       this.withdrwal,
-      this.totalWithdrawal});
+      this.totalWithdrawal,
+      this.paymentInfo});
 
-  Fundraise copyWith({
-    String? id,
-    String? title,
-    String? image,
-    int? goalAmount,
-    String? story,
-    Category? category,
-    Location? location,
-    String? dateCreated,
-    User? organizer,
-    User? beneficiary,
-    List<Donation>? donations,
-    List<Update>? updates,
-    List<TeamMember>? teams,
-    bool? isPublished,
-    int? totalSharedCount,
-    int? likeCount,
-    TotalRaised? totalRaised,
-    List<String>? likedBy,
-    Withdrwal? withdrwal,
-    List<TotalWithdraw>? totalWithdrawal,
-  }) {
+  Fundraise copyWith(
+      {String? id,
+      String? title,
+      String? image,
+      int? goalAmount,
+      String? story,
+      Category? category,
+      Location? location,
+      String? dateCreated,
+      User? organizer,
+      User? beneficiary,
+      List<Donation>? donations,
+      List<Update>? updates,
+      List<TeamMember>? teams,
+      bool? isPublished,
+      int? totalSharedCount,
+      int? likeCount,
+      TotalRaised? totalRaised,
+      List<String>? likedBy,
+      Withdrwal? withdrwal,
+      List<TotalWithdraw>? totalWithdrawal,
+      PaymentInfo? paymentInfo}) {
     return Fundraise(
         id: id ?? this.id,
         title: title ?? this.title,
@@ -94,7 +98,8 @@ class Fundraise {
         totalRaised: totalRaised ?? this.totalRaised,
         likedBy: likedBy ?? this.likedBy,
         withdrwal: withdrwal ?? this.withdrwal,
-        totalWithdrawal: totalWithdrawal ?? this.totalWithdrawal);
+        totalWithdrawal: totalWithdrawal ?? this.totalWithdrawal,
+        paymentInfo: paymentInfo ?? this.paymentInfo);
   }
 
   // parsing json object to Fundraise object
@@ -109,9 +114,10 @@ class Fundraise {
     print("Is integer");
     print(data['totalRaised'] is int);
     print(data['totalRaised']);
-    TotalRaised totalRaised = data['totalRaised'] is int
-        ? TotalRaised(dollar: 0, birr: data['totalRaised'])
-        : TotalRaised.fromJson(data['totalRaised'] ?? {});
+    // TotalRaised totalRaised = data['totalRaised'] is int
+    //     ? TotalRaised(dollar: 0, birr: data['totalRaised'])
+    //     : TotalRaised.fromJson(data['totalRaised'] ?? {});
+    TotalRaised totalRaised = TotalRaised.fromJson(data['totalRaised']);
     print(totalRaised);
     String story = data['story'] ?? '';
     print("trace 1");
@@ -147,31 +153,32 @@ class Fundraise {
     List totalWithdrawal = data['totalWithdraw'] ?? [];
     totalWithdrawal.map((e) => TotalWithdraw.fromJson(e)).toList();
     print("trace 10");
+    Map<String, dynamic> paymentInfo = data['paymentInfo'] ?? {};
 
     Fundraise fundraise = Fundraise(
-      id: id,
-      title: title,
-      image: image,
-      goalAmount: goalAmount,
-      story: story,
-      category: category,
-      location: location,
-      dateCreated: dateCreated,
-      organizer: organizer,
-      beneficiary: beneficiary,
-      donations: donationDynamic.map((e) => Donation.fromJson(e)).toList(),
-      updates: updatesDynamic.map((e) => Update.fromJson(e)).toList(),
-      teams: teamsDynamic.map((team) => TeamMember.fromJson(team)).toList(),
-      isPublished: isPublished,
-      totalSharedCount: totalShareCount,
-      likeCount: likeCount,
-      // isDelete: isDeleted,
-      totalRaised: totalRaised,
-      likedBy: likedBy.map((e) => e.toString()).toList(),
-      withdrwal: Withdrwal.fromJson(withdraw),
-      totalWithdrawal:
-          totalWithdrawal.map((e) => TotalWithdraw.fromJson(e)).toList(),
-    );
+        id: id,
+        title: title,
+        image: image,
+        goalAmount: goalAmount,
+        story: story,
+        category: category,
+        location: location,
+        dateCreated: dateCreated,
+        organizer: organizer,
+        beneficiary: beneficiary,
+        donations: donationDynamic.map((e) => Donation.fromJson(e)).toList(),
+        updates: updatesDynamic.map((e) => Update.fromJson(e)).toList(),
+        teams: teamsDynamic.map((team) => TeamMember.fromJson(team)).toList(),
+        isPublished: isPublished,
+        totalSharedCount: totalShareCount,
+        likeCount: likeCount,
+        // isDelete: isDeleted,
+        totalRaised: totalRaised,
+        likedBy: likedBy.map((e) => e.toString()).toList(),
+        withdrwal: Withdrwal.fromJson(withdraw),
+        totalWithdrawal:
+            totalWithdrawal.map((e) => TotalWithdraw.fromJson(e)).toList(),
+        paymentInfo: PaymentInfo.fromJson(paymentInfo));
     print("fundraise fundraise is ");
     print(fundraise);
     return fundraise;
@@ -193,7 +200,8 @@ class Fundraise {
       'isPublished': isPublished ?? false,
       'totalShareCount': totalSharedCount ?? 0,
       'likeCount': likeCount ?? 0,
-      "likedBy": likedBy ?? []
+      "likedBy": likedBy ?? [],
+      "paymentInfo": paymentInfo!.id ?? ""
       // 'isDelete': isDelete,
     };
   }
@@ -214,7 +222,9 @@ class Fundraise {
       totalSharedCount: ${totalSharedCount ?? 0},
       likeCount: ${likeCount ?? 0},
       likedBy: ${likedBy ?? []},
-      withdraw: $withdrwal
+      withdraw: $withdrwal,
+      paymentInfo: ${paymentInfo != null ? paymentInfo!.id : ""},
+
       }''';
   }
 }

@@ -11,6 +11,7 @@ import 'package:crowd_funding_app/Screens/web_view.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/services/provider/donation.dart';
+import 'package:crowd_funding_app/services/provider/paymentInfo.dart';
 import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/authdialog.dart';
 import 'package:crowd_funding_app/widgets/comment_box.dart';
@@ -65,11 +66,11 @@ class DonationPageState extends State<DonationPage> {
   bool _bankInfoValidated = false;
   final _formKey = GlobalKey<FormState>();
   double _sliderValue = 10.0;
-  int _donation = 0;
+  double _donation = 0;
 
-  double _tip = 0.0;
+  double _tip = 0.075;
   bool _showDoantionInfo = false;
-  String _comment = 'New donation';
+  String _comment = '';
 
   bool _isAnonymous = false;
 
@@ -80,7 +81,7 @@ class DonationPageState extends State<DonationPage> {
     print(_memberId);
     print("data is $_myData");
     print(_comment);
-    _tip = _sliderValue * 0.01;
+    // _tip = _sliderValue * 0.01;
     print("tip");
     print(_tip * _donation);
     final size = MediaQuery.of(context).size;
@@ -137,8 +138,7 @@ class DonationPageState extends State<DonationPage> {
                               ),
                             ),
                             TextSpan(
-                              text:
-                                  " ${widget.fundraise.organizer!.firstName} ${widget.fundraise.organizer!.lastName} ",
+                              text: " ${widget.fundraise.paymentInfo!.name}",
                               style: TextStyle(
                                   color: Colors.grey[600],
                                   fontWeight: FontWeight.bold),
@@ -177,7 +177,7 @@ class DonationPageState extends State<DonationPage> {
                           },
                           onChanged: (value) {
                             setState(() {
-                              _donation = int.tryParse(value) ?? 0;
+                              _donation = double.tryParse(value) ?? 0;
                             });
                           },
                           textAlign: TextAlign.end,
@@ -196,13 +196,15 @@ class DonationPageState extends State<DonationPage> {
                             prefixIcon: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text(
-                                  "\$",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 30.0,
-                                      fontWeight: FontWeight.bold),
-                                ),
+                                Icon(Icons.money,
+                                    color: Colors.black, size: 30.0),
+                                // Text(
+                                //   "\$",
+                                //   style: TextStyle(
+                                //       color: Colors.black,
+                                //       fontSize: 30.0,
+                                //       fontWeight: FontWeight.bold),
+                                // ),
                                 Text(
                                   LocaleKeys.usd_label_text.tr(),
                                   style: TextStyle(color: Colors.black),
@@ -226,75 +228,75 @@ class DonationPageState extends State<DonationPage> {
                       SizedBox(
                         height: 20.0,
                       ),
-                      Text(
-                        LocaleKeys.Tips_legas_service_label_text.tr(),
-                        style: TextStyle(
-                            fontSize: 18.0,
-                            color: Colors.grey[600],
-                            fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
-                      Container(
-                        child: Text(
-                          LocaleKeys.legas_has_a_zero_label_text.tr(),
-                          style: TextStyle(color: Colors.grey, height: 1.5),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 50.0,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                              flex: 1,
-                              child: Text("10%",
-                                  style: labelTextStyle.copyWith(
-                                      color: Theme.of(context)
-                                          .secondaryHeaderColor))),
-                          Expanded(
-                            flex: 10,
-                            child: SliderTheme(
-                              data: SliderTheme.of(context).copyWith(
-                                  activeTrackColor: Theme.of(context)
-                                      .accentColor
-                                      .withOpacity(0.6),
-                                  trackHeight: 4.0,
-                                  tickMarkShape: RoundSliderTickMarkShape(),
-                                  thumbColor: Theme.of(context).accentColor,
-                                  activeTickMarkColor: Colors.white,
-                                  inactiveTickMarkColor: Colors.white,
-                                  valueIndicatorColor:
-                                      Theme.of(context).backgroundColor),
-                              child: Slider.adaptive(
-                                label:
-                                    "${_donation == 0 ? "" : (_donation * _tip).toStringAsFixed(1)}  $_sliderValue%",
-                                divisions: 10,
-                                min: 10.0,
-                                max: 25.0,
-                                value: _sliderValue,
-                                onChanged: (value) {
-                                  setState(() {
-                                    _sliderValue = value;
-                                  });
-                                },
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Text("25%",
-                                style: labelTextStyle.copyWith(
-                                    color: Theme.of(context)
-                                        .secondaryHeaderColor)),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20.0,
-                      ),
+                      // Text(
+                      //   LocaleKeys.Tips_legas_service_label_text.tr(),
+                      //   style: TextStyle(
+                      //       fontSize: 18.0,
+                      //       color: Colors.grey[600],
+                      //       fontWeight: FontWeight.bold),
+                      // ),
+                      // SizedBox(
+                      //   height: 20.0,
+                      // ),
+                      // Container(
+                      //   child: Text(
+                      //     LocaleKeys.legas_has_a_zero_label_text.tr(),
+                      //     style: TextStyle(color: Colors.grey, height: 1.5),
+                      //   ),
+                      // ),
+                      // SizedBox(
+                      //   height: 50.0,
+                      // ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   children: [
+                      //     Expanded(
+                      //         flex: 1,
+                      //         child: Text("10%",
+                      //             style: labelTextStyle.copyWith(
+                      //                 color: Theme.of(context)
+                      //                     .secondaryHeaderColor))),
+                      //     Expanded(
+                      //       flex: 10,
+                      //       child: SliderTheme(
+                      //         data: SliderTheme.of(context).copyWith(
+                      //             activeTrackColor: Theme.of(context)
+                      //                 .accentColor
+                      //                 .withOpacity(0.6),
+                      //             trackHeight: 4.0,
+                      //             tickMarkShape: RoundSliderTickMarkShape(),
+                      //             thumbColor: Theme.of(context).accentColor,
+                      //             activeTickMarkColor: Colors.white,
+                      //             inactiveTickMarkColor: Colors.white,
+                      //             valueIndicatorColor:
+                      //                 Theme.of(context).backgroundColor),
+                      //         child: Slider.adaptive(
+                      //           label:
+                      //               "${_donation == 0 ? "" : (_donation * _tip).toStringAsFixed(1)}  $_sliderValue%",
+                      //           divisions: 10,
+                      //           min: 10.0,
+                      //           max: 25.0,
+                      //           value: _sliderValue,
+                      //           onChanged: (value) {
+                      //             setState(() {
+                      //               _sliderValue = value;
+                      //             });
+                      //           },
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     Expanded(
+                      //       flex: 1,
+                      //       child: Text("25%",
+                      //           style: labelTextStyle.copyWith(
+                      //               color: Theme.of(context)
+                      //                   .secondaryHeaderColor)),
+                      //     )
+                      //   ],
+                      // ),
+                      // SizedBox(
+                      //   height: 20.0,
+                      // ),
                       // if (_showDoantionInfo)
                       //   BankInformation(
                       //     fundraise: widget.fundraise,
@@ -350,101 +352,101 @@ class DonationPageState extends State<DonationPage> {
                       SizedBox(
                         height: 20.0,
                       ),
-                      if (_showDoantionInfo)
-                        PaymentButton(
-                          onPressed: () async {
-                            if (_formKey.currentState!.validate()) {
-                              loadingProgress(context);
-                              UserPreference userPreference = UserPreference();
-                              PreferenceData tokenData =
-                                  await userPreference.getUserToken();
-                              PreferenceData userData =
-                                  await userPreference.getUserInfromation();
-                              Donation donation =
-                                  _memberId != '' && _memberId != "0"
-                                      ? Donation(
-                                          isAnonymous: _isAnonymous,
-                                          amount: _donation,
-                                          userID: userData.data,
-                                          memberID: _memberId,
-                                          tip: double.parse((_tip * _donation)
-                                              .toStringAsFixed(1)),
-                                          comment: _comment,
-                                          paymentMethod: 'paypal')
-                                      : Donation(
-                                          isAnonymous: _isAnonymous,
-                                          amount: _donation,
-                                          userID: userData.data,
-                                          tip: double.parse((_tip * _donation)
-                                              .toStringAsFixed(2)),
-                                          comment: _comment,
-                                          paymentMethod: 'paypal');
-                              await context.read<DonationModel>().payWithPayPal(
-                                    donation,
-                                    tokenData.data,
-                                    widget.fundraise.id!,
-                                  );
-                              Response response =
-                                  context.read<DonationModel>().response;
-                              if (response.status == ResponseStatus.SUCCESS) {
-                                Navigator.of(context).pop();
-                                print("Url is ");
-                                print(response.data);
-                                String url = response.data;
-                                final successDonation =
-                                    await Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => WebBrowser(
-                                      url,
-                                    ),
-                                  ),
-                                );
-                                print('isSuccessFully donated');
-                                print(successDonation);
-                                if (successDonation) {
-                                  loadingProgress(context);
-                                  await context
-                                      .read<DonationModel>()
-                                      .createDonation(donation, tokenData.data,
-                                          widget.fundraise.id!);
-                                  Response _createResponse =
-                                      context.read<DonationModel>().response;
-                                  print("donation status is");
-                                  print(_createResponse.status);
+                      // if (_showDoantionInfo)
+                      //   PaymentButton(
+                      //     onPressed: () async {
+                      //       if (_formKey.currentState!.validate()) {
+                      //         loadingProgress(context);
+                      //         UserPreference userPreference = UserPreference();
+                      //         PreferenceData tokenData =
+                      //             await userPreference.getUserToken();
+                      //         PreferenceData userData =
+                      //             await userPreference.getUserInfromation();
+                      //         Donation donation =
+                      //             _memberId != '' && _memberId != "0"
+                      //                 ? Donation(
+                      //                     isAnonymous: _isAnonymous,
+                      //                     amount: _donation,
+                      //                     userID: userData.data,
+                      //                     memberID: _memberId,
+                      //                     tip: double.parse((_tip * _donation)
+                      //                         .toStringAsFixed(1)),
+                      //                     comment: _comment,
+                      //                     paymentMethod: 'paypal')
+                      //                 : Donation(
+                      //                     isAnonymous: _isAnonymous,
+                      //                     amount: _donation,
+                      //                     userID: userData.data,
+                      //                     tip: double.parse((_tip * _donation)
+                      //                         .toStringAsFixed(2)),
+                      //                     comment: _comment,
+                      //                     paymentMethod: 'paypal');
+                      //         await context.read<DonationModel>().payWithPayPal(
+                      //               donation,
+                      //               tokenData.data,
+                      //               widget.fundraise.id!,
+                      //             );
+                      //         Response response =
+                      //             context.read<DonationModel>().response;
+                      //         if (response.status == ResponseStatus.SUCCESS) {
+                      //           Navigator.of(context).pop();
+                      //           print("Url is ");
+                      //           print(response.data);
+                      //           String url = response.data;
+                      //           final successDonation =
+                      //               await Navigator.of(context).push(
+                      //             MaterialPageRoute(
+                      //               builder: (context) => WebBrowser(
+                      //                 url,
+                      //               ),
+                      //             ),
+                      //           );
+                      //           print('isSuccessFully donated');
+                      //           print(successDonation);
+                      //           if (successDonation) {
+                      //             loadingProgress(context);
+                      //             await context
+                      //                 .read<DonationModel>()
+                      //                 .createDonation(donation, tokenData.data,
+                      //                     widget.fundraise.id!);
+                      //             Response _createResponse =
+                      //                 context.read<DonationModel>().response;
+                      //             print("donation status is");
+                      //             print(_createResponse.status);
 
-                                  if (_createResponse.status ==
-                                      ResponseStatus.SUCCESS) {
-                                    Fluttertoast.showToast(
-                                        msg:
-                                            "Successfully donated $_donation\$");
-                                    Navigator.of(context)
-                                        .pushNamedAndRemoveUntil(
-                                      HomePage.routeName,
-                                      (route) => false,
-                                    );
-                                    return;
-                                  } else {
-                                    Navigator.of(context).pop();
-                                    print(_createResponse.message);
-                                    // authShowDialog(
-                                    //   context,
-                                    //   Text("Unable to donate"),
-                                    //   close: true,
-                                    //   error: true,
-                                    // );
-                                    Fluttertoast.showToast(
-                                        msg:
-                                            "Unable to donate please try again",
-                                        toastLength: Toast.LENGTH_LONG);
-                                    return;
-                                  }
-                                }
-                              } else {
-                                authShowDialog(context, Text(response.message));
-                              }
-                            }
-                          },
-                        ),
+                      //             if (_createResponse.status ==
+                      //                 ResponseStatus.SUCCESS) {
+                      //               Fluttertoast.showToast(
+                      //                   msg:
+                      //                       "Successfully donated $_donation\$");
+                      //               Navigator.of(context)
+                      //                   .pushNamedAndRemoveUntil(
+                      //                 HomePage.routeName,
+                      //                 (route) => false,
+                      //               );
+                      //               return;
+                      //             } else {
+                      //               Navigator.of(context).pop();
+                      //               print(_createResponse.message);
+                      //               // authShowDialog(
+                      //               //   context,
+                      //               //   Text("Unable to donate"),
+                      //               //   close: true,
+                      //               //   error: true,
+                      //               // );
+                      //               Fluttertoast.showToast(
+                      //                   msg:
+                      //                       "Unable to donate please try again",
+                      //                   toastLength: Toast.LENGTH_LONG);
+                      //               return;
+                      //             }
+                      //           }
+                      //         } else {
+                      //           authShowDialog(context, Text(response.message));
+                      //         }
+                      //       }
+                      //     },
+                      //   ),
 
                       SizedBox(
                         height: 30.0,
@@ -486,7 +488,7 @@ class DonationPageState extends State<DonationPage> {
               amount: _donation,
               userID: userData.data,
               memberID: _memberId,
-              tip: double.parse((_tip * _donation).toStringAsFixed(1)),
+              tip: double.parse(with2decimals(_tip * _donation)),
               comment: _comment,
               paymentMethod: 'telebirr')
           : Donation(
@@ -494,7 +496,7 @@ class DonationPageState extends State<DonationPage> {
               amount: _donation,
               userID: userData.data,
               memberID: userData.data,
-              tip: double.parse((_tip * _donation).toStringAsFixed(2)),
+              tip: double.parse(with2decimals(_tip * _donation)),
               comment: _comment,
               paymentMethod: 'telebirr');
       await context.read<DonationModel>().payWithTelebirr(
@@ -504,49 +506,70 @@ class DonationPageState extends State<DonationPage> {
           );
       Response response = context.read<DonationModel>().response;
       if (response.status == ResponseStatus.SUCCESS) {
-        // pass arguments which are: outTradeNo, price, subject
-        var price = donation.amount! + donation.tip!;
-        var arguments = {
-          "outTradeNo": response.data.toString(),
-          "price": price.toString(),
-          "subject": "Donating for ${widget.fundraise.title}"
-        };
+        // get paymentInfo
+        await context
+            .read<PaymentInfoProvider>()
+            .getPaymentInfo(widget.fundraise.paymentInfo?.id ?? '');
 
-        await telebirrChannel
-            .invokeMethod('showNativeView', arguments)
-            .catchError((onError) {
-          print("TELEBIRRRRRRRRRRR EROOR: ");
+        Response paymentInfoResponse =
+            context.read<PaymentInfoProvider>().response;
 
-          var result = {"CODE": 0, "MSG": "there is an error"};
-          Navigator.of(context).pop();
-          Fluttertoast.showToast(
-              msg: "${result['MSG']}", toastLength: Toast.LENGTH_LONG);
-        }).then((onValue) {
-          var result = jsonDecode(onValue);
-          //var data = jsonDecode(result['DATA']);
+        if (paymentInfoResponse.status == ResponseStatus.SUCCESS) {
+          print('in paymentInfoResponse success');
 
-          print(
-              "TELEBIRRRRRRRRRRR: ${result['CODE']} ${result['MSG']} ${result['TRADE_STATUS']}"); 
-          if (result['CODE'] == "0" && result['TRADE_STATUS'] == "2") {
-            Fluttertoast.showToast(
-                msg: "Sucessfully donated \$$_donation",
-                toastLength: Toast.LENGTH_LONG);
-            Navigator.of(context).pushNamedAndRemoveUntil(
-              HomePage.routeName,
-              (route) => false,
-            );
-          } else if (result['CODE'] == "0" && result['TRADE_STATUS'] == "4") {
-            Navigator.of(context).pop();
-            Fluttertoast.showToast(
-                msg: "Payment cancelled", toastLength: Toast.LENGTH_LONG);
-          } else {
+          // pass arguments which are: outTradeNo, price, subject
+          var price = donation.amount!;
+          var arguments = {
+            "outTradeNo": response.data.toString(),
+            "price": price.toString(),
+            "subject": "Donating for ${widget.fundraise.title}",
+            "appKey": paymentInfoResponse.data.appKeyTelebirr.toString(),
+            "appId": paymentInfoResponse.data.appIdTelebirr.toString(),
+            "shortcode": paymentInfoResponse.data.shortcodeTelebirr.toString()
+          };
+
+          await telebirrChannel
+              .invokeMethod('showNativeView', arguments)
+              .catchError((onError) {
+            print("TELEBIRRRRRRRRRRR EROOR: ");
+
+            var result = {"CODE": 0, "MSG": "there is an error"};
             Navigator.of(context).pop();
             Fluttertoast.showToast(
                 msg: "${result['MSG']}", toastLength: Toast.LENGTH_LONG);
-          }
-        });
+          }).then((onValue) {
+            var result = jsonDecode(onValue);
+            //var data = jsonDecode(result['DATA']);
+
+            print(
+                "TELEBIRRRRRRRRRRR: ${result['CODE']} ${result['MSG']} ${result['TRADE_STATUS']}");
+            if (result['CODE'] == "0" && result['TRADE_STATUS'] == "2") {
+              Fluttertoast.showToast(
+                  msg: "Sucessfully donated \$$_donation",
+                  toastLength: Toast.LENGTH_LONG);
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                HomePage.routeName,
+                (route) => false,
+              );
+            } else if (result['CODE'] == "0" && result['TRADE_STATUS'] == "4") {
+              Navigator.of(context).pop();
+              Fluttertoast.showToast(
+                  msg: "Payment cancelled", toastLength: Toast.LENGTH_LONG);
+            } else {
+              Navigator.of(context).pop();
+              Fluttertoast.showToast(
+                  msg: "${result['MSG']}", toastLength: Toast.LENGTH_LONG);
+            }
+          });
+        }
       }
     }
+  }
+
+// returns the tip two decimals after the point without rounding
+  with2decimals(double numb) {
+    RegExp re = RegExp(r'(^-?\d+(?:\.\d{0,2})?)');
+    return re.stringMatch(numb.toString());
   }
 }
 

@@ -33,6 +33,7 @@ class _HelpState extends State<Help> {
   );
 
   _getHelps() async {
+    _helps = [];
     await Future.delayed(
       Duration(seconds: 2),
       () => Provider.of<HelpModel>(context, listen: false).getHelp(),
@@ -149,28 +150,28 @@ class _HelpState extends State<Help> {
                         border: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.grey))),
                   ),
-                  SizedBox(
-                    height: 20.0,
-                  ),
-                  Container(
-                    child: RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(children: [
-                        TextSpan(
-                            text: LocaleKeys.click_here_text.tr(),
-                            style: TextStyle(
-                                fontSize: 18.0,
-                                color: Theme.of(context).accentColor),
-                            recognizer: TapGestureRecognizer()..onTap = () {}),
-                        TextSpan(
-                          text: LocaleKeys.looking_for_fundraiser_text.tr(),
-                          style: TextStyle(
-                              fontSize: 18.0,
-                              color: Theme.of(context).secondaryHeaderColor),
-                        )
-                      ]),
-                    ),
-                  ),
+                  // SizedBox(
+                  //   height: 20.0,
+                  // ),
+                  // Container(
+                  //   child: RichText(
+                  //     textAlign: TextAlign.center,
+                  //     text: TextSpan(children: [
+                  //       TextSpan(
+                  //           text: LocaleKeys.click_here_text.tr(),
+                  //           style: TextStyle(
+                  //               fontSize: 18.0,
+                  //               color: Theme.of(context).accentColor),
+                  //           recognizer: TapGestureRecognizer()..onTap = () {}),
+                  //       TextSpan(
+                  //         text: LocaleKeys.looking_for_fundraiser_text.tr(),
+                  //         style: TextStyle(
+                  //             fontSize: 18.0,
+                  //             color: Theme.of(context).secondaryHeaderColor),
+                  //       )
+                  //     ]),
+                  //   ),
+                  // ),
                   SizedBox(
                     height: 20.0,
                   ),
@@ -252,24 +253,12 @@ class _HelpState extends State<Help> {
                   SizedBox(
                     height: 20.0,
                   ),
-
-                  UnorderedList(text: LocaleKeys.changing_phone_number_text.tr()),
-                  UnorderedList(text: LocaleKeys.changing_phone_number_text.tr()),
-                  UnorderedList(text: LocaleKeys.changing_phone_number_text.tr()),
-                  UnorderedList(text: LocaleKeys.changing_phone_number_text.tr()),
-                  UnorderedList(text: LocaleKeys.changing_phone_number_text.tr()),
-                  UnorderedList(text: LocaleKeys.changing_phone_number_text.tr()),
-                  UnorderedList(text: LocaleKeys.changing_phone_number_text.tr()),
-                  UnorderedList(text: LocaleKeys.changing_phone_number_text.tr()),
-                  UnorderedList(text: LocaleKeys.changing_phone_number_text.tr()),
-                  UnorderedList(text: LocaleKeys.changing_phone_number_text.tr()),
-                  UnorderedList(text: LocaleKeys.changing_phone_number_text.tr()),
-                  UnorderedList(text: LocaleKeys.changing_phone_number_text.tr()),
-                  UnorderedList(text: LocaleKeys.changing_phone_number_text.tr()),
-                  UnorderedList(text: LocaleKeys.changing_phone_number_text.tr()),
-                  UnorderedList(text: LocaleKeys.changing_phone_number_text.tr()),
-                  UnorderedList(text: LocaleKeys.changing_phone_number_text.tr()),
-                 
+                  UnorderedList(
+                      text: LocaleKeys.changing_phone_number_text.tr()),
+                  UnorderedList(
+                      text: LocaleKeys.changing_phone_number_text.tr()),
+                  UnorderedList(
+                      text: LocaleKeys.changing_phone_number_text.tr()),
                   SizedBox(
                     height: 20.0,
                   ),
@@ -279,32 +268,31 @@ class _HelpState extends State<Help> {
                 ],
               ),
             ),
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 40.0),
-              decoration: BoxDecoration(
-                color: Theme.of(context).backgroundColor,
-                boxShadow: [
-                  BoxShadow(
-                      color: Colors.grey.withOpacity(0.3),
-                      blurRadius: 5.0,
-                      offset: Offset(0, 3))
-                ],
-              ),
-              child: Center(
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.symmetric(horizontal: 30.0),
-                    backgroundColor: Theme.of(context).accentColor,
-                  ),
-                  child: Text(
-                    LocaleKeys.get_help_text.tr(),
-                    style: TextStyle(color: Theme.of(context).backgroundColor),
-                  ),
-                  onPressed: () {},
-                ),
-              ),
-            ),
-            
+            // Container(
+            //   padding: EdgeInsets.symmetric(vertical: 40.0),
+            //   decoration: BoxDecoration(
+            //     color: Theme.of(context).backgroundColor,
+            //     boxShadow: [
+            //       BoxShadow(
+            //           color: Colors.grey.withOpacity(0.3),
+            //           blurRadius: 5.0,
+            //           offset: Offset(0, 3))
+            //     ],
+            //   ),
+            //   child: Center(
+            //     child: TextButton(
+            //       style: TextButton.styleFrom(
+            //         padding: EdgeInsets.symmetric(horizontal: 30.0),
+            //         backgroundColor: Theme.of(context).accentColor,
+            //       ),
+            //       child: Text(
+            //         LocaleKeys.get_help_text.tr(),
+            //         style: TextStyle(color: Theme.of(context).backgroundColor),
+            //       ),
+            //       onPressed: () {},
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       );

@@ -11,7 +11,7 @@ class FormProgress extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 10.0,
-      width: size.width * 0.32,
+      width: size.width * 0.24,
       color: color,
     );
   }

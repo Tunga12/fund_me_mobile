@@ -290,49 +290,49 @@ class _SigninPageState extends State<SigninPage> {
                   ),
                 ),
                 OrDivider(),
-                SizedBox(
-                  width: size.width * 0.7,
-                  child: TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.blue.shade700,
-                    ),
-                    onPressed: () {},
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 35,
-                          height: 35,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              image: DecorationImage(
-                                image: AssetImage(
-                                  'assets/images/googleIcon.png',
-                                ),
-                              )),
-                        ),
-                        // Image(
-                        //   image: AssetImage(
-                        //     'assets/images/googleIcon.png',
+                // SizedBox(
+                //   width: size.width * 0.7,
+                //   child: TextButton(
+                //     style: TextButton.styleFrom(
+                //       backgroundColor: Colors.blue.shade700,
+                //     ),
+                //     onPressed: () {},
+                //     child: Row(
+                //       children: [
+                //         Container(
+                //           width: 35,
+                //           height: 35,
+                //           decoration: BoxDecoration(
+                //               color: Colors.white,
+                //               image: DecorationImage(
+                //                 image: AssetImage(
+                //                   'assets/images/googleIcon.png',
+                //                 ),
+                //               )),
+                //         ),
+                //         // Image(
+                //         //   image: AssetImage(
+                //         //     'assets/images/googleIcon.png',
 
-                        //   ),
-                        //   width: 40.0,
-                        // ),
-                        SizedBox(
-                          width: 20.0,
-                        ),
-                        Text(
-                          LocaleKeys.continue_with_google_text.tr(),
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText2!
-                              .copyWith(
-                                  fontSize: 17.0,
-                                  color: Theme.of(context).backgroundColor),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
+                //         //   ),
+                //         //   width: 40.0,
+                //         // ),
+                //         SizedBox(
+                //           width: 20.0,
+                //         ),
+                //         Text(
+                //           LocaleKeys.continue_with_google_text.tr(),
+                //           style: Theme.of(context)
+                //               .textTheme
+                //               .bodyText2!
+                //               .copyWith(
+                //                   fontSize: 17.0,
+                //                   color: Theme.of(context).backgroundColor),
+                //         )
+                //       ],
+                //     ),
+                //   ),
+                // ),
                 SizedBox(
                   height: 20.0,
                 ),

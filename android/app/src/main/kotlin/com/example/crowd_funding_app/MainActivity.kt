@@ -72,21 +72,21 @@ class MainActivity: FlutterActivity(), PaymentResultListener {
             if (call.method == "showNativeView") {
                 val arguments = call.arguments() as Map<String, String>
                 //initTeleBirr(getRandomNumber().toString(),"1")
-                initTeleBirr(arguments["outTradeNo"],arguments["price"], arguments["subject"])
+                initTeleBirr(arguments["outTradeNo"],arguments["price"], arguments["subject"], arguments["appKey"], arguments["appId"], arguments["shortcode"])
             } else {
                 result.notImplemented()
             }
         }
     }
 
-    fun initTeleBirr( payOTN: String?, price: String?, subject: String?) {
+    fun initTeleBirr( payOTN: String?, price: String?, subject: String?, appKey: String?, appId: String?, shortcode: String?) {
         val request = TradePayMapRequest()
-        request.appId = Constants.appidetProduction
+        request.appId = appId
         request.setNotifyUrl(Constants.notifyUrlet)
         request.setOutTradeNo(payOTN)
         request.setReceiveName(Constants.receiverNameet)
         request.setReturnUrl(Constants.returnUrlet)
-        request.setShortCode(Constants.shortcodeProduction)
+        request.setShortCode(shortcode)
         request.setSubject(subject)
         request.setTimeoutExpress(Constants.timeoutExpresset)
         request.setTotalAmount(price)

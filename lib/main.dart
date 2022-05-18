@@ -7,6 +7,7 @@ import 'package:crowd_funding_app/services/data_provider/fundraiser.dart';
 import 'package:crowd_funding_app/services/data_provider/auth.dart';
 import 'package:crowd_funding_app/services/data_provider/help.dart';
 import 'package:crowd_funding_app/services/data_provider/notification.dart';
+import 'package:crowd_funding_app/services/data_provider/paymentInfo.dart';
 import 'package:crowd_funding_app/services/data_provider/report.dart';
 import 'package:crowd_funding_app/services/data_provider/team_member.dart';
 import 'package:crowd_funding_app/services/data_provider/update.dart';
@@ -19,6 +20,7 @@ import 'package:crowd_funding_app/services/provider/donation.dart';
 import 'package:crowd_funding_app/services/provider/fundraise.dart';
 import 'package:crowd_funding_app/services/provider/help.dart';
 import 'package:crowd_funding_app/services/provider/notification.dart';
+import 'package:crowd_funding_app/services/provider/paymentInfo.dart';
 import 'package:crowd_funding_app/services/provider/report.dart';
 import 'package:crowd_funding_app/services/provider/team_add_deep_link.dart';
 import 'package:crowd_funding_app/services/provider/team_member.dart';
@@ -221,7 +223,9 @@ class CrowdFundingApp extends StatelessWidget {
                   ..getCurrencyRate()),
         ChangeNotifierProvider<ReportModel>(
             create: (context) =>
-                ReportModel(reportRepository: reportRepository))
+                ReportModel(reportRepository: reportRepository)),
+        ChangeNotifierProvider<PaymentInfoProvider>(
+            create: (context) => PaymentInfoProvider())
       ],
       child: Builder(
         builder: (BuildContext context) {

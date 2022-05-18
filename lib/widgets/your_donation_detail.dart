@@ -10,7 +10,7 @@ class YourDonationDetail extends StatelessWidget {
     required this.donation,
     required this.tip,
   }) : super(key: key);
-  final int donation;
+  final double donation;
   final double tip;
 
   @override
@@ -33,14 +33,14 @@ class YourDonationDetail extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "${LocaleKeys.Your_donation_label_text.tr()} $donation ",
+                "${LocaleKeys.Your_donation_label_text.tr()} ",
                 style: labelTextStyle.copyWith(
                     color: Theme.of(context)
                         .secondaryHeaderColor
                         .withOpacity(0.5)),
               ),
               Text(
-                "\$$donation.00",
+                "$donation.00",
                 style: labelTextStyle.copyWith(
                     color: Theme.of(context)
                         .secondaryHeaderColor
@@ -51,28 +51,28 @@ class YourDonationDetail extends StatelessWidget {
           SizedBox(
             height: 10.0,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                LocaleKeys.Legas_tip_label_text.tr(),
-                style: labelTextStyle.copyWith(
-                    color: Theme.of(context)
-                        .secondaryHeaderColor
-                        .withOpacity(0.5)),
-              ),
-              Text(
-                "\$${(tip * donation).toStringAsFixed(2)}",
-                style: labelTextStyle.copyWith(
-                    color: Theme.of(context)
-                        .secondaryHeaderColor
-                        .withOpacity(0.5)),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Text(
+          //       LocaleKeys.Legas_tip_label_text.tr(),
+          //       style: labelTextStyle.copyWith(
+          //           color: Theme.of(context)
+          //               .secondaryHeaderColor
+          //               .withOpacity(0.5)),
+          //     ),
+          //     Text(
+          //       "\$${(tip * donation).toStringAsFixed(2)}",
+          //       style: labelTextStyle.copyWith(
+          //           color: Theme.of(context)
+          //               .secondaryHeaderColor
+          //               .withOpacity(0.5)),
+          //     ),
+          //   ],
+          // ),
+          // SizedBox(
+          //   height: 10.0,
+          // ),
           Divider(
             thickness: 2.0,
             color: Theme.of(context).secondaryHeaderColor.withOpacity(0.3),
@@ -89,7 +89,7 @@ class YourDonationDetail extends StatelessWidget {
                     color: Theme.of(context).secondaryHeaderColor),
               ),
               Text(
-                "\$${(donation + tip * donation).toStringAsFixed(2)}",
+                "${(donation).toStringAsFixed(2)}",
                 style: labelTextStyle.copyWith(
                     color: Theme.of(context).secondaryHeaderColor),
               ),

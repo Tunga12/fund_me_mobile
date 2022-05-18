@@ -41,7 +41,7 @@ class FundraiserDetail extends StatefulWidget {
 
 class _FundraiserDetailState extends State<FundraiserDetail> {
   int index = 0;
-  User? user;
+  User? user = User();
   String? token;
   double _currencyRate = 0.0;
 
@@ -61,7 +61,7 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
 
     final _currencyRateResponse = context.read<CurrencyRateModel>().response;
     setState(() {
-      _currencyRate = _currencyRateResponse.data;
+      _currencyRate = _currencyRateResponse.data ?? 0.0;
     });
   }
 
@@ -121,8 +121,9 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
     print(_fundraise.withdrwal);
 
     Location? location = _fundraise.location;
-    List<Update> updates = _fundraise.updates!;
-    List<TeamMember> teams = _fundraise.teams!
+    List<Update> updates = _fundraise.updates ?? [];
+    List<TeamMember> teams = _fundraise.teams ?? [];
+    teams = teams
         .where((team) => team.member!.userID!.id != _fundraise.organizer!.id)
         .toList();
     List<Donation> donations = _fundraise.donations!;
@@ -294,11 +295,11 @@ class _FundraiserDetailState extends State<FundraiserDetail> {
                             iconData: Icons.wallet_travel,
                             onPressed: () {},
                           ),
-                          CustomRaisedButton(
-                            title: "${location!.latitude}",
-                            iconData: Icons.location_on_outlined,
-                            onPressed: () {},
-                          ),
+                          // CustomRaisedButton(
+                          //   title: "${location!.latitude}",
+                          //   iconData: Icons.location_on_outlined,
+                          //   onPressed: () {},
+                          // ),
                         ],
                       ),
                       SizedBox(

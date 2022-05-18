@@ -127,7 +127,7 @@ class _WithdrawPageState extends State<WithdrawPage> {
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: "Total raised from this fundraiser (after ",
+                          text: "Total raised from fundraiser (before ",
                           style: Theme.of(context).textTheme.bodyText1,
                         ),
                         TextSpan(
@@ -150,51 +150,51 @@ class _WithdrawPageState extends State<WithdrawPage> {
                   SizedBox(
                     height: 20.0,
                   ),
-                  Divider(
-                    thickness: 1.5,
-                  ),
+                  // Divider(
+                  //   thickness: 1.5,
+                  // ),
                   if (widget.isSetUped != null)
                     if (widget.isSetUped == false)
                       Container(
                         child: Column(
                           children: [
-                            SizedBox(
-                              width: size.width,
-                              child: TextButton(
-                                style: TextButton.styleFrom(
-                                    backgroundColor:
-                                        Theme.of(context).accentColor),
-                                onPressed: () {
-                                  if (_getTitle() == 'Set up withdrawals')
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            WithdrawalBeneficiarySelection(
-                                                widget.fundraise),
-                                      ),
-                                    );
-                                  else if (_getTitle() ==
-                                      'View previous withdrawals') {
-                                    print('view previous donations...');
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) =>
-                                            _showPreviousWithdrawals());
-                                  } else if (_getTitle() ==
-                                      'Withdrawal Pending...') {
-                                    Fluttertoast.showToast(
-                                        msg:
-                                            "Withdrawal is pending, please wait for approval");
-                                  }
-                                },
-                                child: Text(
-                                  _getTitle(),
-                                  style: TextStyle(
-                                    color: Theme.of(context).backgroundColor,
-                                  ),
-                                ),
-                              ),
-                            ),
+                            // SizedBox(
+                            //   width: size.width,
+                            //   child: TextButton(
+                            //     style: TextButton.styleFrom(
+                            //         backgroundColor:
+                            //             Theme.of(context).accentColor),
+                            //     onPressed: () {
+                            //       if (_getTitle() == 'Set up withdrawals')
+                            //         Navigator.of(context).push(
+                            //           MaterialPageRoute(
+                            //             builder: (context) =>
+                            //                 WithdrawalBeneficiarySelection(
+                            //                     widget.fundraise),
+                            //           ),
+                            //         );
+                            //       else if (_getTitle() ==
+                            //           'View previous withdrawals') {
+                            //         print('view previous donations...');
+                            //         showDialog(
+                            //             context: context,
+                            //             builder: (context) =>
+                            //                 _showPreviousWithdrawals());
+                            //       } else if (_getTitle() ==
+                            //           'Withdrawal Pending...') {
+                            //         Fluttertoast.showToast(
+                            //             msg:
+                            //                 "Withdrawal is pending, please wait for approval");
+                            //       }
+                            //     },
+                            //     child: Text(
+                            //       _getTitle(),
+                            //       style: TextStyle(
+                            //         color: Theme.of(context).backgroundColor,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // ),
                             Divider(
                               thickness: 1.5,
                             ),
@@ -234,11 +234,10 @@ class _WithdrawPageState extends State<WithdrawPage> {
                                                 style: TextStyle(
                                                     color: Colors.grey[700]),
                                                 text:
-                                                    "If you do not set up withdrawals within 90 days of your first donation,",
+                                                    "All donations are already transferred to your ",
                                               ),
                                               TextSpan(
-                                                text:
-                                                    "all donations will be refunded",
+                                                text: "telebirr account",
                                                 style: TextStyle(
                                                   color: Colors.grey[700],
                                                   fontWeight: FontWeight.bold,
@@ -254,20 +253,20 @@ class _WithdrawPageState extends State<WithdrawPage> {
                                     height: 20.0,
                                   ),
                                   WithdrawNote(
-                                    "Settings up withdrawals will not end your campaign. Your Campaing will continue will continue to accept donations",
+                                    "You can login into the portal you have received from telebirr and transfer the money to your bank account",
                                   ),
                                   SizedBox(
                                     height: 20.0,
                                   ),
-                                  WithdrawNote(
-                                    "Withdrawls to a bank account will start arriving in 2-5 business days after setup.",
-                                  ),
-                                  SizedBox(
-                                    height: 20.0,
-                                  ),
-                                  WithdrawNote(
-                                    "Need Someone else to withdrawals the money? No problem! You can grant them sole access as part of this process.",
-                                  )
+                                  // WithdrawNote(
+                                  //   "Withdrawls to a bank account will start arriving in 2-5 business days after setup.",
+                                  // ),
+                                  // SizedBox(
+                                  //   height: 20.0,
+                                  // ),
+                                  // WithdrawNote(
+                                  //   "Need Someone else to withdrawals the money? No problem! You can grant them sole access as part of this process.",
+                                  // )
                                 ],
                               ),
                             )

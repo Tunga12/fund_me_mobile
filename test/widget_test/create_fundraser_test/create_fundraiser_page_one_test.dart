@@ -15,7 +15,7 @@ import '../common/wrapper.dart';
 
 @GenerateMocks([http.Client])
 void main() {
-  group('Testing create', ()  {
+  group('Testing create', () {
     MockClient? client;
     CategoryDataProvider? categoryDataProvider;
     setUp(() {
@@ -28,8 +28,10 @@ void main() {
       CategoryRepository categoryRepository =
           CategoryRepository(dataProvider: categoryDataProvider!);
 
-      CreateFundraiserPageOne createFundraiserPageOne =
-          CreateFundraiserPageOne();
+      Map<String, dynamic> _fundraiseInfo = {};
+      CreateFundraiserPageOne createFundraiserPageOne = CreateFundraiserPageOne(
+        fundraiseInfo: _fundraiseInfo,
+      );
 
       await tester.pumpWidget(
         ChangeNotifierProvider(

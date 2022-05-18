@@ -4,7 +4,7 @@
     "type": "PROCESSED_RES",
     "kind": "Directory"
   },
-  "applicationId": "com.example.crowd_funding_app",
+  "applicationId": "com.legasfund.legas",
   "variantName": "processDebugResources",
   "elements": [
     {

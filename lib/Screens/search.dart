@@ -21,8 +21,8 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-   double _currencyRate = 0.0;
-   
+  double _currencyRate = 0.0;
+
   bool textFieldIsFocused = true;
   TextEditingController searchController = TextEditingController();
   ScrollController _campaignScrollController = ScrollController();
@@ -60,6 +60,8 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {
       _searching = true;
     });
+    // reset the array, so that it doesn't append
+    _searchedFundraises = [];
     await context.read<FundraiseModel>().searchFundraises(title, 0);
     Response response = context.read<FundraiseModel>().response;
     setState(() {
@@ -180,12 +182,14 @@ class _SearchPageState extends State<SearchPage> {
                             physics: ClampingScrollPhysics(),
                             itemCount: searchFundraises.length,
                             itemBuilder: (_, index) {
-                               TotalRaised _totalRaised = searchFundraises[index].totalRaised!;
-                    double _dollarValue = _currencyRate is double
-                        ? _currencyRate * _totalRaised.dollar!.toDouble()
-                        : _totalRaised.dollar!.toDouble();
-                    double totalRaised =
-                        _dollarValue + _totalRaised.birr!.toDouble();
+                              TotalRaised _totalRaised =
+                                  searchFundraises[index].totalRaised!;
+                              double _dollarValue = _currencyRate is double
+                                  ? _currencyRate *
+                                      _totalRaised.dollar!.toDouble()
+                                  : _totalRaised.dollar!.toDouble();
+                              double totalRaised =
+                                  _dollarValue + _totalRaised.birr!.toDouble();
                               return GestureDetector(
                                 onTap: () {
                                   String id = searchFundraises[index].id!;
@@ -200,16 +204,18 @@ class _SearchPageState extends State<SearchPage> {
                                 child: CampaignCard(
                                   fundraiseId: searchFundraises[index].id!,
                                   image: searchFundraises[index].image!,
-                                  donation:
-                                      searchFundraises[index].donations!.length >
-                                              0
-                                          ? searchFundraises[index].donations![0]
-                                          : Donation(),
-                                  goalAmount: searchFundraises[index].goalAmount!,
+                                  donation: searchFundraises[index]
+                                              .donations!
+                                              .length >
+                                          0
+                                      ? searchFundraises[index].donations![0]
+                                      : Donation(),
+                                  goalAmount:
+                                      searchFundraises[index].goalAmount!,
                                   locaion: 'location',
-                                  title: searchFundraises[index].title as String,
-                                  totalRaised:
-                                      totalRaised,
+                                  title:
+                                      searchFundraises[index].title as String,
+                                  totalRaised: totalRaised,
                                 ),
                               );
                             },
@@ -234,7 +240,7 @@ class _SearchPageState extends State<SearchPage> {
                       margin: EdgeInsets.symmetric(
                           horizontal: 20.0, vertical: 20.0),
                       child: Text(
-                       LocaleKeys.browse_label_text.tr(),
+                        LocaleKeys.browse_label_text.tr(),
                         style: titleTextStyle.copyWith(
                             color: Theme.of(context).secondaryHeaderColor),
                       ),

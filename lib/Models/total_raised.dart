@@ -1,6 +1,6 @@
 class TotalRaised {
-  int? birr;
-  int? dollar;
+  double? birr;
+  double? dollar;
 
   TotalRaised({
     required this.dollar,
@@ -8,8 +8,8 @@ class TotalRaised {
   });
 
   factory TotalRaised.fromJson(Map<String, dynamic> json) {
-    int birr = json['birr'] ?? 0;
-    int dollar = json['dollar'] ?? 0;
+    double birr = double.tryParse(json['birr'].toString()) ?? 0;
+    double dollar = double.tryParse(json['dollar'].toString()) ?? 0;
 
     return TotalRaised(
       dollar: dollar,

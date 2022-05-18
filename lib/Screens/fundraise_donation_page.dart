@@ -50,7 +50,7 @@ class FundraiseDonation extends StatelessWidget {
 
   String avatarText = '';
   String fullName = '';
-  int donateAmount = 0;
+  double donateAmount = 0;
   var dateTime;
 
   getData(BuildContext context) {

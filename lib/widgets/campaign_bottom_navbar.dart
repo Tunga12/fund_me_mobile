@@ -4,22 +4,22 @@ import 'package:easy_localization/easy_localization.dart';
 
 // ignore: must_be_immutable
 class CampainBottomNavBar extends StatelessWidget {
-  final Function likeAction;
+  // final Function likeAction;
   final Function shareAction;
   final Function donateAction;
   final Function reportAction;
-  String likeText;
+  // String likeText;
   String shareCount;
-  bool isLiked;
+  // bool isLiked;
 
   CampainBottomNavBar({
-    required this.likeAction,
+    // required this.likeAction,
     required this.shareAction,
     required this.donateAction,
     required this.reportAction,
-    required this.likeText,
+    // required this.likeText,
     required this.shareCount,
-    required this.isLiked,
+    // required this.isLiked,
   });
 
   @override
@@ -32,20 +32,20 @@ class CampainBottomNavBar extends StatelessWidget {
         children: [
           Row(
             children: [
-              TextButton.icon(
-                onPressed: () {
-                  likeAction();
-                },
-                icon: Icon(
-                  Icons.thumb_up_sharp,
-                  size: 20.0,
-                  color: isLiked ? Colors.blue : Colors.grey,
-                ),
-                label: Text(
-                  "$likeText",
-                  style: TextStyle(color: Colors.grey[700]),
-                ),
-              ),
+              // TextButton.icon(
+              //   onPressed: () {
+              //     likeAction();
+              //   },
+              //   icon: Icon(
+              //     Icons.thumb_up_sharp,
+              //     size: 20.0,
+              //     color: isLiked ? Colors.blue : Colors.grey,
+              //   ),
+              //   label: Text(
+              //     "$likeText",
+              //     style: TextStyle(color: Colors.grey[700]),
+              //   ),
+              // ),
               TextButton.icon(
                 onPressed: () {
                   shareAction();
@@ -62,32 +62,41 @@ class CampainBottomNavBar extends StatelessWidget {
               ),
             ],
           ),
-          TextButton(
-            style: TextButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 15.0),
-                backgroundColor: Theme.of(context).secondaryHeaderColor.withOpacity(0.5)),
-            onPressed: () {
-              reportAction();
-            },
-            child: Text(
-              LocaleKeys.report_button_text.tr(),
-              style: TextStyle(color: Theme.of(context).backgroundColor),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(right: 20.0),
-            child: TextButton(
-              style: TextButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 15.0),
-                  backgroundColor: Theme.of(context).accentColor),
-              onPressed: () {
-                donateAction();
-              },
-              child: Text(
-                LocaleKeys.donate_now_button_text.tr(),
-                style: TextStyle(color: Theme.of(context).backgroundColor),
+          Row(
+            children: [
+              TextButton(
+                style: TextButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 15.0),
+                    backgroundColor: Theme.of(context)
+                        .secondaryHeaderColor
+                        .withOpacity(0.3)),
+                onPressed: () {
+                  reportAction();
+                },
+                child: Text(
+                  LocaleKeys.report_button_text.tr(),
+                  style: TextStyle(color: Theme.of(context).backgroundColor),
+                ),
               ),
-            ),
+              SizedBox(
+                width: 15,
+              ),
+              Container(
+                margin: EdgeInsets.only(right: 20.0),
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                      padding: EdgeInsets.symmetric(horizontal: 15.0),
+                      backgroundColor: Theme.of(context).accentColor),
+                  onPressed: () {
+                    donateAction();
+                  },
+                  child: Text(
+                    LocaleKeys.donate_now_button_text.tr(),
+                    style: TextStyle(color: Theme.of(context).backgroundColor),
+                  ),
+                ),
+              )
+            ],
           )
         ],
       ),

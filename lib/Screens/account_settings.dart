@@ -149,9 +149,12 @@ class _AccountSettingsState extends State<AccountSettings> {
                           ),
                           validator: (value) {
                             if (value!.isEmpty) {
-                              return LocaleKeys.first_name_mustnot_empty_text.tr();
+                              return LocaleKeys.first_name_mustnot_empty_text
+                                  .tr();
                             } else if (value.length < 3) {
-                              return LocaleKeys.first_name_must_greater_than_three_text.tr();
+                              return LocaleKeys
+                                  .first_name_must_greater_than_three_text
+                                  .tr();
                             }
                           },
                           onSaved: (value) {
@@ -167,9 +170,12 @@ class _AccountSettingsState extends State<AccountSettings> {
                               labelText: LocaleKeys.last_name_text.tr()),
                           validator: (value) {
                             if (value!.isEmpty) {
-                              return LocaleKeys.last_name_mustnot_empty_text.tr();
+                              return LocaleKeys.last_name_mustnot_empty_text
+                                  .tr();
                             } else if (value.length < 3) {
-                              return LocaleKeys.last_name_must_greater_than_threww_text.tr();
+                              return LocaleKeys
+                                  .last_name_must_greater_than_threww_text
+                                  .tr();
                             }
                           },
                           onSaved: (value) {
@@ -235,63 +241,63 @@ class _AccountSettingsState extends State<AccountSettings> {
           SizedBox(
             height: 10.0,
           ),
-          Container(
-            padding: EdgeInsets.all(20.0),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    blurRadius: 7,
-                    offset: Offset(0, 3))
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  LocaleKeys.connected_accounts_text.tr(),
-                ),
-                SizedBox(
-                  height: 10.0,
-                ),
-                Text(
-                  LocaleKeys.connecting_makes_it_easy_text.tr(),
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
-                SizedBox(
-                  height: 30.0,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Icon(
-                      FontAwesomeIcons.facebookSquare,
-                      color: Colors.blue[900],
-                      size: 35.0,
-                    ),
-                    Text(
-                      LocaleKeys.facebook_text.tr(),
-                      style: Theme.of(context).textTheme.bodyText1,
-                    ),
-                    SizedBox(
-                      width: 30.0,
-                    ),
-                    TextButton(
-                        style: TextButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0)),
-                            padding: EdgeInsets.symmetric(horizontal: 30.0),
-                            side: BorderSide(color: Colors.green, width: 1.5)),
-                        onPressed: () {},
-                        child: Text(
-                          LocaleKeys.connect_button_text.tr(),
-                        ))
-                  ],
-                )
-              ],
-            ),
-          ),
+          // Container(
+          //   padding: EdgeInsets.all(20.0),
+          //   decoration: BoxDecoration(
+          //     color: Colors.white,
+          //     boxShadow: [
+          //       BoxShadow(
+          //           color: Colors.grey.withOpacity(0.5),
+          //           blurRadius: 7,
+          //           offset: Offset(0, 3))
+          //     ],
+          //   ),
+          //   child: Column(
+          //     crossAxisAlignment: CrossAxisAlignment.start,
+          //     children: [
+          //       Text(
+          //         LocaleKeys.connected_accounts_text.tr(),
+          //       ),
+          //       SizedBox(
+          //         height: 10.0,
+          //       ),
+          //       Text(
+          //         LocaleKeys.connecting_makes_it_easy_text.tr(),
+          //         style: Theme.of(context).textTheme.bodyText1,
+          //       ),
+          //       SizedBox(
+          //         height: 30.0,
+          //       ),
+          //       Row(
+          //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //         children: [
+          //           Icon(
+          //             FontAwesomeIcons.facebookSquare,
+          //             color: Colors.blue[900],
+          //             size: 35.0,
+          //           ),
+          //           Text(
+          //             LocaleKeys.facebook_text.tr(),
+          //             style: Theme.of(context).textTheme.bodyText1,
+          //           ),
+          //           SizedBox(
+          //             width: 30.0,
+          //           ),
+          //           TextButton(
+          //               style: TextButton.styleFrom(
+          //                   shape: RoundedRectangleBorder(
+          //                       borderRadius: BorderRadius.circular(8.0)),
+          //                   padding: EdgeInsets.symmetric(horizontal: 30.0),
+          //                   side: BorderSide(color: Colors.green, width: 1.5)),
+          //               onPressed: () {},
+          //               child: Text(
+          //                 LocaleKeys.connect_button_text.tr(),
+          //               ))
+          //         ],
+          //       )
+          //     ],
+          //   ),
+          // ),
           SizedBox(
             height: 30.0,
           ),

@@ -2,6 +2,7 @@ import 'package:crowd_funding_app/Models/fundraise.dart';
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Models/total_raised.dart';
 import 'package:crowd_funding_app/Screens/create_fundraiser_home.dart';
+import 'package:crowd_funding_app/Screens/create_fundraiser_page_shortcode.dart';
 import 'package:crowd_funding_app/Screens/loading_screen.dart';
 import 'package:crowd_funding_app/config/utils/user_preference.dart';
 import 'package:crowd_funding_app/services/provider/currency.dart';
@@ -60,10 +61,11 @@ class _ManageState extends State<Manage> {
         Provider.of<FundraiseModel>(context, listen: false)
             .homeFundraise
             .fundraises!;
+    // await context.read<CurrencyRateModel>().getCurrencyRate();
     Response _currencyResponse = context.read<CurrencyRateModel>().response;
 
     setState(() {
-      _currencyRate = _currencyResponse.data;
+      _currencyRate = _currencyResponse.data ?? 0.0;
       _response = context.read<FundraiseModel>().response;
       userFundraisesResponse.addAll(memberFundraisesResponse);
       userFundraisesResponse.addAll(beneficiaryFundraisesResponse);
@@ -103,7 +105,7 @@ class _ManageState extends State<Manage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => CreateFundraiserHome(),
+                    builder: (context) => CreateFundraiserPageShortcode(),
                   ),
                 );
               },

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:crowd_funding_app/Models/status.dart';
 import 'package:crowd_funding_app/Models/user.dart';
 import 'package:crowd_funding_app/Screens/create_fundraiser_home.dart';
+import 'package:crowd_funding_app/Screens/create_fundraiser_page_shortcode.dart';
 import 'package:crowd_funding_app/Screens/manage.dart';
 import 'package:crowd_funding_app/Screens/notification.dart';
 import 'package:crowd_funding_app/Screens/search.dart';
@@ -182,7 +183,7 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => CreateFundraiserHome(),
+                    builder: (context) => CreateFundraiserPageShortcode(),
                   ),
                 );
               },

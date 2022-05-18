@@ -11,9 +11,13 @@ class CurrencyDataProvider {
     final response = await httpClient.get(Uri.parse(EndPoints.currencyURL));
 
     if (response.statusCode == 200) {
-      Map<String, dynamic> _data = jsonDecode(response.body);
+      //Map<String, dynamic> _data = jsonDecode(response.body);
 
-      return _data['USD_ETB'];
+      //return _data['USD_ETB'];
+      var _data = jsonDecode(response.body);
+      return _data[0]['ExchangeRate']
+          .firstWhere((element) => element.currency.CurrencyCode == "USD")
+          .transactionalBuying;
     } else {
       throw Exception('error occured');
     }

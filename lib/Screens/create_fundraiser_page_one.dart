@@ -9,6 +9,7 @@ import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/continue_button.dart';
 import 'package:crowd_funding_app/widgets/form_label_text.dart';
 import 'package:crowd_funding_app/widgets/form_progress.dart';
+import 'package:crowd_funding_app/widgets/location_alert.dart';
 import 'package:crowd_funding_app/widgets/response_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -17,7 +18,8 @@ import 'package:provider/provider.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class CreateFundraiserPageOne extends StatefulWidget {
-  const CreateFundraiserPageOne({Key? key}) : super(key: key);
+  CreateFundraiserPageOne({required this.fundraiseInfo});
+  final Map<String, dynamic> fundraiseInfo;
 
   @override
   _CreateFundraiserPageOneState createState() =>
@@ -33,6 +35,7 @@ class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
   @override
   void initState() {
     super.initState();
+    this._fundraiseInfo = widget.fundraiseInfo;
   }
 
   int keyIndex = 0;
@@ -67,6 +70,10 @@ class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
                     ),
                     FormProgress(
                       size: size,
+                      color: Theme.of(context).accentColor,
+                    ),
+                    FormProgress(
+                      size: size,
                       color: Theme.of(context)
                           .secondaryHeaderColor
                           .withOpacity(0.2),
@@ -86,7 +93,7 @@ class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      LocaleKeys.step_1_of_3_label_text.tr(),
+                      LocaleKeys.step_2_of_4_label_text.tr(),
                       style: stepTextStyle.copyWith(
                           color: Theme.of(context)
                               .secondaryHeaderColor
@@ -184,25 +191,8 @@ class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
                               IconButton(
                                 key: Key("choose_location_button"),
                                 onPressed: () async {
-                                  setState(() {
-                                    _getLocation = true;
-                                  });
-                                  Position position =
-                                      await Geolocator.getCurrentPosition(
-                                          desiredAccuracy:
-                                              LocationAccuracy.high);
-                                  Location locationObject = Location(
-                                    latitude: position.latitude.toString(),
-                                    longitude: position.longitude.toString(),
-                                  );
-                                  setState(() {
-                                    locationValue = locationObject.latitude +
-                                        " " +
-                                        locationObject.longitude;
-
-                                    _fundraiseInfo['location'] = locationObject;
-                                    _getLocation = false;
-                                  });
+                                  await locationShowDialog(
+                                      context, getLocation);
                                 },
                                 icon: Icon(
                                   Icons.place,
@@ -260,7 +250,7 @@ class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
         ),
       );
     } else {
-      return ResponseAlert("somthing went wrong");
+      return ResponseAlert("something went wrong");
     }
   }
 
@@ -281,5 +271,24 @@ class _CreateFundraiserPageOneState extends State<CreateFundraiserPageOne> {
 
   Widget buildCustomPrifixIcon(Widget child) {
     return Container(width: 0, alignment: Alignment(-0.99, 0.0), child: child);
+  }
+
+  Future<void> getLocation() async {
+    Navigator.of(context).pop();
+    setState(() {
+      _getLocation = true;
+    });
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    Location locationObject = Location(
+      latitude: position.latitude.toString(),
+      longitude: position.longitude.toString(),
+    );
+    setState(() {
+      locationValue = locationObject.latitude + " " + locationObject.longitude;
+
+      _fundraiseInfo['location'] = locationObject;
+      _getLocation = false;
+    });
   }
 }

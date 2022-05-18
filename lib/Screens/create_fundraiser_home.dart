@@ -1,4 +1,5 @@
 import 'package:crowd_funding_app/Screens/create_fundraiser_page_one.dart';
+import 'package:crowd_funding_app/Screens/create_fundraiser_page_shortcode.dart';
 import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:crowd_funding_app/translations/locale_keys.g.dart';
 import 'package:crowd_funding_app/widgets/create_fundraiser_card.dart';
@@ -36,14 +37,13 @@ class CreateFundraiserHome extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => CreateFundraiserPageOne(),
+                    builder: (context) => CreateFundraiserPageShortcode(),
                   ),
                 );
               },
               iconData: Icons.manage_accounts,
               title: LocaleKeys.your_self_or_someone_label_text.tr(),
-              subTitle:
-                 LocaleKeys.donations_will_be_deposited_label_text.tr(),
+              subTitle: LocaleKeys.donations_will_be_deposited_label_text.tr(),
             ),
             SizedBox(
               height: 10.0,
@@ -52,8 +52,7 @@ class CreateFundraiserHome extends StatelessWidget {
               onPressed: () {},
               iconData: Icons.room_preferences_outlined,
               title: LocaleKeys.a_non_profit_or_label_text.tr(),
-              subTitle:
-                  LocaleKeys.donations_will_be_auto_lable_text.tr(),
+              subTitle: LocaleKeys.donations_will_be_auto_lable_text.tr(),
             ),
           ],
         ),

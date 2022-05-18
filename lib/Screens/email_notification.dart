@@ -48,7 +48,7 @@ class _EmailNotificationState extends State<EmailNotification> {
                     color: Colors.white,
                     child: ListTile(
                       leading: Text(
-                        "FoFundMe Newsletters",
+                        "Legas Fund Newsletters",
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
                       trailing: Checkbox(

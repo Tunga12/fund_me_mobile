@@ -2,7 +2,7 @@ import 'package:crowd_funding_app/constants/text_styles.dart';
 import 'package:flutter/material.dart';
 
 class UnorderedList extends StatelessWidget {
-  UnorderedList({required this.text});
+  UnorderedList({required this.text, this.color});
   String text;
   Color? color;
 
@@ -24,10 +24,12 @@ class UnorderedList extends StatelessWidget {
               TextSpan(
                   text: "$text",
                   style: bodyTextStyle2.copyWith(
-                      fontSize: 16.0,
-                      color: Theme.of(context)
-                          .secondaryHeaderColor
-                          .withOpacity(0.6))),
+                      fontSize: 15.0,
+                      color: color != null
+                          ? color
+                          : Theme.of(context)
+                              .secondaryHeaderColor
+                              .withOpacity(0.6))),
             ],
           ),
         ),

@@ -10,20 +10,23 @@ class SharePage extends StatelessWidget {
   SharePage({Key? key, required this.fundraise}) : super(key: key);
   final Fundraise fundraise;
 
-  final String _link = "https://www.crowdfund.com/fundraiser/";
+  final String _link = "https://www.legasfund.com/fundraiser/";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Column(
+        title: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(LocaleKeys.Help_listtile_text.tr()),
             SizedBox(
-              height: 10.0,
+              width: 5.0,
             ),
-            Text(fundraise.title!)
+            Text(
+              fundraise.title!,
+              overflow: TextOverflow.ellipsis,
+            )
           ],
         ),
       ),
@@ -50,7 +53,7 @@ class SharePage extends StatelessWidget {
                       height: 10.0,
                     ),
                     Text(
-                     LocaleKeys.fundraise_shared_on_social_label_text.tr(),
+                      LocaleKeys.fundraise_shared_on_social_label_text.tr(),
                       style: TextStyle(color: Colors.grey),
                     )
                   ],
@@ -59,40 +62,53 @@ class SharePage extends StatelessWidget {
               SizedBox(
                 height: 20.0,
               ),
-              ListTile(
-                leading: Icon(
-                  FontAwesomeIcons.link,
-                  // color: Colors.lin,
-                ),
-                title: Text(
-                  LocaleKeys.fundraise_link_label_text.tr(),
-                  style: TextStyle(fontWeight: FontWeight.w200),
-                ),
-                subtitle: Container(
-                  margin: EdgeInsets.only(top: 10.0),
-                  child: SizedBox(
-                    height: 50.0,
-                    child: TextFormField(
-                      initialValue: _link,
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 10.0, horizontal: 5.0),
-                        border: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.grey, width: 1.5),
-                        ),
-                        suffix: TextButton(
-                          onPressed: () {},
-                          child: Text(LocaleKeys.copy_link_button_text.tr()),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    LocaleKeys.fundraise_link_label_text.tr(),
+                    style: TextStyle(
+                        fontWeight: FontWeight.w200,
+                        color: Colors.grey.shade800,
+                        fontSize: 16),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    children: [
+                      Icon(
+                        FontAwesomeIcons.link,
+                        color: Colors.grey.shade600,
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        child: Container(
+                          margin: EdgeInsets.only(top: 5.0),
+                          child: SizedBox(
+                            height: 50.0,
+                            child: TextFormField(
+                              initialValue: _link,
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 10.0, horizontal: 5.0),
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                      color: Colors.grey, width: 1.5),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                ),
+                    ],
+                  )
+                ],
               ),
               Padding(
-                padding: const EdgeInsets.symmetric(
-                    vertical: 30.0),
+                padding: const EdgeInsets.symmetric(vertical: 30.0),
                 child: PreviewTextButton(
                   title: LocaleKeys.share_lable_text.tr(),
                   backgroundColor: Theme.of(context).buttonColor.withAlpha(100),
